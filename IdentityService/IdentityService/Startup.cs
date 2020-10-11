@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using MicroIdentityService.Repositories;
+using MicroIdentityService.Repositories.Mock;
+using MicroIdentityService.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
-namespace IdentityService
+namespace MicroIdentityService
 {
     /// <summary>
     /// Encapsulates startup logic.
@@ -30,6 +33,15 @@ namespace IdentityService
         /// <param name="services">Service collection to extend.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // Register repositories
+            services.AddSingleton<IIdentityRepository, MockIdentityRepository>();
+            services.AddSingleton<IReadOnlyIdentityRepository, MockIdentityRepository>();
+
+            // Register services
+            services.AddSingleton<PasswordHashingService>();
+            services.AddSingleton<IdentityService>();
+
             // Register controllers
             services.AddControllers();
         }

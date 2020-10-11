@@ -4,7 +4,7 @@ using Serilog;
 using Serilog.Events;
 using System;
 
-namespace IdentityService
+namespace MicroIdentityService
 {
     /// <summary>
     /// Main program.
