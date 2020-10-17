@@ -83,6 +83,21 @@ namespace MicroIdentityService
         /// <param name="app">Application builder to configure the app through.</param>
         public void Configure(IApplicationBuilder app)
         {
+            try
+            {
+                if (Configuration.GetValue<bool>("Administrator:CreateIfMissing"))
+                {
+                    string identifier = Configuration.GetValue<string>("Administrator:Identifier");
+                    string password = Configuration.GetValue<string>("Administrator:Password");
+                    IdentityService identityService = app.ApplicationServices.GetService<IdentityService>();
+                    identityService.CreateIdentity(identifier, password);
+                }
+            }
+            catch (Exception)
+            {
+                Logger.LogWarning("Failed processing `Administrator` configuration.");
+            }
+
             app.UseSerilogRequestLogging();
             app.UseRouting();
 
