@@ -14,10 +14,15 @@ namespace MicroIdentityService.Controllers
     [Route("api/v1/identities")]
     public class IdentityController : ControllerBase
     {
+        private IdentifierValidationService IdentifierValidationService { get; }
+
         private IdentityService IdentityService { get; }
 
-        public IdentityController(ILogger<IdentityController> logger, IdentityService identityService)
+        public IdentityController(ILogger<IdentityController> logger,
+            IdentifierValidationService identifierValidationService,
+            IdentityService identityService)
         {
+            IdentifierValidationService = identifierValidationService;
             IdentityService = identityService;
             Logger = logger;
         }
@@ -67,8 +72,13 @@ namespace MicroIdentityService.Controllers
 
             try
             {
+                IdentifierValidationService.Validate(identityCreationRequest.Identifier);
                 Identity identity = IdentityService.CreateIdentity(identityCreationRequest.Identifier, identityCreationRequest.Password);
                 return Created(GetNewResourceUri(identity.Id), new IdentityResponse(identity));
+            }
+            catch (IdentifierValidationException)
+            {
+                return HandleBadRequest("The provided user identifier is not valid.");
             }
             catch (EntityAlreadyExsistsException exception)
             {

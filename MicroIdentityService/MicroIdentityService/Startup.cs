@@ -1,6 +1,7 @@
 ﻿using MicroIdentityService.Repositories;
 using MicroIdentityService.Repositories.InMemory;
 using MicroIdentityService.Services;
+using MicroIdentityService.Services.IdentifierValidation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,7 +43,28 @@ namespace MicroIdentityService
         /// <param name="services">Service collection to extend.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // Confiture persistence-related services
+            ConfigurePersistenceServices(services);
 
+            // Configure identifier validation
+            ConfigureIdentifierValidation(services);
+
+            // Register services
+            services.AddSingleton<IdentifierValidationService>();
+            services.AddSingleton<PasswordHashingService>();
+            services.AddSingleton<AuthenticationService>();
+            services.AddSingleton<IdentityService>();
+
+            // Register controllers
+            services.AddControllers();
+        }
+
+        /// <summary>
+        /// Configures persistence-related services. This provides implementations for entity repositories.
+        /// </summary>
+        /// <param name="services">Service collection to register services in.</param>
+        private void ConfigurePersistenceServices(IServiceCollection services)
+        {
             // Get persistence strategy from configuration
             PersistenceStrategy persistenceStrategy;
             try
@@ -67,14 +89,38 @@ namespace MicroIdentityService
                 // TODO: implement real DB persistence
                 throw new NotImplementedException("Real database persistence has not been implemented yet.");
             }
+        }
 
-            // Register services
-            services.AddSingleton<PasswordHashingService>();
-            services.AddSingleton<AuthenticationService>();
-            services.AddSingleton<IdentityService>();
+        /// <summary>
+        /// Configures identifier validation. This provides an implementation for the <see cref="IIdentifierValidator"/> interface.
+        /// </summary>
+        /// <param name="services">Service collection to register services in.</param>
+        private void ConfigureIdentifierValidation(IServiceCollection services)
+        {
+            // Get identifier validation strategy from configuration
+            IdentifierValidationStrategy identifierValidationStrategy;
+            try
+            {
+                identifierValidationStrategy = Configuration.GetValue<IdentifierValidationStrategy>("IdentifierValidation:Strategy");
+            }
+            catch (Exception)
+            {
+                Logger.LogWarning("Failed getting identifier validation strategy from configuration - defaulting to no validation.");
+                identifierValidationStrategy = IdentifierValidationStrategy.None;
+            }
+            Logger.LogInformation($"Identifier validation strategy `{identifierValidationStrategy}` has been configured.");
 
-            // Register controllers
-            services.AddControllers();
+            // Provide speicific identifier validator
+            switch (identifierValidationStrategy)
+            {
+                case IdentifierValidationStrategy.Email:
+                    services.AddSingleton<IIdentifierValidator, EmailIdentifierValidator>();
+                    break;
+                case IdentifierValidationStrategy.None:
+                default:
+                    services.AddSingleton<IIdentifierValidator, NoOpIdentifierValidator>();
+                    break;
+            }
         }
 
         /// <summary>
