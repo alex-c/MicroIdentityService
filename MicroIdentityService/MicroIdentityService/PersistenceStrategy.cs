@@ -8,6 +8,6 @@
         /// <summary>
         /// Indicates that entities are to be persisted in memory.
         /// </summary>
-        Mock
+        InMemory
     }
 }

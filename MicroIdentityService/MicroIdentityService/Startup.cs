@@ -1,5 +1,5 @@
 ﻿using MicroIdentityService.Repositories;
-using MicroIdentityService.Repositories.Mock;
+using MicroIdentityService.Repositories.InMemory;
 using MicroIdentityService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -44,15 +44,23 @@ namespace MicroIdentityService
         {
 
             // Get persistence strategy from configuration
-            PersistenceStrategy persistenceStrategy = Configuration.GetValue<PersistenceStrategy>("Persistence:Strategy");
+            PersistenceStrategy persistenceStrategy;
+            try
+            {
+                persistenceStrategy = Configuration.GetValue<PersistenceStrategy>("Persistence:Strategy");
+            }
+            catch (Exception exception)
+            {
+                throw new Exception("Failed getting persistence strategy from configuration.", exception);
+            }
             Logger.LogInformation($"Persistence strategy `{persistenceStrategy}` has been configured.");
 
             // Register repositories
-            if (persistenceStrategy == PersistenceStrategy.Mock)
+            if (persistenceStrategy == PersistenceStrategy.InMemory)
             {
-                services.AddSingleton<MockIdentityRepository>();
-                services.AddSingleton<IIdentityRepository>(x => x.GetRequiredService<MockIdentityRepository>());
-                services.AddSingleton<IReadOnlyIdentityRepository>(x => x.GetRequiredService<MockIdentityRepository>());
+                services.AddSingleton<InMemoryIdentityRepository>();
+                services.AddSingleton<IIdentityRepository>(x => x.GetRequiredService<InMemoryIdentityRepository>());
+                services.AddSingleton<IReadOnlyIdentityRepository>(x => x.GetRequiredService<InMemoryIdentityRepository>());
             }
             else
             {

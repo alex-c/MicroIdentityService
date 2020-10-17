@@ -2,12 +2,12 @@
 using System;
 using System.Collections.Generic;
 
-namespace MicroIdentityService.Repositories.Mock
+namespace MicroIdentityService.Repositories.InMemory
 {
     /// <summary>
     /// A mock implementation of the identity repository, used for testing. This stores identities in-memory.
     /// </summary>
-    public class MockIdentityRepository : IIdentityRepository, IReadOnlyIdentityRepository
+    public class InMemoryIdentityRepository : IIdentityRepository, IReadOnlyIdentityRepository
     {
         public IEnumerable<Identity> GetIdentities()
         {
@@ -17,7 +17,7 @@ namespace MicroIdentityService.Repositories.Mock
         private Dictionary<Guid, Identity> IdentitiesIdMap { get; }
         private Dictionary<string, Identity> IdentitiesEmailMap { get; }
 
-        public MockIdentityRepository()
+        public InMemoryIdentityRepository()
         {
             IdentitiesIdMap = new Dictionary<Guid, Identity>();
             IdentitiesEmailMap = new Dictionary<string, Identity>();
