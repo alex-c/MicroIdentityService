@@ -59,15 +59,15 @@ namespace MicroIdentityService.Controllers
         public IActionResult CreateIdentity([FromBody] IdentityCreationRequest identityCreationRequest)
         {
             if (identityCreationRequest == null ||
-                string.IsNullOrWhiteSpace(identityCreationRequest.Email) ||
+                string.IsNullOrWhiteSpace(identityCreationRequest.Identifier) ||
                 string.IsNullOrWhiteSpace(identityCreationRequest.Password))
             {
-                return HandleBadRequest("A valid user ID, name, password and role need to be provided.");
+                return HandleBadRequest("A valid user identifier and password need to be provided.");
             }
 
             try
             {
-                Identity identity = IdentityService.CreateIdentity(identityCreationRequest.Email, identityCreationRequest.Password);
+                Identity identity = IdentityService.CreateIdentity(identityCreationRequest.Identifier, identityCreationRequest.Password);
                 return Created(GetNewResourceUri(identity.Id), new IdentityResponse(identity));
             }
             catch (EntityAlreadyExsistsException exception)

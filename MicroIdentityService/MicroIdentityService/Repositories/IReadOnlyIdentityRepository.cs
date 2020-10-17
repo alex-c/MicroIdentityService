@@ -23,10 +23,10 @@ namespace MicroIdentityService.Repositories
         Identity GetIdentity(Guid id);
 
         /// <summary>
-        /// Gets an identity from its unique email address. Returns null if no matching identity could be found.
+        /// Gets an identity by its unique unser-chosen identifier. Returns null if no matching identity could be found.
         /// </summary>
-        /// <param name="email">The email address of the identity to retrieve.</param>
+        /// <param name="identifier">The identifier of the identity to retrieve.</param>
         /// <returns>Returns the identity or null.</returns>
-        Identity GetIdentity(string email);
+        Identity GetIdentity(string identifier);
     }
 }

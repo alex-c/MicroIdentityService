@@ -8,14 +8,14 @@ namespace MicroIdentityService.Models
     public class Identity
     {
         /// <summary>
-        /// A unique identity ID.
+        /// A unique identity system ID.
         /// </summary>
         public Guid Id { get; set; }
 
         /// <summary>
-        /// The unique email address associated with the identity. This is used for authentication.
+        /// The unique user-chosen identifer associated with the identity. This is used for authentication.
         /// </summary>
-        public string Email { get; set; }
+        public string Identifier { get; set; }
 
         /// <summary>
         /// The hashed password associated with the identity.

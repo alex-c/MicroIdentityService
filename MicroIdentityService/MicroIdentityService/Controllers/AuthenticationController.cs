@@ -33,19 +33,21 @@ namespace MicroIdentityService.Controllers
         /// <summary>
         /// Authenticates an identity.
         /// </summary>
-        /// <param name="loginRequest">User login request.</param>
+        /// <param name="authenticationRequest">Authentication request data.</param>
         /// <returns>Returns a JWT on success.</returns>
         [HttpPost]
         public IActionResult AuthenticateUser([FromBody] AuthenticationRequest authenticationRequest)
         {
-            if (authenticationRequest == null || authenticationRequest.Id == null || string.IsNullOrEmpty(authenticationRequest.Password))
+            if (authenticationRequest == null || 
+                string.IsNullOrEmpty(authenticationRequest.Identifier) || 
+                string.IsNullOrEmpty(authenticationRequest.Password))
             {
                 return HandleBadRequest("An identity ID and password need to be supplied for authentication requests.");
             }
 
             try
             {
-                if (AuthenticationService.TryAuthenticate(authenticationRequest.Id, authenticationRequest.Password, out string token))
+                if (AuthenticationService.TryAuthenticate(authenticationRequest.Identifier, authenticationRequest.Password, out string token))
                 {
                     return Ok(new AuthenticationResponse(token));
                 }

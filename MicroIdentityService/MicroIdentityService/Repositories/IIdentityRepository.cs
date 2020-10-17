@@ -16,27 +16,27 @@ namespace MicroIdentityService.Repositories
         IEnumerable<Identity> GetIdentities();
 
         /// <summary>
-        /// Gets an identity from its unique ID. Returns null if no matching identity could be found.
+        /// Gets an identity by its unique ID. Returns null if no matching identity could be found.
         /// </summary>
         /// <param name="id">The ID of the identity to retrieve.</param>
         /// <returns>Returns the identity or null.</returns>
         Identity GetIdentity(Guid id);
 
         /// <summary>
-        /// Gets an identity from its unique email address. Returns null if no matching identity could be found.
+        /// Gets an identity by its unique user-chosen identifier. Returns null if no matching identity could be found.
         /// </summary>
-        /// <param name="email">The email address of the identity to retrieve.</param>
+        /// <param name="identifier">The identifier of the identity to retrieve.</param>
         /// <returns>Returns the identity or null.</returns>
-        Identity GetIdentity(string email);
+        Identity GetIdentity(string identifier);
 
         /// <summary>
         /// Creates a new identity.
         /// </summary>
-        /// <param name="email">The email address of the new identity to create.</param>
+        /// <param name="identifier">The user-chosen identifier of the new identity to create.</param>
         /// <param name="hashedPassword">The hashed password of the new identity to create.</param>
         /// <param name="salt">The salt used to hash the password of the new identity to create.</param>
         /// <returns>Returns the newly created identity.</returns>
-        Identity CreateIdentity(string email, string hashedPassword, byte[] salt);
+        Identity CreateIdentity(string identifier, string hashedPassword, byte[] salt);
 
         /// <summary>
         /// Updates an existing identity.

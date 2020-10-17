@@ -6,12 +6,12 @@
     public class IdentityCreationRequest
     {
         /// <summary>
-        /// The user's email address, used to log in.
+        /// The identity's user-chosen identifier, used to log in.
         /// </summary>
-        public string Email { get; set; }
+        public string Identifier { get; set; }
 
         /// <summary>
-        /// The user's as-of-yet unhashed password.
+        /// The identity's as-of-yet unhashed password.
         /// </summary>
         public string Password { get; set; }
     }

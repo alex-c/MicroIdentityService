@@ -15,17 +15,17 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
         public IdentityResponse(Identity identity)
         {
             Id = identity.Id;
-            Email = identity.Email;
+            Identifier = identity.Identifier;
         }
 
         /// <summary>
-        /// The user's unique ID.
+        /// The user's unique system ID.
         /// </summary>
         public Guid Id { get; set; }
 
         /// <summary>
-        /// The user's email address.
+        /// The user-chosen unique identifier.
         /// </summary>
-        public string Email { get; set; }
+        public string Identifier { get; set; }
     }
 }

@@ -73,20 +73,20 @@ namespace MicroIdentityService.Services
         /// <summary>
         /// Attempts to authenticate an identity.
         /// </summary>
-        /// <param name="id">The identity's unique ID.</param>
+        /// <param name="identifier">The identity's unique identifier.</param>
         /// <param name="password">The identity's password.</param>
         /// <param name="serializedToken">The serialized token.</param>
         /// <returns>Returns whether authentication was successful.</returns>
         /// <exception cref="EntityNotFoundException">User</exception>
-        public bool TryAuthenticate(Guid id, string password, out string serializedToken)
+        public bool TryAuthenticate(string identifier, string password, out string serializedToken)
         {
             serializedToken = null;
 
             // Get user
-            Identity identity = IdentityRepository.GetIdentity(id);
+            Identity identity = IdentityRepository.GetIdentity(identifier);
             if (identity == null)
             {
-                throw new EntityNotFoundException("Identity", id);
+                throw new EntityNotFoundException("Identity", identifier);
             }
 
             // Check password

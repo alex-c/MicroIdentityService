@@ -70,20 +70,19 @@ namespace MicroIdentityService.Services
         /// <summary>
         /// Creates a new identity.
         /// </summary>
-        /// <param name="email">The unique email associated with this identity.</param>
-        /// <param name="name">The display name of this identity.</param>
+        /// <param name="identifier">The unique user-chosen identifier with this identity.</param>
         /// <param name="password">The as-of-yet unhashed password of this identity.</param>
         /// <returns></returns>
         /// <exception cref="EntityAlreadyExsistsException">Identity</exception>
-        public Identity CreateIdentity(string email, string password)
+        public Identity CreateIdentity(string identifier, string password)
         {
-            if (IdentityRepository.GetIdentity(email) != null)
+            if (IdentityRepository.GetIdentity(identifier) != null)
             {
-                throw new EntityAlreadyExsistsException("Identity", email);
+                throw new EntityAlreadyExsistsException("Identity", identifier);
             }
 
             (string hash, byte[] salt) = PasswordHashingService.HashAndSaltPassword(password);
-            return IdentityRepository.CreateIdentity(email, hash, salt);
+            return IdentityRepository.CreateIdentity(identifier, hash, salt);
         }
 
         /// <summary>

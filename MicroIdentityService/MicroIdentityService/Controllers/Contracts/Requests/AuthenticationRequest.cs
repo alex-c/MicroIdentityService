@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MicroIdentityService.Controllers.Contracts.Requests
+﻿namespace MicroIdentityService.Controllers.Contracts.Requests
 {
     /// <summary>
     /// A contract for an identity authentication request.
@@ -8,9 +6,9 @@ namespace MicroIdentityService.Controllers.Contracts.Requests
     public class AuthenticationRequest
     {
         /// <summary>
-        /// ID of the identity to authenticate.
+        /// Identifier of the identity to authenticate.
         /// </summary>
-        public Guid Id { get; set; }
+        public string Identifier { get; set; }
 
         /// <summary>
         /// Password of the identity.

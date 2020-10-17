@@ -15,12 +15,12 @@ namespace MicroIdentityService.Repositories.InMemory
         }
 
         private Dictionary<Guid, Identity> IdentitiesIdMap { get; }
-        private Dictionary<string, Identity> IdentitiesEmailMap { get; }
+        private Dictionary<string, Identity> IdentitiesIdentifierMap { get; }
 
         public InMemoryIdentityRepository()
         {
             IdentitiesIdMap = new Dictionary<Guid, Identity>();
-            IdentitiesEmailMap = new Dictionary<string, Identity>();
+            IdentitiesIdentifierMap = new Dictionary<string, Identity>();
         }
 
         public Identity GetIdentity(Guid id)
@@ -32,26 +32,26 @@ namespace MicroIdentityService.Repositories.InMemory
             return null;
         }
 
-        public Identity GetIdentity(string email)
+        public Identity GetIdentity(string identifier)
         {
-            if (IdentitiesEmailMap.TryGetValue(email, out Identity identity))
+            if (IdentitiesIdentifierMap.TryGetValue(identifier, out Identity identity))
             {
                 return identity;
             }
             return null;
         }
 
-        public Identity CreateIdentity(string email, string hashedPassword, byte[] salt)
+        public Identity CreateIdentity(string identifier, string hashedPassword, byte[] salt)
         {
             Identity identity = new Identity()
             {
                 Id = Guid.NewGuid(),
-                Email = email,
+                Identifier = identifier,
                 HashedPassword = hashedPassword,
                 Salt = salt
             };
             IdentitiesIdMap.Add(identity.Id, identity);
-            IdentitiesEmailMap.Add(identity.Email, identity);
+            IdentitiesIdentifierMap.Add(identity.Identifier, identity);
             return identity;
         }
 
@@ -66,7 +66,7 @@ namespace MicroIdentityService.Repositories.InMemory
             if (IdentitiesIdMap.TryGetValue(id, out Identity identity))
             {
                 IdentitiesIdMap.Remove(id);
-                IdentitiesEmailMap.Remove(identity.Email);
+                IdentitiesIdentifierMap.Remove(identity.Identifier);
             }
         }
     }
