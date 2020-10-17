@@ -14,8 +14,8 @@ MIS allows to create and manage identities. An identity is a lightweight object 
 
 ### Roles managenent
 
-MIS allows to create and manage domains and roles. A role can be associated with one or no domain. Domains are application-specific units that allow to organize roles in several groups. For example, if MIS manages identities and roles for three microservices A, B and C, those could be used as domains, which allows for the services to have roles with the same names.
+MIS allows to create and manage domains and roles. A role can be associated with one or no domain. Domains are application-specific groups that allow to organize roles. For example, if MIS manages identities and roles for three microservices A, B and C, those could be used as domains, which allows for the services to have roles with the same names.
 
 ### Authentication
 
-MIS allows clients to authenticate an identity with a combination of client-provided identifier and password. Upon successful authentication, a JSON Web Token (JWT) is returned, which contains the identity's system ID, identifier and a list of roles. Roles that belong to a domain are returned in the `domaine.role` format.
+MIS allows clients to authenticate an identity with a combination of client-provided identifier and password. Upon successful authentication, a JSON Web Token (JWT) is returned, which contains the identity's system ID, identifier and a list of roles. Roles that belong to a domain are returned in the `domain.role` format.

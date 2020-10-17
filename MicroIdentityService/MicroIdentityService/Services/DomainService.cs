@@ -54,7 +54,7 @@ namespace MicroIdentityService.Services
             Domain domain = DomainRepository.GetDomain(id);
             if (domain == null)
             {
-                throw new EntityNotFoundException("domain", id);
+                throw new EntityNotFoundException("Domain", id);
             }
             return domain;
         }
