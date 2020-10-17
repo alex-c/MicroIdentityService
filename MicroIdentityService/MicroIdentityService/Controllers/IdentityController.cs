@@ -94,7 +94,7 @@ namespace MicroIdentityService.Controllers
         public IActionResult DeleteIdentity(Guid id)
         {
             IdentityService.DeleteIdentity(id);
-            return Ok();
+            return NoContent();
         }
     }
 }

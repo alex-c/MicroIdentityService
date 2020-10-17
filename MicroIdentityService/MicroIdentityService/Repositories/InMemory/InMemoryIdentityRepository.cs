@@ -9,11 +9,6 @@ namespace MicroIdentityService.Repositories.InMemory
     /// </summary>
     public class InMemoryIdentityRepository : IIdentityRepository, IReadOnlyIdentityRepository
     {
-        public IEnumerable<Identity> GetIdentities()
-        {
-            return IdentitiesIdMap.Values;
-        }
-
         private Dictionary<Guid, Identity> IdentitiesIdMap { get; }
         private Dictionary<string, Identity> IdentitiesIdentifierMap { get; }
 
@@ -21,6 +16,11 @@ namespace MicroIdentityService.Repositories.InMemory
         {
             IdentitiesIdMap = new Dictionary<Guid, Identity>();
             IdentitiesIdentifierMap = new Dictionary<string, Identity>();
+        }
+
+        public IEnumerable<Identity> GetIdentities()
+        {
+            return IdentitiesIdMap.Values;
         }
 
         public Identity GetIdentity(Guid id)

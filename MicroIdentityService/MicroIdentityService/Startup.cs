@@ -54,6 +54,7 @@ namespace MicroIdentityService
             services.AddSingleton<PasswordHashingService>();
             services.AddSingleton<AuthenticationService>();
             services.AddSingleton<IdentityService>();
+            services.AddSingleton<DomainService>();
 
             // Register controllers
             services.AddControllers();
@@ -83,6 +84,7 @@ namespace MicroIdentityService
                 services.AddSingleton<InMemoryIdentityRepository>();
                 services.AddSingleton<IIdentityRepository>(x => x.GetRequiredService<InMemoryIdentityRepository>());
                 services.AddSingleton<IReadOnlyIdentityRepository>(x => x.GetRequiredService<InMemoryIdentityRepository>());
+                services.AddSingleton<IDomainRepository, InMemoryDomainRepository>();
             }
             else
             {
