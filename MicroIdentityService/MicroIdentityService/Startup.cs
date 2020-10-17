@@ -4,7 +4,9 @@ using MicroIdentityService.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Serilog;
+using System;
 
 namespace MicroIdentityService
 {
@@ -19,11 +21,18 @@ namespace MicroIdentityService
         private IConfiguration Configuration { get; }
 
         /// <summary>
+        /// Logger instance for local logging needs.
+        /// </summary>
+        private Microsoft.Extensions.Logging.ILogger Logger { get; }
+
+        /// <summary>
         /// Injects modules necessary to app and services configuration.
         /// </summary>
+        /// <param name="logger">Logger instance for local logging needs.</param>
         /// <param name="configuration">App configuration.</param>
-        public Startup(IConfiguration configuration)
+        public Startup(ILogger<Startup> logger, IConfiguration configuration)
         {
+            Logger = logger;
             Configuration = configuration;
         }
 
@@ -34,12 +43,26 @@ namespace MicroIdentityService
         public void ConfigureServices(IServiceCollection services)
         {
 
+            // Get persistence strategy from configuration
+            PersistenceStrategy persistenceStrategy = Configuration.GetValue<PersistenceStrategy>("Persistence:Strategy");
+            Logger.LogInformation($"Persistence strategy `{persistenceStrategy}` has been configured.");
+
             // Register repositories
-            services.AddSingleton<IIdentityRepository, MockIdentityRepository>();
-            services.AddSingleton<IReadOnlyIdentityRepository, MockIdentityRepository>();
+            if (persistenceStrategy == PersistenceStrategy.Mock)
+            {
+                services.AddSingleton<MockIdentityRepository>();
+                services.AddSingleton<IIdentityRepository>(x => x.GetRequiredService<MockIdentityRepository>());
+                services.AddSingleton<IReadOnlyIdentityRepository>(x => x.GetRequiredService<MockIdentityRepository>());
+            }
+            else
+            {
+                // TODO: implement real DB persistence
+                throw new NotImplementedException("Real database persistence has not been implemented yet.");
+            }
 
             // Register services
             services.AddSingleton<PasswordHashingService>();
+            services.AddSingleton<AuthenticationService>();
             services.AddSingleton<IdentityService>();
 
             // Register controllers
