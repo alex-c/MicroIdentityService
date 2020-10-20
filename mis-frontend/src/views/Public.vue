@@ -17,7 +17,7 @@
         </div>
       </div-->
     <div id="login-box-container">
-      <Box title="MicroIdentityService">
+      <Box title="μIS">
         <template v-slot:actions><i class="el-icon-s-tools action" @click="showSettingsSidebar"/></template>
         <el-form label-position="top" :model="loginForm">
           <el-form-item label="Name">

@@ -1,13 +1,29 @@
 <template>
   <div id="private">
     <header>
-      <div id="header-title">MicroIdentityServer</div>
+      <div id="header-title">
+        <i class="el-icon-s-unfold" />
+        MicroIdentityServer
+      </div>
       <div id="header-options">
-        <div class="option"><i class="el-icon-s-tools" /></div>
+        <div class="option"><i class="el-icon-s-tools" @click="showSettingsSidebar" /></div>
       </div>
     </header>
   </div>
 </template>
+
+<script>
+import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
+
+export default {
+  name: 'Private',
+  methods: {
+    showSettingsSidebar: function() {
+      this.$store.commit(SET_SETTINGS_DRAWER_OPEN, true);
+    },
+  },
+};
+</script>
 
 <style lang="scss" scoped>
 @import '@/style/colors.scss';
