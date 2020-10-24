@@ -1,33 +1,20 @@
 <template>
   <main>
-    <!--div id="login-box">
-        <div id="login-box-header">Sign In</div>
-        <div id="login-box-content">
-          <el-form label-position="top" :model="loginForm">
-            <el-form-item label="Name">
-              <el-input v-model="loginForm.userName"></el-input>
-            </el-form-item>
-            <el-form-item label="Password" prop="password">
-              <el-input type="password" v-model="loginForm.password" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item id="login-form-button">
-              <el-button type="primary">Sign In</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
-      </div-->
     <div id="login-box-container">
-      <Box title="μIS">
+      <Box title="μIS - MicroIdentityService">
         <template v-slot:actions><i class="el-icon-s-tools action" @click="showSettingsSidebar"/></template>
         <el-form label-position="top" :model="loginForm">
-          <el-form-item label="Name">
-            <el-input v-model="loginForm.userName"></el-input>
+          <el-form-item label="Identifier">
+            <el-input v-model="loginForm.identifier"></el-input>
           </el-form-item>
           <el-form-item label="Password" prop="password">
             <el-input type="password" v-model="loginForm.password" autocomplete="off"></el-input>
           </el-form-item>
-          <el-form-item id="login-form-button">
-            <el-button type="primary" @click="go">Sign In</el-button>
+          <el-form-item>
+            <div id="login-form-actions">
+              <el-link type="primary">Forgot your password?</el-link>
+              <el-button type="primary" @click="signIn">Sign In</el-button>
+            </div>
           </el-form-item>
         </el-form>
       </Box>
@@ -36,7 +23,7 @@
 </template>
 
 <script>
-import Box from '@/components/Box.vue';
+import Box from '@/components/shared/Box.vue';
 
 import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
 
@@ -46,13 +33,13 @@ export default {
   data() {
     return {
       loginForm: {
-        userName: '',
+        identifier: '',
         password: '',
       },
     };
   },
   methods: {
-    go: function() {
+    signIn: function() {
       this.$router.push({ path: '/private' });
     },
     showSettingsSidebar: function() {
@@ -80,7 +67,8 @@ main {
   width: 480px;
 }
 
-#login-form-button {
-  text-align: right;
+#login-form-actions {
+  display: flex;
+  justify-content: space-between;
 }
 </style>

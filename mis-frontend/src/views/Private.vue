@@ -1,62 +1,43 @@
 <template>
   <div id="private">
-    <header>
-      <div id="header-title">
-        <i class="el-icon-s-unfold" />
-        MicroIdentityServer
-      </div>
-      <div id="header-options">
-        <div class="option"><i class="el-icon-s-tools" @click="showSettingsSidebar" /></div>
-      </div>
-    </header>
+    <Header />
+    <main>
+      <Menu />
+      <div id="content"><router-view /></div>
+    </main>
   </div>
 </template>
 
 <script>
-import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
+import Header from '@/components/Header.vue';
+import Menu from '@/components/Menu.vue';
+
+import { SET_COLLAPSED_UI } from '@/store/mutations.js';
 
 export default {
   name: 'Private',
+  components: { Header, Menu },
   methods: {
-    showSettingsSidebar: function() {
-      this.$store.commit(SET_SETTINGS_DRAWER_OPEN, true);
+    fitToScreen: function() {
+      this.$store.commit(SET_COLLAPSED_UI, window.innerWidth <= 800);
     },
+  },
+  created: function() {
+    window.addEventListener('resize', this.fitToScreen);
+    this.fitToScreen();
+  },
+  destroyed() {
+    window.removeEventListener('resize', this.fitToScreen);
   },
 };
 </script>
 
 <style lang="scss" scoped>
-@import '@/style/colors.scss';
-
-header {
-  text-align: left;
-  background-color: $mis-color-primary;
-  overflow: auto;
-  color: white;
-  border-bottom: 1px solid $mis-color-border;
-  box-shadow: 0px 1px 2px 0px $mis-color-shadow;
-}
-
-#header-title {
-  float: left;
-  font-size: 30px;
-  padding: 16px;
-  height: 32px;
-}
-
-#header-options {
-  float: right;
-  display: flex;
-  & > .option {
-    font-size: 32px;
-    padding: 16px;
-    width: 32px;
-    height: 32px;
-  }
-  & > .option:hover {
-    background-color: white;
-    color: $mis-color-primary;
-    cursor: pointer;
-  }
+#content {
+  position: absolute;
+  top: 65px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
 }
 </style>

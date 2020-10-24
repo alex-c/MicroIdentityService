@@ -1,9 +1,13 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+Vue.use(VueRouter);
+
+// Main layour views
 import Public from '../views/Public.vue';
 import Private from '../views/Private.vue';
 
-Vue.use(VueRouter);
+// Private views
+import Dashboard from '../views/private/Dashboard.vue';
 
 const routes = [
   {
@@ -15,6 +19,12 @@ const routes = [
     path: '/private',
     name: 'Private',
     component: Private,
+    children: [
+      {
+        path: '/',
+        component: Dashboard,
+      },
+    ],
   },
 ];
 

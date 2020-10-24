@@ -1,10 +1,10 @@
 # MicroIdentityService
 
-MicroIdentityService (MIS) is a simple .NET Core microservice for identity management and authentication.
+MicroIdentityService (μIS) is a simple .NET Core microservice for identity management and authentication.
 
 ## Status
 
-Please note that MIS is currently in early development!
+Please note that μIS is currently in early development!
 
 ## Features
 

@@ -2,15 +2,23 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 Vue.use(Vuex);
 
-import { SET_SETTINGS_DRAWER_OPEN } from './mutations.js';
+import { SET_COLLAPSED_UI, SET_MENU_DRAWER_OPEN, SET_SETTINGS_DRAWER_OPEN } from './mutations.js';
 
 export default new Vuex.Store({
   state: {
+    collapsedUi: false, // Holds whether the UI is collapsed to fit smaller screens
+    menuOpen: false,
     settings: {
       drawerOpen: false,
     },
   },
   mutations: {
+    [SET_COLLAPSED_UI](state, payload) {
+      state.collapsedUi = payload;
+    },
+    [SET_MENU_DRAWER_OPEN](state, payload) {
+      state.menuOpen = payload;
+    },
     [SET_SETTINGS_DRAWER_OPEN](state, payload) {
       state.settings.drawerOpen = payload;
     },
