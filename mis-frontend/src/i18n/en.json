@@ -4,7 +4,8 @@
     "password": "Password"
   },
   "settings": {
-    "title": "Settings"
+    "title": "Settings",
+    "language": "Language"
   },
   "public": {
     "passwordForgottenPrompt": "Forgot your password?",
