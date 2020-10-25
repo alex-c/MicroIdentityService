@@ -2,8 +2,8 @@
   <div id="private">
     <Header />
     <main>
-      <Menu />
       <div id="content"><router-view /></div>
+      <Menu />
     </main>
   </div>
 </template>

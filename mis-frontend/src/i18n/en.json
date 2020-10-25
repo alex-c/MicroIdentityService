@@ -1,7 +1,11 @@
 {
   "general": {
     "identifier": "Identifier",
-    "password": "Password"
+    "password": "Password",
+    "dashboard": "Dashboard",
+    "identities": "Identities",
+    "domains": "Domains",
+    "roles": "Roles"
   },
   "settings": {
     "title": "Settings",

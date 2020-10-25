@@ -1,21 +1,27 @@
 <template>
   <div id="menu" :class="{ collapsed: collapsedUi, shown: menuOpen }">
-    <div class="menu-item">Dashboard</div>
-    <div class="menu-item">Identities</div>
-    <div class="menu-item">Domains</div>
-    <div class="menu-item">Roles</div>
+    <MenuItem target="dashboard" :current="current" />
+    <MenuItem target="identities" :current="current" />
+    <MenuItem target="domains" :current="current" />
+    <MenuItem target="roles" :current="current" />
   </div>
 </template>
 
 <script>
+import MenuItem from '@/components/MenuItem.vue';
+
 export default {
   name: 'Menu',
+  components: { MenuItem },
   computed: {
-    collapsedUi: function() {
+    collapsedUi() {
       return this.$store.state.collapsedUi;
     },
-    menuOpen: function() {
+    menuOpen() {
       return this.$store.state.menuOpen;
+    },
+    current() {
+      return this.$route.path;
     },
   },
 };
@@ -42,9 +48,5 @@ export default {
   &.shown {
     width: 200px;
   }
-}
-
-.menu-item {
-  padding: 16px;
 }
 </style>

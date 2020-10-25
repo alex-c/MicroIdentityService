@@ -8,6 +8,9 @@ import Private from '../views/Private.vue';
 
 // Private views
 import Dashboard from '../views/private/Dashboard.vue';
+import Identities from '../views/private/Identities.vue';
+import Domains from '../views/private/Domains.vue';
+import Roles from '../views/private/Roles.vue';
 
 const routes = [
   {
@@ -17,12 +20,27 @@ const routes = [
   },
   {
     path: '/private',
-    name: 'Private',
     component: Private,
     children: [
       {
         path: '/',
+        redirect: '/dashboard',
+      },
+      {
+        path: '/dashboard',
         component: Dashboard,
+      },
+      {
+        path: '/identities',
+        component: Identities,
+      },
+      {
+        path: '/domains',
+        component: Domains,
+      },
+      {
+        path: '/roles',
+        component: Roles,
       },
     ],
   },
