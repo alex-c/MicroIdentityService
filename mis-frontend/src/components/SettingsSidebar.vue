@@ -3,7 +3,7 @@
     <div id="settings-drawer-overlay" @click="closeDrawer" v-show="drawerOpen" />
     <div id="settings-drawer" :class="{ shown: drawerOpen }">
       <header>
-        <span>Settings</span>
+        <span>{{ $t('settings.title') }}</span>
         <i class="el-icon-arrow-right action" @click="closeDrawer" />
       </header>
     </div>

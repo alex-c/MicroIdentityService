@@ -4,16 +4,16 @@
       <Box title="μIS - MicroIdentityService">
         <template v-slot:actions><i class="el-icon-s-tools action" @click="showSettingsSidebar"/></template>
         <el-form label-position="top" :model="loginForm">
-          <el-form-item label="Identifier">
+          <el-form-item :label="$t('general.identifier')">
             <el-input v-model="loginForm.identifier"></el-input>
           </el-form-item>
-          <el-form-item label="Password" prop="password">
+          <el-form-item :label="$t('general.password')" prop="password">
             <el-input type="password" v-model="loginForm.password" autocomplete="off"></el-input>
           </el-form-item>
           <el-form-item>
             <div id="login-form-actions">
-              <el-link type="primary">Forgot your password?</el-link>
-              <el-button type="primary" @click="signIn">Sign In</el-button>
+              <el-link type="primary">{{ $t('public.passwordForgottenPrompt') }}</el-link>
+              <el-button type="primary" @click="signIn">{{ $t('public.signIn') }}</el-button>
             </div>
           </el-form-item>
         </el-form>

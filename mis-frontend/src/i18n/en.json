@@ -1,0 +1,13 @@
+{
+  "general": {
+    "identifier": "Identifier",
+    "password": "Password"
+  },
+  "settings": {
+    "title": "Settings"
+  },
+  "public": {
+    "passwordForgottenPrompt": "Forgot your password?",
+    "signIn": "Sign In"
+  }
+}
