@@ -47,4 +47,8 @@ main {
   flex-grow: 1;
   text-align: left;
 }
+
+.standard-page {
+  padding: 16px;
+}
 </style>

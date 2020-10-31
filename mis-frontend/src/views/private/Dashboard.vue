@@ -1,3 +1,5 @@
 <template>
-  <div id="dashboard">{{ $t('general.dashboard') }}</div>
+  <div id="dashboard" class="standard-page">{{ $t('general.dashboard') }}</div>
 </template>
+
+<style lang="scss" scoped></style>

@@ -6,18 +6,21 @@
       <span id="header-name" v-else>μIS</span>
     </div>
     <div id="header-options">
-      <div class="option" @click="signOut"><i class="el-icon-close" /></div>
+      <div class="option" @click="signOut"><LogoutIcon :size="32" /></div>
       <div class="option" @click="showSettingsSidebar"><i class="el-icon-s-tools" /></div>
     </div>
   </header>
 </template>
 
 <script>
+import LogoutIcon from '@/components/shared/icons/LogoutIcon.vue';
+
 import { SET_MENU_DRAWER_OPEN } from '@/store/mutations.js';
 import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
 
 export default {
   name: 'Header',
+  components: { LogoutIcon },
   computed: {
     collapsedUi: function() {
       return this.$store.state.collapsedUi;
