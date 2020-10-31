@@ -31,10 +31,6 @@ export default {
 @import '@/style/colors.scss';
 
 #menu {
-  position: absolute;
-  top: 65px;
-  left: 0px;
-  bottom: 0px;
   width: 0px;
   overflow: hidden;
   text-align: left;
@@ -43,7 +39,10 @@ export default {
   box-shadow: 1px 0px 2px 0px $mis-color-shadow;
   transition: width 0.5s;
   &.collapsed {
-    top: 0px;
+    position: absolute;
+    top: 65px;
+    left: 0px;
+    bottom: 0px;
   }
   &.shown {
     width: 200px;

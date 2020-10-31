@@ -2,8 +2,8 @@
   <div id="private">
     <Header />
     <main>
-      <div id="content"><router-view /></div>
       <Menu />
+      <div id="content"><router-view /></div>
     </main>
   </div>
 </template>
@@ -33,11 +33,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#private {
+  height: 100%;
+}
+
+main {
+  height: calc(100% - 65px);
+  display: flex;
+}
+
 #content {
-  position: absolute;
-  top: 65px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
+  height: 100%;
+  flex-grow: 1;
+  text-align: left;
 }
 </style>

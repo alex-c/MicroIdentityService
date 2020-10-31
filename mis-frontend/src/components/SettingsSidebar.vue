@@ -80,8 +80,9 @@ export default {
   & > header {
     display: flex;
     justify-content: space-between;
-    background-color: $mis-color-primary;
     padding: 16px;
+    background-color: $mis-color-primary;
+    color: white;
     border-bottom: 1px solid $mis-color-border;
     & > .action:hover {
       cursor: pointer;

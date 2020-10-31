@@ -3,6 +3,7 @@
     <div id="header-title">
       <i id="menu-toggle" :class="menuToggleIcon" @click="toggleMenuOpen" />
       <span id="header-name" v-if="!collapsedUi">MicroIdentityServer</span>
+      <span id="header-name" v-else>μIS</span>
     </div>
     <div id="header-options">
       <div class="option" @click="signOut"><i class="el-icon-close" /></div>

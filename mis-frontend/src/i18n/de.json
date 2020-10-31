@@ -1,2 +1,10 @@
 {
+  "general": {
+    "identifier": "Kennung",
+    "password": "Passwort",
+    "dashboard": "Dashboard",
+    "identities": "Identitäten",
+    "domains": "Domänen",
+    "roles": "Rollen"
+  }
 }

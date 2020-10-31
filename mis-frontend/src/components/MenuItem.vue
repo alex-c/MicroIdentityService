@@ -5,6 +5,8 @@
 </template>
 
 <script>
+import { SET_MENU_DRAWER_OPEN } from '@/store/mutations.js';
+
 export default {
   name: 'MenuItem',
   props: ['target', 'current'],
@@ -15,6 +17,9 @@ export default {
     };
   },
   computed: {
+    collapsedUi() {
+      return this.$store.state.collapsedUi;
+    },
     type() {
       return this.route === this.current ? 'primary' : 'default';
     },
@@ -22,6 +27,9 @@ export default {
   methods: {
     navigate: function() {
       this.$router.push({ path: this.route });
+      if (this.collapsedUi) {
+        this.$store.commit(SET_MENU_DRAWER_OPEN, false);
+      }
     },
   },
 };
