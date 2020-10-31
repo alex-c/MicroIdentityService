@@ -1,19 +1,14 @@
 # mis-frontend
 
-## Project setup
-```
-npm install
-```
+The administration UI for MicroIdentityServices.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Installation
 
-### Compiles and minifies for production
-```
-npm run build
-```
+Install with `npm install`
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## NPM Scrips
+
+The following NPM scripts are available:
+
+- `npm run serve`: compile in development mode and serve with hot-reloading
+- `npm run build`: compile to an optimized production build
