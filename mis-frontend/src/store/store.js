@@ -15,9 +15,6 @@ export default new Vuex.Store({
   mutations: {
     [SET_COLLAPSED_UI](state, payload) {
       state.collapsedUi = payload;
-      if (state.collapsedUi) {
-        state.menuOpen = false;
-      }
     },
     [SET_MENU_DRAWER_OPEN](state, payload) {
       state.menuOpen = payload;

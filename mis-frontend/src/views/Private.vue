@@ -33,6 +33,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/style/colors.scss';
+
 #private {
   height: 100%;
 }

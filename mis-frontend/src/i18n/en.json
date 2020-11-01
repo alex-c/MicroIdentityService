@@ -1,11 +1,13 @@
 {
   "general": {
+    "id": "ID",
     "identifier": "Identifier",
     "password": "Password",
     "dashboard": "Dashboard",
     "identities": "Identities",
     "domains": "Domains",
-    "roles": "Roles"
+    "roles": "Roles",
+    "noData": "No Data."
   },
   "settings": {
     "title": "Settings",

@@ -1,6 +1,6 @@
 <template>
   <div class="box">
-    <header>
+    <header v-if="title !== undefined">
       {{ title }}
       <div class="actions">
         <slot name="actions" />

@@ -60,6 +60,7 @@ export default {
   bottom: 0px;
   background-color: $mis-color-shadow;
   opacity: 0.5;
+  z-index: 5;
 }
 
 #settings-drawer {
@@ -74,6 +75,7 @@ export default {
   transition: width 0.5s;
   overflow: hidden;
   text-align: left;
+  z-index: 10;
   &.shown {
     width: 280px;
   }

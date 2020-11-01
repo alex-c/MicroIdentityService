@@ -43,5 +43,8 @@ export default {
   & > .el-link {
     font-size: 16px;
   }
+  &:hover {
+    cursor: pointer;
+  }
 }
 </style>
