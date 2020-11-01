@@ -26,9 +26,11 @@ export default {
   },
   methods: {
     navigate: function() {
-      this.$router.push({ path: this.route });
-      if (this.collapsedUi) {
-        this.$store.commit(SET_MENU_DRAWER_OPEN, false);
+      if (this.route !== this.current) {
+        this.$router.push({ path: this.route });
+        if (this.collapsedUi) {
+          this.$store.commit(SET_MENU_DRAWER_OPEN, false);
+        }
       }
     },
   },
