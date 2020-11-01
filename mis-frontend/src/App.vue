@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import SettingsSidebar from '@/components/SettingsSidebar.vue';
+import SettingsSidebar from '@/views/_partials/SettingsSidebar.vue';
 
 export default {
   name: 'App',

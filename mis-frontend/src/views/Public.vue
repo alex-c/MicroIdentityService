@@ -23,8 +23,8 @@
 </template>
 
 <script>
-import Box from '@/components/shared/Box.vue';
-import SettingsIcon from '@/components/shared/icons/SettingsIcon.vue';
+import Box from '@/components/Box.vue';
+import SettingsIcon from '@/components/icons/SettingsIcon.vue';
 
 import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
 

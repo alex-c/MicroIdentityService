@@ -3,9 +3,8 @@
 </template>
 
 <script>
-import Icon from '@/components/shared/Icon.vue';
-import { mdiMenu } from '@mdi/js';
-import { mdiBackburger } from '@mdi/js';
+import Icon from '@/components/Icon.vue';
+import { mdiLogout } from '@mdi/js';
 
 export default {
   name: 'LogoutIcon',
@@ -15,12 +14,11 @@ export default {
       type: Number,
       default: 24,
     },
-    menuOpen: Boolean,
   },
-  computed: {
-    path() {
-      return this.menuOpen ? mdiBackburger : mdiMenu;
-    },
+  data() {
+    return {
+      path: mdiLogout,
+    };
   },
 };
 </script>

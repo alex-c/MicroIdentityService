@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import Header from '@/components/Header.vue';
-import Menu from '@/components/Menu.vue';
+import Header from '@/views/private/_partials/Header.vue';
+import Menu from '@/views/private/_partials/Menu.vue';
 
 import { SET_COLLAPSED_UI } from '@/store/mutations.js';
 

@@ -13,9 +13,9 @@
 </template>
 
 <script>
-import MenuIcon from '@/components/shared/icons/MenuIcon.vue';
-import LogoutIcon from '@/components/shared/icons/LogoutIcon.vue';
-import SettingsIcon from '@/components/shared/icons/SettingsIcon.vue';
+import MenuIcon from '@/components/icons/MenuIcon.vue';
+import LogoutIcon from '@/components/icons/LogoutIcon.vue';
+import SettingsIcon from '@/components/icons/SettingsIcon.vue';
 
 import { SET_MENU_DRAWER_OPEN } from '@/store/mutations.js';
 import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';

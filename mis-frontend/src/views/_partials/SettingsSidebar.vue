@@ -24,7 +24,7 @@
 <script>
 import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
 
-import languageIndex from '../i18n/index.json';
+import languageIndex from '@/i18n/index.json';
 
 export default {
   name: 'SettingsSidebar',

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import MenuItem from '@/components/MenuItem.vue';
+import MenuItem from '@/views/private/_partials/MenuItem.vue';
 
 export default {
   name: 'Menu',
