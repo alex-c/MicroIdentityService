@@ -104,13 +104,13 @@ export default {
       this.updateIdentity(true);
     },
     updateIdentity: function(disabled) {
-      console.log(disabled);
       Api.identities
         .updateIdentity(this.selectedIdentity.id, disabled)
         .then(this.getIdentities) // TODO: message
         .catch(this.handleHttpError);
     },
     deleteIdentity: function() {
+      // TODO: prompt
       Api.identities
         .deleteIdentity(this.selectedIdentity.id)
         .then(this.getIdentities) // TODO: message

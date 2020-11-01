@@ -1,6 +1,6 @@
 <template>
-  <div class="menu-item" @click="navigate">
-    <el-link :type="type">{{ label }}</el-link>
+  <div :class="[{ 'menu-item-active': active }, 'menu-item']" @click="navigate">
+    <span>{{ label }}</span>
   </div>
 </template>
 
@@ -20,8 +20,8 @@ export default {
     collapsedUi() {
       return this.$store.state.collapsedUi;
     },
-    type() {
-      return this.route === this.current ? 'primary' : 'default';
+    active() {
+      return this.route === this.current;
     },
   },
   methods: {
@@ -38,13 +38,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/style/colors.scss';
+
 .menu-item {
-  padding: 16px 16px 0px;
-  & > .el-link {
-    font-size: 16px;
-  }
+  padding: 16px;
+  font-size: 16px;
   &:hover {
     cursor: pointer;
+    color: $mis-color-primary;
+    text-decoration: underline;
+    background-color: #f0f0f0;
   }
+}
+
+.menu-item-active {
+  color: $mis-color-primary;
 }
 </style>

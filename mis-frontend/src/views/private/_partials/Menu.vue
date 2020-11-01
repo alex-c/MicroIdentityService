@@ -39,6 +39,7 @@ export default {
   box-shadow: 1px 0px 2px 0px $mis-color-shadow;
   transition: width 0.5s;
   flex-shrink: 0;
+  z-index: 3;
   &.collapsed {
     position: absolute;
     top: 65px;

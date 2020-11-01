@@ -2,8 +2,8 @@
   <div id="private">
     <Header />
     <main>
+      <div id="content" :class="{ collapsed: menuOpen && !collapsedUi }"><router-view /></div>
       <Menu />
-      <div id="content"><router-view /></div>
     </main>
   </div>
 </template>
@@ -17,6 +17,14 @@ import { SET_COLLAPSED_UI } from '@/store/mutations.js';
 export default {
   name: 'Private',
   components: { Header, Menu },
+  computed: {
+    collapsedUi() {
+      return this.$store.state.collapsedUi;
+    },
+    menuOpen() {
+      return this.$store.state.menuOpen;
+    },
+  },
   methods: {
     fitToScreen: function() {
       this.$store.commit(SET_COLLAPSED_UI, window.innerWidth <= 800);
@@ -45,9 +53,16 @@ main {
 }
 
 #content {
-  height: 100%;
-  flex-grow: 1;
+  position: absolute;
+  top: 65px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
   text-align: left;
+  transition: left 0.5s;
+  &.collapsed {
+    left: 201px;
+  }
 }
 
 .standard-page {
