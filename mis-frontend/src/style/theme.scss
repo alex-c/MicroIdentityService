@@ -6,3 +6,10 @@ $--color-primary: $mis-color-primary;
 // Import Element UI style
 $--font-path: '~element-ui/lib/theme-chalk/fonts';
 @import '~element-ui/packages/theme-chalk/src/index';
+
+// Overwrites
+.el-pagination {
+  padding: 0;
+  position: relative;
+  left: -5px;
+}

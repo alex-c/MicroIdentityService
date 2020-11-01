@@ -42,5 +42,12 @@ export default {
 
 .box-body {
   padding: 16px;
+  & > .content-row {
+    margin-top: 8px;
+    overflow: auto;
+    &:first-child {
+      margin: 0;
+    }
+  }
 }
 </style>

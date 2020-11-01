@@ -30,18 +30,17 @@
             @current-change="changePage"
           ></el-pagination>
         </div>
-        <!--div class="right">
-          <el-button icon="el-icon-download" type="success" size="mini" :disabled="selectedBatch.id === null || selectedBatch.isLocked" @click="checkIn">
-            {{ $t('inventory.checkIn') }}
+        <div class="right">
+          <el-button icon="el-icon-lock" type="warning" size="mini" v-if="selectedIdentity.id !== null && selectedIdentity.disabled === false">
+            {{ $t('identities.disable') }}
           </el-button>
-          <el-button icon="el-icon-upload2" type="success" size="mini" :disabled="selectedBatch.id === null || selectedBatch.isLocked" @click="checkOut">
-            {{ $t('inventory.checkOut') }}
+          <el-button icon="el-icon-unlock" type="success" size="mini" v-if="selectedIdentity.id !== null && selectedIdentity.disabled === true">
+            {{ $t('identities.enable') }}
           </el-button>
-          <router-link :to="{ name: 'editBatch', params: { id: selectedBatch.id } }">
-            <el-button icon="el-icon-edit" type="info" size="mini" :disabled="selectedBatch.id === null">{{ $t('general.edit') }}</el-button>
-          </router-link>
-          <el-button icon="el-icon-view" type="primary" size="mini" :disabled="selectedBatch.id === null" @click="viewLog">{{ $t('inventory.log') }}</el-button>
-        </div-->
+          <el-button icon="el-icon-delete" type="danger" size="mini" :disabled="selectedIdentity.id === null">
+            {{ $t('identities.delete') }}
+          </el-button>
+        </div>
       </div>
     </Box>
   </div>

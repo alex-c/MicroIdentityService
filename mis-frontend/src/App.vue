@@ -33,4 +33,12 @@ body {
   right: 0px;
   bottom: 0px;
 }
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
 </style>
