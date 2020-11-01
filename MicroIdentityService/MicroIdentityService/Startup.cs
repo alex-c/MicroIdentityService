@@ -3,11 +3,13 @@ using MicroIdentityService.Repositories.InMemory;
 using MicroIdentityService.Services;
 using MicroIdentityService.Services.IdentifierValidation;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
+using Microsoft.AspNetCore.Hosting;
 
 namespace MicroIdentityService
 {
@@ -16,6 +18,16 @@ namespace MicroIdentityService
     /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// CORS policy name for local development.
+        /// </summary>
+        private readonly string LOCAL_DEVELOPMENT_CORS_POLICY = "localDevelopmentCorsPolicy";
+
+        /// <summary>
+        /// The hosting environment information.
+        /// </summary>
+        private IWebHostEnvironment Environment { get; }
+
         /// <summary>
         /// The app configuration.
         /// </summary>
@@ -31,10 +43,12 @@ namespace MicroIdentityService
         /// </summary>
         /// <param name="logger">Logger instance for local logging needs.</param>
         /// <param name="configuration">App configuration.</param>
-        public Startup(ILogger<Startup> logger, IConfiguration configuration)
+        /// <param name="environemnt">Hosting environment.</param>
+        public Startup(ILogger<Startup> logger, IConfiguration configuration, IWebHostEnvironment environemnt)
         {
             Logger = logger;
             Configuration = configuration;
+            Environment = environemnt;
         }
 
         /// <summary>
@@ -43,6 +57,21 @@ namespace MicroIdentityService
         /// <param name="services">Service collection to extend.</param>
         public void ConfigureServices(IServiceCollection services)
         {
+            // Configure CORS
+            services.AddCors(options =>
+            {
+                if (Environment.IsDevelopment())
+                {
+                    options.AddPolicy(LOCAL_DEVELOPMENT_CORS_POLICY, builder =>
+                    {
+                        builder.WithOrigins("http://localhost:8080")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                    });
+                }
+            });
+
             // Confiture persistence-related services
             ConfigurePersistenceServices(services);
 
@@ -150,6 +179,8 @@ namespace MicroIdentityService
 
             app.UseSerilogRequestLogging();
             app.UseRouting();
+
+            app.UseCors(LOCAL_DEVELOPMENT_CORS_POLICY);
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
