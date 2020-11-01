@@ -2,7 +2,7 @@
   <main>
     <div id="login-box-container">
       <Box title="μIS - MicroIdentityService">
-        <template v-slot:actions><i class="el-icon-s-tools action" @click="showSettingsSidebar"/></template>
+        <template v-slot:actions><SettingsIcon class="action" @click="showSettingsSidebar" :size="20"/></template>
         <el-form label-position="top" :model="loginForm">
           <el-form-item :label="$t('general.identifier')">
             <el-input v-model="loginForm.identifier"></el-input>
@@ -24,12 +24,13 @@
 
 <script>
 import Box from '@/components/shared/Box.vue';
+import SettingsIcon from '@/components/shared/icons/SettingsIcon.vue';
 
 import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
 
 export default {
   name: 'Public',
-  components: { Box },
+  components: { Box, SettingsIcon },
   data() {
     return {
       loginForm: {

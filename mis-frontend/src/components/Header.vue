@@ -1,26 +1,28 @@
 <template>
   <header>
     <div id="header-title">
-      <i id="menu-toggle" :class="menuToggleIcon" @click="toggleMenuOpen" />
+      <span id="menu-toggle" @click="toggleMenuOpen"><MenuIcon :menu-open="menuOpen" :size="32"/></span>
       <span id="header-name" v-if="!collapsedUi">MicroIdentityServer</span>
       <span id="header-name" v-else>μIS</span>
     </div>
     <div id="header-options">
       <div class="option" @click="signOut"><LogoutIcon :size="32" /></div>
-      <div class="option" @click="showSettingsSidebar"><i class="el-icon-s-tools" /></div>
+      <div class="option" @click="showSettingsSidebar"><SettingsIcon :size="32" /></div>
     </div>
   </header>
 </template>
 
 <script>
+import MenuIcon from '@/components/shared/icons/MenuIcon.vue';
 import LogoutIcon from '@/components/shared/icons/LogoutIcon.vue';
+import SettingsIcon from '@/components/shared/icons/SettingsIcon.vue';
 
 import { SET_MENU_DRAWER_OPEN } from '@/store/mutations.js';
 import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
 
 export default {
   name: 'Header',
-  components: { LogoutIcon },
+  components: { MenuIcon, LogoutIcon, SettingsIcon },
   computed: {
     collapsedUi: function() {
       return this.$store.state.collapsedUi;
@@ -68,6 +70,7 @@ header {
   font-size: 30px;
   padding: 16px;
   height: 32px;
+  display: flex;
   & > #menu-toggle {
     cursor: pointer;
   }

@@ -4,7 +4,7 @@
 
 <script>
 import Icon from '@/components/shared/Icon.vue';
-import { mdiLogout } from '@mdi/js';
+import { mdiCog } from '@mdi/js';
 
 export default {
   name: 'LogoutIcon',
@@ -17,7 +17,7 @@ export default {
   },
   data() {
     return {
-      path: mdiLogout,
+      path: mdiCog,
     };
   },
 };

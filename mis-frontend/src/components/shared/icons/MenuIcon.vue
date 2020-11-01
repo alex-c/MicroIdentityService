@@ -4,7 +4,8 @@
 
 <script>
 import Icon from '@/components/shared/Icon.vue';
-import { mdiLogout } from '@mdi/js';
+import { mdiMenu } from '@mdi/js';
+import { mdiBackburger } from '@mdi/js';
 
 export default {
   name: 'LogoutIcon',
@@ -14,11 +15,12 @@ export default {
       type: Number,
       default: 24,
     },
+    menuOpen: Boolean,
   },
-  data() {
-    return {
-      path: mdiLogout,
-    };
+  computed: {
+    path() {
+      return this.menuOpen ? mdiBackburger : mdiMenu;
+    },
   },
 };
 </script>
