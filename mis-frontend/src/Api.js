@@ -25,14 +25,37 @@ function getAuthorizationHeader() {
 const SERVER_ENDPOINT = process.env.VUE_APP_SERVER_ENDPOINT;
 
 export default {
-  getIdentities: (page, elementsPerPage) => {
-    return fetch(`${SERVER_ENDPOINT}/api/v1/identities?page=${page}&elementsPerPage=${elementsPerPage}`, {
-      method: 'GET',
-      withCredentials: true,
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
-    })
-      .catch(catchNetworkError)
-      .then(processResponse);
+  identities: {
+    getIdentities: (page, elementsPerPage) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/identities?page=${page}&elementsPerPage=${elementsPerPage}`, {
+        method: 'GET',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
+    updateIdentity: (id, disabled) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}`, {
+        method: 'PUT',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+        body: JSON.stringify({ disabled }),
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
+    deleteIdentity: id => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}`, {
+        method: 'DELETE',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
   },
 };

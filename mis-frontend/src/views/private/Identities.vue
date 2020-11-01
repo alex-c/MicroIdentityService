@@ -32,13 +32,13 @@
           ></el-pagination>
         </div>
         <div class="right">
-          <el-button icon="el-icon-lock" type="warning" size="mini" :disabled="selectedIdentity.id === null" v-if="selectedIdentity.disabled === false">
+          <el-button icon="el-icon-lock" type="warning" size="mini" :disabled="selectedIdentity.id === null" v-if="selectedIdentity.disabled === false" @click="disableIdentity">
             {{ $t('identities.disable') }}
           </el-button>
-          <el-button icon="el-icon-unlock" type="success" size="mini" :disabled="selectedIdentity.id === null" v-else>
+          <el-button icon="el-icon-unlock" type="success" size="mini" :disabled="selectedIdentity.id === null" v-else @click="enableIdentity">
             {{ $t('identities.enable') }}
           </el-button>
-          <el-button icon="el-icon-delete" type="danger" size="mini" :disabled="selectedIdentity.id === null">
+          <el-button icon="el-icon-delete" type="danger" size="mini" :disabled="selectedIdentity.id === null" @click="deleteIdentity">
             {{ $t('identities.delete') }}
           </el-button>
         </div>
@@ -70,7 +70,9 @@ export default {
   },
   methods: {
     getIdentities: function() {
-      Api.getIdentities(this.query.page, this.query.elementsPerPage)
+      this.resetSelectedIdentity();
+      Api.identities
+        .getIdentities(this.query.page, this.query.elementsPerPage)
         .then(response => {
           this.identities = response.body.data;
           this.totalIdentities = response.body.totalElements;
@@ -94,6 +96,25 @@ export default {
     changePage: function(page) {
       this.query.page = page;
       this.getIdentities();
+    },
+    enableIdentity: function() {
+      this.updateIdentity(false);
+    },
+    disableIdentity: function() {
+      this.updateIdentity(true);
+    },
+    updateIdentity: function(disabled) {
+      console.log(disabled);
+      Api.identities
+        .updateIdentity(this.selectedIdentity.id, disabled)
+        .then(this.getIdentities) // TODO: message
+        .catch(this.handleHttpError);
+    },
+    deleteIdentity: function() {
+      Api.identities
+        .deleteIdentity(this.selectedIdentity.id)
+        .then(this.getIdentities) // TODO: message
+        .catch(this.handleHttpError);
     },
   },
   mounted() {
