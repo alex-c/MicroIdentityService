@@ -16,6 +16,7 @@
         >
           <el-table-column prop="id" :label="$t('general.id')"></el-table-column>
           <el-table-column prop="identifier" :label="$t('general.identifier')"></el-table-column>
+          <el-table-column prop="disabled" :label="$t('identities.status')" :formatter="formatStatus"></el-table-column>
         </el-table>
       </div>
       <!-- Pagination & Options -->
@@ -31,10 +32,10 @@
           ></el-pagination>
         </div>
         <div class="right">
-          <el-button icon="el-icon-lock" type="warning" size="mini" v-if="selectedIdentity.id !== null && selectedIdentity.disabled === false">
+          <el-button icon="el-icon-lock" type="warning" size="mini" :disabled="selectedIdentity.id === null" v-if="selectedIdentity.disabled === false">
             {{ $t('identities.disable') }}
           </el-button>
-          <el-button icon="el-icon-unlock" type="success" size="mini" v-if="selectedIdentity.id !== null && selectedIdentity.disabled === true">
+          <el-button icon="el-icon-unlock" type="success" size="mini" :disabled="selectedIdentity.id === null" v-else>
             {{ $t('identities.enable') }}
           </el-button>
           <el-button icon="el-icon-delete" type="danger" size="mini" :disabled="selectedIdentity.id === null">
@@ -75,6 +76,13 @@ export default {
           this.totalIdentities = response.body.totalElements;
         })
         .catch(this.handleHttpError);
+    },
+    formatStatus: function(identity) {
+      if (identity.disabled) {
+        return this.$t('identities.disabled');
+      } else {
+        return this.$t('identities.enabled');
+      }
     },
     selectIdentity: function(identity) {
       this.selectedIdentity = { ...identity };

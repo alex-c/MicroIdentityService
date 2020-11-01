@@ -90,6 +90,24 @@ namespace MicroIdentityService.Controllers
             }
         }
 
+        [HttpPut("{id}")]
+        public IActionResult UpdateIdentity(Guid id, [FromBody] IdentityUpdateRequest identityUpdateRequest)
+        {
+            try
+            {
+                IdentityService.UpdateIdentity(id, identityUpdateRequest.Disabled);
+                return NoContent();
+            }
+            catch (EntityNotFoundException exception)
+            {
+                return HandleResourceNotFoundException(exception);
+            }
+            catch (Exception exception)
+            {
+                return HandleUnexpectedException(exception);
+            }
+        }
+
         [HttpDelete("{id}")]
         public IActionResult DeleteIdentity(Guid id)
         {

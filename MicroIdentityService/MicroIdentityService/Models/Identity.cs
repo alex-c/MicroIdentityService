@@ -26,5 +26,10 @@ namespace MicroIdentityService.Models
         /// The salt used to hash this identity's password.
         /// </summary>
         public byte[] Salt { get; set; }
+
+        /// <summary>
+        /// Indicates whether this identity has been disabled, which prevents it from authentication.
+        /// </summary>
+        public bool Disabled { get; set; }
     }
 }

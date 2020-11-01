@@ -89,6 +89,12 @@ namespace MicroIdentityService.Services
                 throw new EntityNotFoundException("Identity", identifier);
             }
 
+            // Reject authentication attempt if identity is disabled
+            if (identity.Disabled)
+            {
+                return false;
+            }
+
             // Check password
             if (identity.HashedPassword != PasswordHashingService.HashAndSaltPassword(password, identity.Salt))
             {

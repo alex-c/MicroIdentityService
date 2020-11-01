@@ -86,6 +86,21 @@ namespace MicroIdentityService.Services
         }
 
         /// <summary>
+        /// Updates an existing identity.
+        /// </summary>
+        /// <param name="id">ID of the identity to update.</param>
+        /// <param name="disabled">Whether the identity is to be disabled</param>
+        /// <returns>Returns the updated identity.</returns>
+        /// <exception cref="EntityNotFoundException">Thrown if the identity could not be found.</exception>
+        public Identity UpdateIdentity(Guid id, bool disabled)
+        {
+            Identity identity = GetIdentity(id);
+            identity.Disabled = disabled;
+            IdentityRepository.UpdateIdentity(identity);
+            return identity;
+        }
+
+        /// <summary>
         /// Deletes an identity.
         /// </summary>
         /// <param name="id">The ID of the identity to delete.</param>

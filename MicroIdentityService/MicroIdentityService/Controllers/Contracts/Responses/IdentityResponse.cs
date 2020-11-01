@@ -16,6 +16,7 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
         {
             Id = identity.Id;
             Identifier = identity.Identifier;
+            Disabled = identity.Disabled;
         }
 
         /// <summary>
@@ -27,5 +28,10 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
         /// The user-chosen unique identifier.
         /// </summary>
         public string Identifier { get; set; }
+
+        /// <summary>
+        /// Whether the identity has been deisabled.
+        /// </summary>
+        public bool Disabled { get; set; }
     }
 }
