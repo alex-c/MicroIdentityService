@@ -58,4 +58,28 @@ export default {
         .then(processResponse);
     },
   },
+  domains: {
+    getDomains: (page, elementsPerPage) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/domains?page=${page}&elementsPerPage=${elementsPerPage}`, {
+        method: 'GET',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
+  },
+  roles: {
+    getRoles: (page, elementsPerPage) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/roles?page=${page}&elementsPerPage=${elementsPerPage}`, {
+        method: 'GET',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
+  },
 };
