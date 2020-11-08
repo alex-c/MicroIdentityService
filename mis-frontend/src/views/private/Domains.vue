@@ -31,7 +31,11 @@
             @current-change="changePage"
           ></el-pagination>
         </div>
-        <div class="right"></div>
+        <div class="right">
+          <el-button icon="el-icon-delete" type="danger" size="mini" :disabled="selectedDomain.id === null" @click="deleteDomain">
+            {{ $t('domains.delete') }}
+          </el-button>
+        </div>
       </div>
     </Box>
   </div>
@@ -83,9 +87,30 @@ export default {
             .createDomain(value)
             .then(result => {
               this.$message({
-                message: this.$t('domains.createdMessage'),
+                message: this.$t('domains.createdMessage', value),
                 type: 'success',
               });
+              this.getDomains();
+            })
+            .catch(this.handleHttpError);
+        })
+        .catch(() => {});
+    },
+    deleteDomain: function() {
+      this.$confirm(this.$t('domains.deleteConfirm', { id: this.selectedDomain.identifier }), {
+        confirmButtonText: this.$t('general.delete'),
+        cancelButtonText: this.$t('general.cancel'),
+        type: 'warning',
+      })
+        .then(() => {
+          Api.domains
+            .deleteDomain(this.selectedDomain.id)
+            .then(response => {
+              this.$message({
+                message: this.$t('domains.deletedMessage', this.selectedDomain.name),
+                type: 'success',
+              });
+              this.query.page = 1;
               this.getDomains();
             })
             .catch(this.handleHttpError);

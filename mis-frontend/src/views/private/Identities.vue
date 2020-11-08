@@ -1,6 +1,10 @@
 <template>
   <div id="identities" class="standard-page">
     <Box title="Identities">
+      <template slot="actions">
+        <PlusIcon class="action" :size="20" @click="createIdentity" />
+      </template>
+
       <!-- Identities Table -->
       <div class="content-row">
         <el-table
@@ -19,7 +23,8 @@
           <el-table-column prop="disabled" :label="$t('identities.status')" :formatter="formatStatus"></el-table-column>
         </el-table>
       </div>
-      <!-- Pagination & Options -->
+
+      <!-- Pagination & Actions -->
       <div class="content-row">
         <div class="left">
           <el-pagination
@@ -51,11 +56,12 @@
 import Api from '@/Api.js';
 import GenericErrorHandlingMixin from '@/mixins/GenericErrorHandlingMixin.js';
 import Box from '@/components/Box.vue';
+import PlusIcon from '@/components/icons/PlusIcon.vue';
 
 export default {
   name: 'Identities',
   mixins: [GenericErrorHandlingMixin],
-  components: { Box },
+  components: { Box, PlusIcon },
   data() {
     return {
       query: {
@@ -69,6 +75,7 @@ export default {
     };
   },
   methods: {
+    // API calls
     getIdentities: function() {
       this.resetSelectedIdentity();
       Api.identities
@@ -79,24 +86,7 @@ export default {
         })
         .catch(this.handleHttpError);
     },
-    formatStatus: function(identity) {
-      if (identity.disabled) {
-        return this.$t('identities.disabled');
-      } else {
-        return this.$t('identities.enabled');
-      }
-    },
-    selectIdentity: function(identity) {
-      this.selectedIdentity = { ...identity };
-    },
-    resetSelectedIdentity: function() {
-      this.$refs['identityTable'].setCurrentRow(1);
-      this.selectedIdentity = { id: null };
-    },
-    changePage: function(page) {
-      this.query.page = page;
-      this.getIdentities();
-    },
+    createIdentity: function() {},
     enableIdentity: function() {
       this.updateIdentity(false);
     },
@@ -110,11 +100,45 @@ export default {
         .catch(this.handleHttpError);
     },
     deleteIdentity: function() {
-      // TODO: prompt
-      Api.identities
-        .deleteIdentity(this.selectedIdentity.id)
-        .then(this.getIdentities) // TODO: message
-        .catch(this.handleHttpError);
+      this.$confirm(this.$t('identities.deleteConfirm', { id: this.selectedIdentity.identifier }), {
+        confirmButtonText: this.$t('general.delete'),
+        cancelButtonText: this.$t('general.cancel'),
+        type: 'warning',
+      })
+        .then(() => {
+          Api.identities
+            .deleteIdentity(this.selectedIdentity.id)
+            .then(response => {
+              this.$message({
+                message: this.$t('identities.deletedMessage', this.selectedIdentity.identifier),
+                type: 'success',
+              });
+              this.query.page = 1;
+              this.getIdentities();
+            })
+            .catch(this.handleHttpError);
+        })
+        .catch(() => {});
+    },
+    // Table manipulation
+    selectIdentity: function(identity) {
+      this.selectedIdentity = { ...identity };
+    },
+    resetSelectedIdentity: function() {
+      this.$refs['identityTable'].setCurrentRow(1);
+      this.selectedIdentity = { id: null };
+    },
+    changePage: function(page) {
+      this.query.page = page;
+      this.getIdentities();
+    },
+    // Formatter
+    formatStatus: function(identity) {
+      if (identity.disabled) {
+        return this.$t('identities.disabled');
+      } else {
+        return this.$t('identities.enabled');
+      }
     },
   },
   mounted() {

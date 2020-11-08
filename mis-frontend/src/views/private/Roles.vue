@@ -23,7 +23,7 @@
         </el-table>
       </div>
 
-      <!-- Pagination & Options -->
+      <!-- Pagination & Actions -->
       <div class="content-row">
         <div class="left">
           <el-pagination
@@ -35,7 +35,11 @@
             @current-change="changePage"
           ></el-pagination>
         </div>
-        <div class="right"></div>
+        <div class="right">
+          <el-button icon="el-icon-delete" type="danger" size="mini" :disabled="selectedRole.id === null" @click="deleteRole">
+            {{ $t('roles.delete') }}
+          </el-button>
+        </div>
       </div>
     </Box>
   </div>
@@ -89,6 +93,27 @@ export default {
           this.totalRoles = response.body.totalElements;
         })
         .catch(this.handleHttpError);
+    },
+    deleteRole: function() {
+      this.$confirm(this.$t('roles.deleteConfirm', { id: this.selectedRole.identifier }), {
+        confirmButtonText: this.$t('general.delete'),
+        cancelButtonText: this.$t('general.cancel'),
+        type: 'warning',
+      })
+        .then(() => {
+          Api.roles
+            .deleteRole(this.selectedRole.id)
+            .then(response => {
+              this.$message({
+                message: this.$t('roles.deletedMessage', this.selectedRole.name),
+                type: 'success',
+              });
+              this.query.page = 1;
+              this.getRoles();
+            })
+            .catch(this.handleHttpError);
+        })
+        .catch(() => {});
     },
     // Table manipulation
     selectRole: function(role) {

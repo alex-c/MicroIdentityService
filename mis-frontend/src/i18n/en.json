@@ -13,6 +13,7 @@
     "role": "Role",
     "noData": "No Data.",
     "save": "Save",
+    "delete": "Delete",
     "cancel": "Cancel"
   },
   "settings": {

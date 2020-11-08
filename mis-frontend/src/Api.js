@@ -80,6 +80,16 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
+    deleteDomain: id => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/domains/${id}`, {
+        method: 'DELETE',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
   },
   roles: {
     getRoles: (filter, page, elementsPerPage, domainId) => {
@@ -99,6 +109,16 @@ export default {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
         body: JSON.stringify({ name, domainId }),
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
+    deleteRole: id => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/roles/${id}`, {
+        method: 'DELETE',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
       })
         .catch(catchNetworkError)
         .then(processResponse);

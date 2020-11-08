@@ -55,7 +55,7 @@ export default {
         .createRole(this.createRoleForm.name, this.createRoleForm.domain)
         .then(result => {
           this.$message({
-            message: this.$t('domains.createdMessage'),
+            message: this.$t('roles.createdMessage', this.createRoleForm.name),
             type: 'success',
           });
           this.navigateBack();
