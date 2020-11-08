@@ -10,6 +10,9 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
 using Microsoft.AspNetCore.Hosting;
+using System.Linq;
+using MicroIdentityService.Models;
+using System.Collections.Generic;
 
 namespace MicroIdentityService
 {
@@ -21,7 +24,9 @@ namespace MicroIdentityService
         /// <summary>
         /// CORS policy name for local development.
         /// </summary>
-        private readonly string LOCAL_DEVELOPMENT_CORS_POLICY = "localDevelopmentCorsPolicy";
+        private static readonly string LOCAL_DEVELOPMENT_CORS_POLICY = "localDevelopmentCorsPolicy";
+        private static readonly string MIS_DOMAIN_NAME = "mis";
+        private static readonly string MIS_ADMINISTRATOR_ROLE_NAME = "admin";
 
         /// <summary>
         /// The hosting environment information.
@@ -76,7 +81,7 @@ namespace MicroIdentityService
             ConfigurePersistenceServices(services);
 
             // Configure identifier validation
-            ConfigureIdentifierValidation(services);
+            ConfigureIdentifierValidationService(services);
 
             // Register services
             services.AddSingleton<IdentifierValidationService>();
@@ -128,7 +133,7 @@ namespace MicroIdentityService
         /// Configures identifier validation. This provides an implementation for the <see cref="IIdentifierValidator"/> interface.
         /// </summary>
         /// <param name="services">Service collection to register services in.</param>
-        private void ConfigureIdentifierValidation(IServiceCollection services)
+        private void ConfigureIdentifierValidationService(IServiceCollection services)
         {
             // Get identifier validation strategy from configuration
             IdentifierValidationStrategy identifierValidationStrategy;
@@ -162,6 +167,10 @@ namespace MicroIdentityService
         /// <param name="app">Application builder to configure the app through.</param>
         public void Configure(IApplicationBuilder app)
         {
+            // Make sure that the MIS domain and admin role are present
+            (Domain, Role) misEntities = ConfigureMisDomainAndAdminRole(app);
+
+            // If configured, ensure existense of an MIS admin
             try
             {
                 if (Configuration.GetValue<bool>("Administrator:CreateIfMissing"))
@@ -170,6 +179,8 @@ namespace MicroIdentityService
                     string password = Configuration.GetValue<string>("Administrator:Password");
                     IdentityService identityService = app.ApplicationServices.GetService<IdentityService>();
                     identityService.CreateIdentity(identifier, password);
+
+                    // TODO: Set MIS admin role with misEntities from above
                 }
             }
             catch (Exception)
@@ -185,6 +196,37 @@ namespace MicroIdentityService
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
             });
+        }
+
+        /// <summary>
+        /// Ensures that the MIS domain and admin role are present - creating them if needed. Returns both.
+        /// </summary>
+        /// <param name="app">Grants access to app services.</param>
+        /// <returns>Returns the MIS domain and admin role entities.</returns>
+        private (Domain, Role) ConfigureMisDomainAndAdminRole(IApplicationBuilder app)
+        {
+            // Get domains
+            DomainService domainService = app.ApplicationServices.GetService<DomainService>();
+            IEnumerable<Domain> domains = domainService.GetDomains();
+
+            // Configure MIS domain if needed
+            Domain misDomain = domains.Where(d => d.Name == MIS_DOMAIN_NAME).FirstOrDefault();
+            if (misDomain == null)
+            {
+                misDomain = domainService.CreateDomain(MIS_DOMAIN_NAME);
+            }
+
+            // Get roles of MIS domain
+            RoleService roleService = app.ApplicationServices.GetService<RoleService>();
+            IEnumerable<Role> roles = roleService.GetRoles(misDomain.Id);
+            Role misAdminRole = roles.Where(r => r.Name == MIS_ADMINISTRATOR_ROLE_NAME).FirstOrDefault();
+            if (misAdminRole == null)
+            {
+                misAdminRole = roleService.CreateRole(MIS_ADMINISTRATOR_ROLE_NAME, misDomain.Id);
+            }
+
+            // Return MIS domain and admin role
+            return (misDomain, misAdminRole);
         }
     }
 }
