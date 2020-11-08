@@ -9,7 +9,7 @@
         <el-table :data="roles" stripe border size="mini" :empty-text="$t('general.noData')" highlight-current-row @current-change="selectRole" ref="rolesTable" row-key="id">
           <el-table-column prop="id" :label="$t('general.id')"></el-table-column>
           <el-table-column prop="name" :label="$t('general.name')"></el-table-column>
-          <el-table-column prop="domainId" :label="$t('general.domain')"></el-table-column>
+          <el-table-column prop="domainId" :label="$t('general.domain')" :formatter="domainFormatter"></el-table-column>
         </el-table>
       </div>
       <!-- Pagination & Options -->
@@ -47,12 +47,26 @@ export default {
         elementsPerPage: 10,
         search: '',
       },
+      domains: {},
       roles: [],
       totalRoles: 0,
       selectedRole: { id: null },
     };
   },
   methods: {
+    getDomains: function() {
+      Api.domains
+        .getDomains(1, this.query.elementsPerPage)
+        .then(response => {
+          const domains = response.body.data;
+          for (let i = 0; i < response.body.data.length; i++) {
+            const domain = response.body.data[i];
+            domains[domain.id] = domain.name;
+          }
+          this.domains = domains;
+        })
+        .catch(this.handleHttpError);
+    },
     getRoles: function() {
       this.resetSelectedRole();
       Api.roles
@@ -77,8 +91,17 @@ export default {
       this.query.page = page;
       this.getRoles();
     },
+    domainFormatter: function(role) {
+      console.log(role);
+      if (this.domains[role.domainId]) {
+        return this.domains[role.domainId];
+      } else {
+        return null;
+      }
+    },
   },
   mounted() {
+    this.getDomains();
     this.getRoles();
   },
 };
