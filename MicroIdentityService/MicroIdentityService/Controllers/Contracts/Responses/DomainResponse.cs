@@ -1,5 +1,6 @@
 ﻿using MicroIdentityService.Models;
 using System;
+using System.Collections.Generic;
 
 namespace MicroIdentityService.Controllers.Contracts.Responses
 {
@@ -19,6 +20,11 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
         public string Name { get; set; }
 
         /// <summary>
+        /// Roles associated with this domain.
+        /// </summary>
+        public ISet<Role> Roles { get; set; }
+
+        /// <summary>
         /// Creates a domain response contract from a domain entity.
         /// </summary>
         /// <param name="domain">Domain entity to create a contract for.</param>
@@ -26,6 +32,7 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
         {
             Id = domain.Id;
             Name = domain.Name;
+            Roles = domain.Roles;
         }
     }
 }

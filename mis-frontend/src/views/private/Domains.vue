@@ -110,7 +110,7 @@ export default {
     },
     // Formatters
     formatRoles: function(domain) {
-      return 0;
+      return domain.roles.length;
     },
   },
   mounted() {

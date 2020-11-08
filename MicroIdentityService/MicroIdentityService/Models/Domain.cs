@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MicroIdentityService.Models
 {
@@ -16,5 +17,10 @@ namespace MicroIdentityService.Models
         /// Unique name of the domain
         /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Roles associated with this domain.
+        /// </summary>
+        public ISet<Role> Roles { get; set; }
     }
 }

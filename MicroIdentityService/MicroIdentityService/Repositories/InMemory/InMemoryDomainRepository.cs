@@ -13,27 +13,30 @@ namespace MicroIdentityService.Repositories.InMemory
         private Dictionary<Guid, Domain> DomainIdMap { get; }
         private Dictionary<string, Domain> DomainNameMap { get; }
 
-        public InMemoryDomainRepository()
+        private IRoleRepository RoleRepository { get; }
+
+        public InMemoryDomainRepository(IRoleRepository roleRepository)
         {
             DomainIdMap = new Dictionary<Guid, Domain>();
             DomainNameMap = new Dictionary<string, Domain>();
+            RoleRepository = roleRepository;
         }
 
         public IEnumerable<Domain> GetDomains()
         {
-            return DomainIdMap.Values;
+            return SetDomainRoles(DomainIdMap.Values);
         }
 
         public IEnumerable<Domain> SearchDomainsByName(string filter)
         {
-            return DomainNameMap.Where(kvp => kvp.Key.ToLowerInvariant().Contains(filter.ToLowerInvariant())).Select(kvp => kvp.Value);
+            return SetDomainRoles(DomainNameMap.Where(kvp => kvp.Key.ToLowerInvariant().Contains(filter.ToLowerInvariant())).Select(kvp => kvp.Value));
         }
 
         public Domain GetDomain(Guid id)
         {
             if (DomainIdMap.TryGetValue(id, out Domain domain))
             {
-                return domain;
+                return SetDomainRoles(domain);
             }
             return null;
         }
@@ -42,7 +45,7 @@ namespace MicroIdentityService.Repositories.InMemory
         {
             if (DomainNameMap.TryGetValue(name, out Domain domain))
             {
-                return domain;
+                return SetDomainRoles(domain);
             }
             return null;
         }
@@ -52,7 +55,8 @@ namespace MicroIdentityService.Repositories.InMemory
             Domain domain = new Domain()
             {
                 Id = Guid.NewGuid(),
-                Name = name
+                Name = name,
+                Roles = new HashSet<Role>()
             };
             DomainIdMap.Add(domain.Id, domain);
             DomainNameMap.Add(domain.Name, domain);
@@ -72,6 +76,21 @@ namespace MicroIdentityService.Repositories.InMemory
                 DomainIdMap.Remove(id);
                 DomainNameMap.Remove(domain.Name);
             }
+        }
+
+        private Domain SetDomainRoles(Domain domain)
+        {
+            domain.Roles = RoleRepository.GetDomainRoles(domain.Id).ToHashSet();
+            return domain;
+        }
+
+        private IEnumerable<Domain> SetDomainRoles(IEnumerable<Domain> domains)
+        {
+            foreach (Domain domain in domains)
+            {
+                SetDomainRoles(domain);
+            }
+            return domains;
         }
     }
 }

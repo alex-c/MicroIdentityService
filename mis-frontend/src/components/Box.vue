@@ -50,4 +50,12 @@ export default {
     }
   }
 }
+
+.filter-row {
+  display: flex;
+  margin: 0px -4px;
+  & > * {
+    margin: 0px 4px;
+  }
+}
 </style>
