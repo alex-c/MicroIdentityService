@@ -1,6 +1,7 @@
 ﻿using MicroIdentityService.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MicroIdentityService.Repositories.InMemory
 {
@@ -21,6 +22,11 @@ namespace MicroIdentityService.Repositories.InMemory
         public IEnumerable<Domain> GetDomains()
         {
             return DomainIdMap.Values;
+        }
+
+        public IEnumerable<Domain> SearchDomainsByName(string filter)
+        {
+            return DomainNameMap.Where(kvp => kvp.Key.ToLowerInvariant().Contains(filter.ToLowerInvariant())).Select(kvp => kvp.Value);
         }
 
         public Domain GetDomain(Guid id)

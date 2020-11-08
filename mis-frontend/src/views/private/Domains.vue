@@ -4,6 +4,12 @@
       <template slot="actions">
         <PlusIcon class="action" :size="20" @click="createDomain" />
       </template>
+
+      <!-- Filtering Options -->
+      <div class="filter-row">
+        <el-input :placeholder="$t('domains.filter')" prefix-icon="el-icon-search" v-model="query.search" size="mini" clearable @change="setSearch" />
+      </div>
+
       <!-- Domains Table -->
       <div class="content-row">
         <el-table :data="domains" stripe border size="mini" :empty-text="$t('general.noData')" highlight-current-row @current-change="selectDomain" ref="domainTable" row-key="id">
@@ -12,7 +18,8 @@
           <el-table-column prop="roles" :label="$t('general.roles')" :formatter="formatRoles"></el-table-column>
         </el-table>
       </div>
-      <!-- Pagination & Options -->
+
+      <!-- Pagination & Actions -->
       <div class="content-row">
         <div class="left">
           <el-pagination
@@ -56,7 +63,7 @@ export default {
     getDomains: function() {
       this.resetSelectedDomain();
       Api.domains
-        .getDomains(this.query.page, this.query.elementsPerPage)
+        .getDomains(this.query.search, this.query.page, this.query.elementsPerPage)
         .then(response => {
           this.domains = response.body.data;
           this.totalDomains = response.body.totalElements;
@@ -86,6 +93,10 @@ export default {
     },
     formatRoles: function(domain) {
       return 0;
+    },
+    setSearch: function(value) {
+      this.query.search = value;
+      this.changePage(1);
     },
     selectDomain: function(domain) {
       this.selectedDomain = { ...domain };

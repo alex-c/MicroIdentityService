@@ -35,12 +35,19 @@ namespace MicroIdentityService.Services
         }
 
         /// <summary>
-        /// Gets all domains.
+        /// Gets domains, optionally filtered by name.
         /// </summary>
         /// <returns>Returns all domains.</returns>
-        public IEnumerable<Domain> GetDomains()
+        public IEnumerable<Domain> GetDomains(string filter = null)
         {
-            return DomainRepository.GetDomains();
+            if (filter == null)
+            {
+                return DomainRepository.GetDomains();
+            }
+            else
+            {
+                return DomainRepository.SearchDomainsByName(filter);
+            }
         }
 
         /// <summary>

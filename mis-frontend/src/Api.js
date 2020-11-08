@@ -59,8 +59,8 @@ export default {
     },
   },
   domains: {
-    getDomains: (page, elementsPerPage) => {
-      return fetch(`${SERVER_ENDPOINT}/api/v1/domains?page=${page}&elementsPerPage=${elementsPerPage}`, {
+    getDomains: (filter, page, elementsPerPage) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/domains?filter=${filter}&page=${page}&elementsPerPage=${elementsPerPage}`, {
         method: 'GET',
         withCredentials: true,
         credentials: 'include',

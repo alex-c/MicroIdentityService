@@ -23,11 +23,11 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetDomains([FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
+        public IActionResult GetDomains([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
         {
             try
             {
-                IEnumerable<Domain> domains = DomainService.GetDomains();
+                IEnumerable<Domain> domains = DomainService.GetDomains(filter);
                 IEnumerable<Domain> paginatedIdentities = domains.Skip((page - 1) * elementsPerPage).Take(elementsPerPage);
                 return Ok(new PaginatedResponse<DomainResponse>(paginatedIdentities.Select(i => new DomainResponse(i)), domains.Count()));
             }

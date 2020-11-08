@@ -16,6 +16,12 @@ namespace MicroIdentityService.Repositories
         IEnumerable<Domain> GetDomains();
 
         /// <summary>
+        /// Search domains by name. All domains containing the search string in the name (case insensitive) are returned.
+        /// </summary>
+        /// <returns>Returns all matching domains.</returns>
+        IEnumerable<Domain> SearchDomainsByName(string filter);
+
+        /// <summary>
         /// Gets a domain by its unique ID.
         /// </summary>
         /// <param name="id">ID of the domain to get.</param>

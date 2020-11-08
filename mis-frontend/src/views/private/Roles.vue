@@ -56,7 +56,7 @@ export default {
   methods: {
     getDomains: function() {
       Api.domains
-        .getDomains(1, this.query.elementsPerPage)
+        .getDomains('', 1, this.query.elementsPerPage)
         .then(response => {
           const domains = response.body.data;
           for (let i = 0; i < response.body.data.length; i++) {
