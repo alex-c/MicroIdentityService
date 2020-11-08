@@ -23,11 +23,11 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetRoles([FromQuery] Guid? domainId = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
+        public IActionResult GetRoles([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10, [FromQuery] Guid? domainId = null)
         {
             try
             {
-                IEnumerable<Role> roles = RoleService.GetRoles(domainId);
+                IEnumerable<Role> roles = RoleService.GetRoles(filter, domainId);
                 IEnumerable<Role> paginatedIdentities = roles.Skip((page - 1) * elementsPerPage).Take(elementsPerPage);
                 return Ok(new PaginatedResponse<RoleResponse>(paginatedIdentities.Select(i => new RoleResponse(i)), roles.Count()));
             }

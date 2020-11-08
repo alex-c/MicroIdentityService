@@ -4,14 +4,25 @@
       <template slot="actions">
         <PlusIcon class="action" :size="20" @click="createRole" />
       </template>
+
+      <!-- Filtering Options -->
+      <div class="filter-row">
+        <el-input :placeholder="$t('roles.filter')" prefix-icon="el-icon-search" v-model="query.search" size="mini" clearable @change="setSearch" />
+        <el-select v-model="query.domain" size="mini" clearable @change="setDomain">
+          <el-option v-for="(name, id) in domains" :key="id" :label="name" :value="id" />
+        </el-select>
+        <el-button type="danger" icon="el-icon-close" size="mini" :disabled="query.search == '' && query.domain == ''" @click="clearFilters" />
+      </div>
+
       <!-- Roles Table -->
       <div class="content-row">
         <el-table :data="roles" stripe border size="mini" :empty-text="$t('general.noData')" highlight-current-row @current-change="selectRole" ref="rolesTable" row-key="id">
           <el-table-column prop="id" :label="$t('general.id')"></el-table-column>
           <el-table-column prop="name" :label="$t('general.name')"></el-table-column>
-          <el-table-column prop="domainId" :label="$t('general.domain')" :formatter="domainFormatter"></el-table-column>
+          <el-table-column prop="domainId" :label="$t('general.domain')" :formatter="formatDomain"></el-table-column>
         </el-table>
       </div>
+
       <!-- Pagination & Options -->
       <div class="content-row">
         <div class="left">
@@ -46,6 +57,7 @@ export default {
         page: 1,
         elementsPerPage: 10,
         search: '',
+        domain: '',
       },
       domains: {},
       roles: [],
@@ -54,11 +66,12 @@ export default {
     };
   },
   methods: {
+    // API calls
     getDomains: function() {
       Api.domains
         .getDomains('', 1, this.query.elementsPerPage)
         .then(response => {
-          const domains = response.body.data;
+          const domains = {};
           for (let i = 0; i < response.body.data.length; i++) {
             const domain = response.body.data[i];
             domains[domain.id] = domain.name;
@@ -70,16 +83,14 @@ export default {
     getRoles: function() {
       this.resetSelectedRole();
       Api.roles
-        .getRoles(this.query.page, this.query.elementsPerPage)
+        .getRoles(this.query.search, this.query.page, this.query.elementsPerPage, this.query.domain)
         .then(response => {
           this.roles = response.body.data;
           this.totalRoles = response.body.totalElements;
         })
         .catch(this.handleHttpError);
     },
-    createRole: function() {
-      this.$router.push({ path: '/roles/create' });
-    },
+    // Table manipulation
     selectRole: function(role) {
       this.selectedRole = { ...role };
     },
@@ -91,13 +102,30 @@ export default {
       this.query.page = page;
       this.getRoles();
     },
-    domainFormatter: function(role) {
-      console.log(role);
+    setSearch: function(value) {
+      this.query.search = value;
+      this.changePage(1);
+    },
+    setDomain: function(value) {
+      this.query.domain = value;
+      this.changePage(1);
+    },
+    clearFilters: function() {
+      this.query.search = '';
+      this.query.domain = '';
+      this.changePage(1);
+    },
+    // Formatters
+    formatDomain: function(role) {
       if (this.domains[role.domainId]) {
         return this.domains[role.domainId];
       } else {
         return null;
       }
+    },
+    // Navigation
+    createRole: function() {
+      this.$router.push({ path: '/roles/create' });
     },
   },
   mounted() {
@@ -106,3 +134,13 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.filter-row {
+  display: flex;
+  margin: 0px -4px;
+  & > * {
+    margin: 0px 4px;
+  }
+}
+</style>

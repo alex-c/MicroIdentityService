@@ -218,7 +218,7 @@ namespace MicroIdentityService
 
             // Get roles of MIS domain
             RoleService roleService = app.ApplicationServices.GetService<RoleService>();
-            IEnumerable<Role> roles = roleService.GetRoles(misDomain.Id);
+            IEnumerable<Role> roles = roleService.GetRoles("", misDomain.Id);
             Role misAdminRole = roles.Where(r => r.Name == MIS_ADMINISTRATOR_ROLE_NAME).FirstOrDefault();
             if (misAdminRole == null)
             {

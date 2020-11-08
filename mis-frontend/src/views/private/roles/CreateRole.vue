@@ -9,7 +9,7 @@
           <el-input v-model="createRoleForm.name" />
         </el-form-item>
         <el-form-item :label="$t('general.domain')">
-          <el-select v-model="createRoleForm.domain" :clearable="true">
+          <el-select v-model="createRoleForm.domain" clearable>
             <el-option v-for="domain in domains" :key="domain.id" :label="domain.name" :value="domain.id" />
           </el-select>
         </el-form-item>
@@ -41,9 +41,10 @@ export default {
     };
   },
   methods: {
+    // API calls
     getDomains: function() {
       Api.domains
-        .getDomains(1, 10)
+        .getDomains('', 1, 10)
         .then(response => {
           this.domains = response.body.data;
         })
@@ -61,6 +62,7 @@ export default {
         })
         .catch(this.handleHttpError);
     },
+    // Navigation
     navigateBack: function() {
       this.$router.push({ path: '/roles' });
     },

@@ -82,8 +82,8 @@ export default {
     },
   },
   roles: {
-    getRoles: (page, elementsPerPage) => {
-      return fetch(`${SERVER_ENDPOINT}/api/v1/roles?page=${page}&elementsPerPage=${elementsPerPage}`, {
+    getRoles: (filter, page, elementsPerPage, domainId) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/roles?filter=${filter}&page=${page}&elementsPerPage=${elementsPerPage}&domainId=${domainId}`, {
         method: 'GET',
         withCredentials: true,
         credentials: 'include',

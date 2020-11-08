@@ -16,11 +16,26 @@ namespace MicroIdentityService.Repositories
         IEnumerable<Role> GetRoles();
 
         /// <summary>
+        /// Searches roles whose name contains the passed filter (case insensitive).
+        /// </summary>
+        /// <param name="filter">The string to filter names with.</param>
+        /// <returns>Returns all matching roles.</returns>
+        IEnumerable<Role> SearchRolesByName(string filter);
+
+        /// <summary>
         /// Gets all roles belonging to a given domain.
         /// </summary>
         /// <param name="domainId">ID of the domain to get roles for.</param>
         /// <returns>Returns all domain roles.</returns>
         IEnumerable<Role> GetDomainRoles(Guid domainId);
+
+        /// <summary>
+        /// Searches domain roles whose anme contain the passed filter (case insensitive).
+        /// </summary>
+        /// <param name="domainId">ID of the domain for which to search roles for.</param>
+        /// <param name="filter">The string to filter names with.</param>
+        /// <returns>Returns all matching roles.</returns>
+        IEnumerable<Role> SearchDomainRolesByName(Guid domainId, string filter);
 
         /// <summary>
         /// Gets a role by its unique ID.

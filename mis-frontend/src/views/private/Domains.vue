@@ -60,6 +60,7 @@ export default {
     };
   },
   methods: {
+    // API calls
     getDomains: function() {
       this.resetSelectedDomain();
       Api.domains
@@ -91,13 +92,7 @@ export default {
         })
         .catch(() => {});
     },
-    formatRoles: function(domain) {
-      return 0;
-    },
-    setSearch: function(value) {
-      this.query.search = value;
-      this.changePage(1);
-    },
+    // Table manipulation
     selectDomain: function(domain) {
       this.selectedDomain = { ...domain };
     },
@@ -108,6 +103,14 @@ export default {
     changePage: function(page) {
       this.query.page = page;
       this.getDomains();
+    },
+    setSearch: function(value) {
+      this.query.search = value;
+      this.changePage(1);
+    },
+    // Formatters
+    formatRoles: function(domain) {
+      return 0;
     },
   },
   mounted() {

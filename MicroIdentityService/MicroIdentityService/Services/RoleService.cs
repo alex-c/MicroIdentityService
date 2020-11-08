@@ -46,16 +46,25 @@ namespace MicroIdentityService.Services
         /// <param name="domainId">ID of the domain to get identity roles for.</param>
         /// <returns>Returns a list of roles.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if a domain ID was provided but no matching domain could be found.</exception>
-        public IEnumerable<Role> GetRoles(Guid? domainId)
+        public IEnumerable<Role> GetRoles(string filter = null, Guid? domainId = null)
         {
-            if (domainId == null)
+            if (filter == null && domainId == null)
             {
                 return RoleRepository.GetRoles();
+            }
+            else if (filter == null && domainId != null)
+            {
+                DomainService.GetDomain(domainId.Value); // Throws an EntityNotFoundException if domain doesn't exist
+                return RoleRepository.GetDomainRoles(domainId.Value);
+            }
+            else if (filter != null && domainId == null)
+            {
+                return RoleRepository.SearchRolesByName(filter);
             }
             else
             {
                 DomainService.GetDomain(domainId.Value); // Throws an EntityNotFoundException if domain doesn't exist
-                return RoleRepository.GetDomainRoles(domainId.Value);
+                return RoleRepository.SearchDomainRolesByName(domainId.Value, filter);
             }
         }
 

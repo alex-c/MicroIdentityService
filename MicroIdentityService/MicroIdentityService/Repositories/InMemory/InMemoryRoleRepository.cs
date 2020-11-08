@@ -22,9 +22,19 @@ namespace MicroIdentityService.Repositories.InMemory
             return Roles.Values;
         }
 
+        public IEnumerable<Role> SearchRolesByName(string filter)
+        {
+            return GetRoles().Where(r => r.Name.ToLowerInvariant().Contains(filter.ToLowerInvariant()));
+        }
+
         public IEnumerable<Role> GetDomainRoles(Guid domainId)
         {
-            return Roles.Values.Where(r => r.DomainId == domainId);
+            return GetRoles().Where(r => r.DomainId == domainId);
+        }
+
+        public IEnumerable<Role> SearchDomainRolesByName(Guid domainId, string filter)
+        {
+            return GetDomainRoles(domainId).Where(r => r.Name.ToLowerInvariant().Contains(filter.ToLowerInvariant()));
         }
 
         public Role GetRole(Guid id)

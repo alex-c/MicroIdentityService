@@ -20,12 +20,12 @@ export default {
 body {
   margin: 0px;
   background-image: url('./assets/webb.png');
-}
-
-#app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
   text-align: center;
   position: absolute;
   top: 0px;
