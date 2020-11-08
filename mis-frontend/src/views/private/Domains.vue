@@ -1,6 +1,9 @@
 <template>
   <div id="domains" class="standard-page">
     <Box :title="$t('general.domains')">
+      <template slot="actions">
+        <PlusIcon class="action" :size="20" @click="createDomain" />
+      </template>
       <!-- Domains Table -->
       <div class="content-row">
         <el-table :data="domains" stripe border size="mini" :empty-text="$t('general.noData')" highlight-current-row @current-change="selectDomain" ref="domainTable" row-key="id">
@@ -31,12 +34,12 @@
 import Api from '@/Api.js';
 import GenericErrorHandlingMixin from '@/mixins/GenericErrorHandlingMixin.js';
 import Box from '@/components/Box.vue';
-import { mdiTextToSpeech } from '@mdi/js';
+import PlusIcon from '@/components/icons/PlusIcon.vue';
 
 export default {
   name: 'Domains',
   mixins: [GenericErrorHandlingMixin],
-  components: { Box },
+  components: { Box, PlusIcon },
   data() {
     return {
       query: {
@@ -59,6 +62,27 @@ export default {
           this.totalDomains = response.body.totalElements;
         })
         .catch(this.handleHttpError);
+    },
+    createDomain: function() {
+      this.$prompt(this.$t('domains.createPrompt'), this.$t('domains.create'), {
+        confirmButtonText: this.$t('general.save'),
+        cancelButtonText: this.$t('general.cancel'),
+        inputPattern: /^(?!\s*$).+/,
+        inputErrorMessage: this.$t('domains.createInputError'),
+      })
+        .then(({ value }) => {
+          Api.domains
+            .createDomain(value)
+            .then(result => {
+              this.$message({
+                message: this.$t('domains.createdMessage'),
+                type: 'success',
+              });
+              this.getDomains();
+            })
+            .catch(this.handleHttpError);
+        })
+        .catch(() => {});
     },
     formatRoles: function(domain) {
       return 0;

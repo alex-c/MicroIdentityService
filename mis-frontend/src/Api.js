@@ -69,6 +69,17 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
+    createDomain: name => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/domains`, {
+        method: 'POST',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+        body: JSON.stringify({ name }),
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
   },
   roles: {
     getRoles: (page, elementsPerPage) => {
@@ -77,6 +88,17 @@ export default {
         withCredentials: true,
         credentials: 'include',
         headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
+    createRole: (name, domainId) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/roles`, {
+        method: 'POST',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+        body: JSON.stringify({ name, domainId }),
       })
         .catch(catchNetworkError)
         .then(processResponse);

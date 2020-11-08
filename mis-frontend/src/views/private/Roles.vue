@@ -1,6 +1,9 @@
 <template>
   <div id="roles" class="standard-page">
     <Box :title="$t('general.roles')">
+      <template slot="actions">
+        <PlusIcon class="action" :size="20" @click="createRole" />
+      </template>
       <!-- Roles Table -->
       <div class="content-row">
         <el-table :data="roles" stripe border size="mini" :empty-text="$t('general.noData')" highlight-current-row @current-change="selectRole" ref="rolesTable" row-key="id">
@@ -31,11 +34,12 @@
 import Api from '@/Api.js';
 import GenericErrorHandlingMixin from '@/mixins/GenericErrorHandlingMixin.js';
 import Box from '@/components/Box.vue';
+import PlusIcon from '@/components/icons/PlusIcon.vue';
 
 export default {
   name: 'Roles',
   mixins: [GenericErrorHandlingMixin],
-  components: { Box },
+  components: { Box, PlusIcon },
   data() {
     return {
       query: {
@@ -58,6 +62,9 @@ export default {
           this.totalRoles = response.body.totalElements;
         })
         .catch(this.handleHttpError);
+    },
+    createRole: function() {
+      this.$router.push({ path: '/roles/create' });
     },
     selectRole: function(role) {
       this.selectedRole = { ...role };

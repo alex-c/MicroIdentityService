@@ -2,7 +2,7 @@
   <main>
     <div id="login-box-container">
       <Box title="μIS - MicroIdentityService">
-        <template v-slot:actions><SettingsIcon class="action" @click="showSettingsSidebar" :size="20"/></template>
+        <template v-slot:actions><SettingsIcon class="action" :size="20" @click="showSettingsSidebar"/></template>
         <el-form label-position="top" :model="loginForm">
           <el-form-item :label="$t('general.identifier')">
             <el-input v-model="loginForm.identifier"></el-input>

@@ -11,6 +11,7 @@ import Dashboard from '../views/private/Dashboard.vue';
 import Identities from '../views/private/Identities.vue';
 import Domains from '../views/private/Domains.vue';
 import Roles from '../views/private/Roles.vue';
+import CreateRole from '../views/private/roles/CreateRole.vue';
 
 const routes = [
   {
@@ -41,6 +42,10 @@ const routes = [
       {
         path: '/roles',
         component: Roles,
+      },
+      {
+        path: '/roles/create',
+        component: CreateRole,
       },
     ],
   },
