@@ -32,6 +32,9 @@
           ></el-pagination>
         </div>
         <div class="right">
+          <el-button icon="el-icon-search" type="default" size="mini" :disabled="selectedDomain.id === null" @click="showDomainRoles">
+            {{ $t('domains.domainRoles') }}
+          </el-button>
           <el-button icon="el-icon-delete" type="danger" size="mini" :disabled="selectedDomain.id === null" @click="deleteDomain">
             {{ $t('domains.delete') }}
           </el-button>
@@ -136,6 +139,10 @@ export default {
     // Formatters
     formatRoles: function(domain) {
       return domain.roles.length;
+    },
+    // Navigation
+    showDomainRoles: function() {
+      this.$router.push({ name: 'roles', params: { domainId: this.selectedDomain.id } });
     },
   },
   mounted() {

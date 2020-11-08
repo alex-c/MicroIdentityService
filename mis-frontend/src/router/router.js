@@ -41,7 +41,9 @@ const routes = [
       },
       {
         path: '/roles',
+        name: 'roles',
         component: Roles,
+        props: true,
       },
       {
         path: '/roles/create',

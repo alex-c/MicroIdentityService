@@ -55,13 +55,14 @@ export default {
   name: 'Roles',
   mixins: [GenericErrorHandlingMixin],
   components: { Box, PlusIcon },
+  props: ['domainId'],
   data() {
     return {
       query: {
         page: 1,
         elementsPerPage: 10,
         search: '',
-        domain: '',
+        domain: this.domainId || '',
       },
       domains: {},
       roles: [],
