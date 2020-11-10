@@ -36,6 +36,17 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
+    createIdentity: (identifier, password) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/identities`, {
+        method: 'POST',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+        body: JSON.stringify({ identifier, password }),
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
     updateIdentity: (id, disabled) => {
       return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}`, {
         method: 'PUT',
