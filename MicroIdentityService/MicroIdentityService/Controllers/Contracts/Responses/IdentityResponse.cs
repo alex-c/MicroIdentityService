@@ -1,5 +1,6 @@
 ﻿using MicroIdentityService.Models;
 using System;
+using System.Collections.Generic;
 
 namespace MicroIdentityService.Controllers.Contracts.Responses
 {
@@ -17,6 +18,7 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
             Id = identity.Id;
             Identifier = identity.Identifier;
             Disabled = identity.Disabled;
+            Roles = identity.Roles;
         }
 
         /// <summary>
@@ -33,5 +35,10 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
         /// Whether the identity has been deisabled.
         /// </summary>
         public bool Disabled { get; set; }
+
+        /// <summary>
+        /// The roles associated with this identity.
+        /// </summary>
+        public IEnumerable<Role> Roles { get; set; }
     }
 }

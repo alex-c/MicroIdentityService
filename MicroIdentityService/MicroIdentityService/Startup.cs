@@ -178,7 +178,8 @@ namespace MicroIdentityService
                     string identifier = Configuration.GetValue<string>("Administrator:Identifier");
                     string password = Configuration.GetValue<string>("Administrator:Password");
                     IdentityService identityService = app.ApplicationServices.GetService<IdentityService>();
-                    identityService.CreateIdentity(identifier, password);
+                    Identity identity = identityService.CreateIdentity(identifier, password);
+                    identity.Roles = new List<Role>() { misEntities.Item2 };
 
                     // TODO: Set MIS admin role with misEntities from above
                 }

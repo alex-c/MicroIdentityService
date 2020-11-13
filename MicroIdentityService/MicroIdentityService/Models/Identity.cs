@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MicroIdentityService.Models
 {
@@ -31,5 +32,10 @@ namespace MicroIdentityService.Models
         /// Indicates whether this identity has been disabled, which prevents it from authentication.
         /// </summary>
         public bool Disabled { get; set; }
+
+        /// <summary>
+        /// The roles associated with this identity.
+        /// </summary>
+        public IEnumerable<Role> Roles { get; set; }
     }
 }

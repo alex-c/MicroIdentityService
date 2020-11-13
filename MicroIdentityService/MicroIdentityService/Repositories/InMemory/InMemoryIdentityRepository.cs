@@ -48,7 +48,9 @@ namespace MicroIdentityService.Repositories.InMemory
                 Id = Guid.NewGuid(),
                 Identifier = identifier,
                 HashedPassword = hashedPassword,
-                Salt = salt
+                Salt = salt,
+                Disabled = false,
+                Roles = new List<Role>()
             };
             IdentitiesIdMap.Add(identity.Id, identity);
             IdentitiesIdentifierMap.Add(identity.Identifier, identity);

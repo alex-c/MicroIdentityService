@@ -20,6 +20,7 @@
         >
           <el-table-column prop="id" :label="$t('general.id')"></el-table-column>
           <el-table-column prop="identifier" :label="$t('general.identifier')"></el-table-column>
+          <el-table-column prop="roles" :label="$t('general.roles')" :formatter="formatRoles"></el-table-column>
           <el-table-column prop="disabled" :label="$t('identities.status')" :formatter="formatStatus"></el-table-column>
         </el-table>
       </div>
@@ -37,6 +38,9 @@
           ></el-pagination>
         </div>
         <div class="right">
+          <el-button icon="el-icon-edit" type="primary" size="mini" :disabled="selectedIdentity.id === null" @click="showIdentityRoles">
+            {{ $t('identities.editRoles') }}
+          </el-button>
           <el-button icon="el-icon-lock" type="warning" size="mini" :disabled="selectedIdentity.id === null" v-if="selectedIdentity.disabled === false" @click="disableIdentity">
             {{ $t('identities.disable') }}
           </el-button>
@@ -132,6 +136,9 @@ export default {
       this.getIdentities();
     },
     // Formatter
+    formatRoles: function(identity) {
+      return identity.roles.length;
+    },
     formatStatus: function(identity) {
       if (identity.disabled) {
         return this.$t('identities.disabled');
@@ -142,6 +149,9 @@ export default {
     // Navigation
     createIdentity: function() {
       this.$router.push({ path: '/identities/create' });
+    },
+    showIdentityRoles: function() {
+      this.$router.push({ name: 'identity' });
     },
   },
   mounted() {
