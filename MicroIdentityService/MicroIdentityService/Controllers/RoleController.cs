@@ -25,10 +25,15 @@ namespace MicroIdentityService.Controllers
         [HttpGet]
         public IActionResult GetRoles([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10, [FromQuery] Guid? domainId = null)
         {
+            if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
+            {
+                return HandleBadRequest(errorMessage);
+            }
+
             try
             {
                 IEnumerable<Role> roles = RoleService.GetRoles(filter, domainId);
-                IEnumerable<Role> paginatedIdentities = roles.Skip((page - 1) * elementsPerPage).Take(elementsPerPage);
+                IEnumerable<Role> paginatedIdentities = Paginate(roles, page, elementsPerPage, paginationDisabled);
                 return Ok(new PaginatedResponse<RoleResponse>(paginatedIdentities.Select(i => new RoleResponse(i)), roles.Count()));
             }
             catch (EntityNotFoundException exception)

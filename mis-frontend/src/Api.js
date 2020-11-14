@@ -80,6 +80,9 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
+    getAllDomains: function() {
+      return this.getDomains('', 1, -1);
+    },
     createDomain: name => {
       return fetch(`${SERVER_ENDPOINT}/api/v1/domains`, {
         method: 'POST',

@@ -30,10 +30,15 @@ namespace MicroIdentityService.Controllers
         [HttpGet]
         public IActionResult GetIdentities([FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
         {
+            if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
+            {
+                return HandleBadRequest(errorMessage);
+            }
+
             try
             {
                 IEnumerable<Identity> identities = IdentityService.GetIdentities();
-                IEnumerable<Identity> paginatedIdentities = identities.Skip((page - 1) * elementsPerPage).Take(elementsPerPage);
+                IEnumerable<Identity> paginatedIdentities = Paginate(identities, page, elementsPerPage, paginationDisabled);
                 return Ok(new PaginatedResponse<IdentityResponse>(paginatedIdentities.Select(i => new IdentityResponse(i)), identities.Count()));
             }
             catch (Exception exception)
