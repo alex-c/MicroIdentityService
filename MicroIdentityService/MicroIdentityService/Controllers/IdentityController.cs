@@ -28,7 +28,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetIdentities([FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
+        public IActionResult GetIdentities([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
         {
             if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
             {
@@ -37,7 +37,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                IEnumerable<Identity> identities = IdentityService.GetIdentities();
+                IEnumerable<Identity> identities = IdentityService.GetIdentities(filter);
                 IEnumerable<Identity> paginatedIdentities = Paginate(identities, page, elementsPerPage, paginationDisabled);
                 return Ok(new PaginatedResponse<IdentityResponse>(paginatedIdentities.Select(i => new IdentityResponse(i)), identities.Count()));
             }

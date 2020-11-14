@@ -43,12 +43,20 @@ namespace MicroIdentityService.Services
         }
 
         /// <summary>
-        /// Gets all identities.
+        /// Gets all identities, optionally filtered by name.
         /// </summary>
-        /// <returns>Returns all identities.</returns>
-        public IEnumerable<Identity> GetIdentities()
+        /// <param name="filter">A string to filter identities names with.</param>
+        /// <returns>Returns identities.</returns>
+        public IEnumerable<Identity> GetIdentities(string filter)
         {
-            return IdentityRepository.GetIdentities();
+            if (filter == null)
+            {
+                return IdentityRepository.GetIdentities();
+            }
+            else
+            {
+                return IdentityRepository.SearchIdentitiesByIdentifier(filter);
+            }
         }
 
         /// <summary>

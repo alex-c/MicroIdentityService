@@ -37,7 +37,8 @@ namespace MicroIdentityService.Services
         /// <summary>
         /// Gets domains, optionally filtered by name.
         /// </summary>
-        /// <returns>Returns all domains.</returns>
+        /// <param name="filter">A string to filter domain names with.</param>
+        /// <returns>Returns domains.</returns>
         public IEnumerable<Domain> GetDomains(string filter = null)
         {
             if (filter == null)

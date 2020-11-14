@@ -1,6 +1,7 @@
 ﻿using MicroIdentityService.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MicroIdentityService.Repositories.InMemory
 {
@@ -21,6 +22,11 @@ namespace MicroIdentityService.Repositories.InMemory
         public IEnumerable<Identity> GetIdentities()
         {
             return IdentitiesIdMap.Values;
+        }
+
+        public IEnumerable<Identity> SearchIdentitiesByIdentifier(string filter)
+        {
+            return IdentitiesIdentifierMap.Where(kvp => kvp.Key.ToLowerInvariant().Contains(filter.ToLowerInvariant())).Select(kvp => kvp.Value);
         }
 
         public Identity GetIdentity(Guid id)

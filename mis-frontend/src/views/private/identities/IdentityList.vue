@@ -5,6 +5,11 @@
         <PlusIcon class="action" :size="20" @click="createIdentity" />
       </template>
 
+      <!-- Filtering Options -->
+      <div class="filter-row">
+        <el-input :placeholder="$t('identities.filter')" prefix-icon="el-icon-search" v-model="query.search" size="mini" clearable @change="setSearch" />
+      </div>
+
       <!-- Identities Table -->
       <div class="content-row">
         <el-table
@@ -83,7 +88,7 @@ export default {
     getIdentities: function() {
       this.resetSelectedIdentity();
       Api.identities
-        .getIdentities(this.query.page, this.query.elementsPerPage)
+        .getIdentities(this.query.search, this.query.page, this.query.elementsPerPage)
         .then(response => {
           this.identities = response.body.data;
           this.totalIdentities = response.body.totalElements;
@@ -134,6 +139,10 @@ export default {
     changePage: function(page) {
       this.query.page = page;
       this.getIdentities();
+    },
+    setSearch: function(value) {
+      this.query.search = value;
+      this.changePage(1);
     },
     // Formatter
     formatRoles: function(identity) {

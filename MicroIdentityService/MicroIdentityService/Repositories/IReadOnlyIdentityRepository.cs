@@ -16,6 +16,13 @@ namespace MicroIdentityService.Repositories
         IEnumerable<Identity> GetIdentities();
 
         /// <summary>
+        /// Searches identities by identifier. All identities containing the search string in the identifier (case insensitive) are returned.
+        /// </summary>
+        /// <param name="filter">A string to filter identity identifiers with.</param>
+        /// <returns>Returns all matching identities.</returns>
+        IEnumerable<Identity> SearchIdentitiesByIdentifier(string filter);
+
+        /// <summary>
         /// Gets an identity from its unique ID. Returns null if no matching identity could be found.
         /// </summary>
         /// <param name="id">The ID of the identity to retrieve.</param>

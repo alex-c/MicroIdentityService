@@ -26,8 +26,8 @@ const SERVER_ENDPOINT = process.env.VUE_APP_SERVER_ENDPOINT;
 
 export default {
   identities: {
-    getIdentities: (page, elementsPerPage) => {
-      return fetch(`${SERVER_ENDPOINT}/api/v1/identities?page=${page}&elementsPerPage=${elementsPerPage}`, {
+    getIdentities: (filter, page, elementsPerPage) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/identities?filter=${filter}&page=${page}&elementsPerPage=${elementsPerPage}`, {
         method: 'GET',
         withCredentials: true,
         credentials: 'include',
