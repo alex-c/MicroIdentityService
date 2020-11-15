@@ -10,6 +10,7 @@ import Private from '../views/Private.vue';
 import Dashboard from '../views/private/Dashboard.vue';
 import Identities from '../views/private/Identities.vue';
 import CreateIdentity from '../views/private/identities/CreateIdentity.vue';
+import IdentityRoles from '../views/private/identities/IdentityRoles.vue';
 import Domains from '../views/private/Domains.vue';
 import Roles from '../views/private/Roles.vue';
 import CreateRole from '../views/private/roles/CreateRole.vue';
@@ -39,6 +40,10 @@ const routes = [
       {
         path: '/identities/create',
         component: CreateIdentity,
+      },
+      {
+        path: '/identities/:id/roles',
+        component: IdentityRoles,
       },
       {
         path: '/domains',

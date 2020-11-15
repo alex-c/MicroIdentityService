@@ -160,7 +160,7 @@ export default {
       this.$router.push({ path: '/identities/create' });
     },
     showIdentityRoles: function() {
-      this.$router.push({ name: 'identity' });
+      this.$router.push({ path: '/identities/' + this.selectedIdentity.id + '/roles' });
     },
   },
   mounted() {

@@ -39,6 +39,16 @@ export default {
     getAll: function() {
       return this.getIdentities('', 1, -1);
     },
+    getIdentity: id => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}`, {
+        method: 'GET',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
     createIdentity: (identifier, password) => {
       return fetch(`${SERVER_ENDPOINT}/api/v1/identities`, {
         method: 'POST',
