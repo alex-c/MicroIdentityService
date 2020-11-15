@@ -1,5 +1,4 @@
-﻿using MicroIdentityService.Services.Exceptions;
-using MicroIdentityService.Services.IdentifierValidation;
+﻿using MicroIdentityService.Services.IdentifierValidation;
 using Microsoft.Extensions.Logging;
 
 namespace MicroIdentityService.Services
@@ -29,12 +28,12 @@ namespace MicroIdentityService.Services
         /// Attempts to validate a user-provided identifier.
         /// </summary>
         /// <param name="identifier">The identifier to validate.</param>
-        /// <exception cref="IdentifierValidationException">Thrown on validation failure.</exception>
+        /// <exception cref="PasswordValidationException">Thrown on validation failure.</exception>
         public void Validate(string identifier)
         {
-            if (!IdentifierValidator.Validate(identifier))
+            if (!IdentifierValidator.Validate(identifier, out string errorMessage))
             {
-                throw new IdentifierValidationException();
+                throw new IdentifierValidationException(errorMessage);
             }
         }
 

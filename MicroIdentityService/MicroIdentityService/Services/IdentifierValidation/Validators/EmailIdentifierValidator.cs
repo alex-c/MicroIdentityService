@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Net.Mail;
 
-namespace MicroIdentityService.Services.IdentifierValidation
+namespace MicroIdentityService.Services.IdentifierValidation.Validators
 {
     /// <summary>
     /// Validator that checks whether user-chosen identifiers are email addresses.
     /// </summary>
     public class EmailIdentifierValidator : IIdentifierValidator
     {
-        /// <summary>
-        /// Checks whether the provided identifier is an email addrerss.
-        /// </summary>
-        /// <param name="identifier">The identifier to check.</param>
-        /// <returns>Returns whether the identifier is an email address.</returns>
-        public bool Validate(string identifier)
+        public bool Validate(string identifier, out string errorMessage)
         {
+            errorMessage = null;
             try
             {
                 new MailAddress(identifier);
@@ -22,6 +18,7 @@ namespace MicroIdentityService.Services.IdentifierValidation
             }
             catch (FormatException)
             {
+                errorMessage = "An identifier must be a valid e-mail address.";
                 return false;
             }
         }

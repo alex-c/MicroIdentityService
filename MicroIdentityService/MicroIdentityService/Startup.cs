@@ -1,18 +1,21 @@
-﻿using MicroIdentityService.Repositories;
+﻿using MicroIdentityService.Models;
+using MicroIdentityService.Repositories;
 using MicroIdentityService.Repositories.InMemory;
 using MicroIdentityService.Services;
 using MicroIdentityService.Services.IdentifierValidation;
+using MicroIdentityService.Services.IdentifierValidation.Validators;
+using MicroIdentityService.Services.PasswordValidation;
+using MicroIdentityService.Services.PasswordValidation.Validators;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using System;
-using Microsoft.AspNetCore.Hosting;
-using System.Linq;
-using MicroIdentityService.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MicroIdentityService
 {
@@ -80,11 +83,13 @@ namespace MicroIdentityService
             // Confiture persistence-related services
             ConfigurePersistenceServices(services);
 
-            // Configure identifier validation
+            // Configure identifier and password validation
             ConfigureIdentifierValidationService(services);
+            ConfigurePasswordValidationService(services);
 
             // Register services
             services.AddSingleton<IdentifierValidationService>();
+            services.AddSingleton<PasswordValidationService>();
             services.AddSingleton<PasswordHashingService>();
             services.AddSingleton<AuthenticationService>();
             services.AddSingleton<IdentityService>();
@@ -148,7 +153,7 @@ namespace MicroIdentityService
             }
             Logger.LogInformation($"Identifier validation strategy `{identifierValidationStrategy}` has been configured.");
 
-            // Provide speicific identifier validator
+            // Provide speicific password validator
             switch (identifierValidationStrategy)
             {
                 case IdentifierValidationStrategy.Email:
@@ -162,31 +167,61 @@ namespace MicroIdentityService
         }
 
         /// <summary>
+        /// Configures password validation. This provides an implementation for the <see cref="IPasswordValidator"/> interface.
+        /// </summary>
+        /// <param name="services">Service collection to register services in.</param>
+        private void ConfigurePasswordValidationService(IServiceCollection services)
+        {
+            // Get password validation strategy from configuration
+            PasswordValidationStrategy passwordValidationStrategy;
+            try
+            {
+                passwordValidationStrategy = Configuration.GetValue<PasswordValidationStrategy>("PasswordValidation:Strategy");
+            }
+            catch (Exception)
+            {
+                Logger.LogWarning("Failed getting password validation strategy from configuration - defaulting to no validation.");
+                passwordValidationStrategy = PasswordValidationStrategy.None;
+            }
+            Logger.LogInformation($"Password validation strategy `{passwordValidationStrategy}` has been configured.");
+
+            // Provide speicific identifier validator
+            switch (passwordValidationStrategy)
+            {
+                case PasswordValidationStrategy.MinimumLength:
+                    services.AddSingleton<IPasswordValidator, MinimumLengthPasswordValidator>();
+                    break;
+                case PasswordValidationStrategy.None:
+                default:
+                    services.AddSingleton<IPasswordValidator, NoOpPasswordValidator>();
+                    break;
+            }
+        }
+
+        /// <summary>
         /// Configures the app.
         /// </summary>
         /// <param name="app">Application builder to configure the app through.</param>
         public void Configure(IApplicationBuilder app)
         {
             // Make sure that the MIS domain and admin role are present
-            (Domain, Role) misEntities = ConfigureMisDomainAndAdminRole(app);
+            (Domain domain, Role adminRole) misEntities = ConfigureMisDomainAndAdminRole(app);
 
             // If configured, ensure existense of an MIS admin
             try
             {
-                if (Configuration.GetValue<bool>("Administrator:CreateIfMissing"))
+                if (Configuration.GetValue("Administrator:CreateIfMissing", false))
                 {
                     string identifier = Configuration.GetValue<string>("Administrator:Identifier");
                     string password = Configuration.GetValue<string>("Administrator:Password");
                     IdentityService identityService = app.ApplicationServices.GetService<IdentityService>();
                     Identity identity = identityService.CreateIdentity(identifier, password);
-                    identity.Roles = new List<Role>() { misEntities.Item2 };
-
-                    // TODO: Set MIS admin role with misEntities from above
+                    identity.Roles = new List<Role>() { misEntities.adminRole };
                 }
             }
-            catch (Exception)
+            catch (Exception exception)
             {
-                Logger.LogWarning("Failed processing `Administrator` configuration.");
+                Logger.LogWarning($"Failed processing `Administrator` configuration: {exception.Message}");
             }
 
             app.UseSerilogRequestLogging();

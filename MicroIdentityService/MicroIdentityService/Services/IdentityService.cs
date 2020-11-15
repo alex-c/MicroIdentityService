@@ -13,6 +13,16 @@ namespace MicroIdentityService.Services
     public class IdentityService
     {
         /// <summary>
+        /// Provides validation logic for client-provided identifiers.
+        /// </summary>
+        private IdentifierValidationService IdentifierValidationService { get; }
+
+        /// <summary>
+        /// Provides validation logic for client-provided passwords.
+        /// </summary>
+        private PasswordValidationService PasswordValidationService { get; }
+
+        /// <summary>
         /// Provides password hashing functionality.
         /// </summary>
         private PasswordHashingService PasswordHashingService { get; }
@@ -31,13 +41,19 @@ namespace MicroIdentityService.Services
         /// Initializes a new instance of the <see cref="IdentityService"/> class.
         /// </summary>
         /// <param name="loggerFactory">A factory to create loggers from.</param>
+        /// <param name="identifierValidationService">Provides validation logic for client-provided identifiers.</param>
+        /// <param name="passwordValidationService">Provides validation logic for client-provided passwords.</param>
         /// <param name="passwordHashingService">The password hashing service.</param>
         /// <param name="identityRepository">A repository of identities.</param>
-        public IdentityService(ILoggerFactory loggerFactory, 
+        public IdentityService(ILoggerFactory loggerFactory,
+            IdentifierValidationService identifierValidationService,
+            PasswordValidationService passwordValidationService,
             PasswordHashingService passwordHashingService,
             IIdentityRepository identityRepository)
         {
             Logger = loggerFactory.CreateLogger<IdentityService>();
+            IdentifierValidationService = identifierValidationService;
+            PasswordValidationService = passwordValidationService;
             PasswordHashingService = passwordHashingService;
             IdentityRepository = identityRepository;
         }
@@ -84,11 +100,17 @@ namespace MicroIdentityService.Services
         /// <exception cref="EntityAlreadyExsistsException">Identity</exception>
         public Identity CreateIdentity(string identifier, string password)
         {
+            // Validate identifier format and availability
+            IdentifierValidationService.Validate(identifier);
             if (IdentityRepository.GetIdentity(identifier) != null)
             {
                 throw new EntityAlreadyExsistsException("Identity", identifier);
             }
 
+            // Validate client-provided password
+            PasswordValidationService.Validate(password);
+            
+            // Hash password and create new identity
             (string hash, byte[] salt) = PasswordHashingService.HashAndSaltPassword(password);
             return IdentityRepository.CreateIdentity(identifier, hash, salt);
         }
