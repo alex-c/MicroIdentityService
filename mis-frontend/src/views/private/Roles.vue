@@ -74,7 +74,7 @@ export default {
     // API calls
     getDomains: function() {
       Api.domains
-        .getAllDomains()
+        .getAll()
         .then(response => {
           const domains = {};
           for (let i = 0; i < response.body.data.length; i++) {

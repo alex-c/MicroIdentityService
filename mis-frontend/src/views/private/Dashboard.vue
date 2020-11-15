@@ -1,89 +1,27 @@
 <template>
   <div id="dashboard" class="standard-page">
     <div id="dashboard-cards">
-      <div>
-        <div class="card-header">{{ identities.length }}</div>
-        <div class="card-footer">{{ $t('general.identities') }}</div>
-      </div>
-      <div>
-        <div class="card-header">{{ domains.length }}</div>
-        <div class="card-footer">{{ $t('general.domains') }}</div>
-      </div>
-      <div>
-        <div class="card-header">{{ roles.length }}</div>
-        <div class="card-footer">{{ $t('general.roles') }}</div>
-      </div>
+      <DashboardCard entity="identities" />
+      <DashboardCard entity="domains" />
+      <DashboardCard entity="roles" />
     </div>
   </div>
 </template>
 
 <script>
-import Api from '@/Api.js';
-import GenericErrorHandlingMixin from '@/mixins/GenericErrorHandlingMixin.js';
+import DashboardCard from '@/components/DashboardCard.vue';
 
 export default {
   name: 'Dashboard',
-  mixins: [GenericErrorHandlingMixin],
-  data() {
-    return {
-      identities: [],
-      domains: [],
-      roles: [],
-    };
-  },
-  methods: {
-    getIdentities: function() {
-      Api.identities
-        .getAllIdentities()
-        .then(response => (this.identities = response.body.data))
-        .catch(this.handleHttpError);
-    },
-    getDomains: function() {
-      Api.domains
-        .getAllDomains()
-        .then(response => (this.domains = response.body.data))
-        .catch(this.handleHttpError);
-    },
-    getRoles: function() {
-      Api.roles
-        .getAllRoles()
-        .then(response => (this.roles = response.body.data))
-        .catch(this.handleHttpError);
-    },
-  },
-  mounted() {
-    this.getIdentities();
-    this.getDomains();
-    this.getRoles();
-  },
+  components: { DashboardCard },
 };
 </script>
 
 <style lang="scss" scoped>
-@import '@/style/colors.scss';
-
 #dashboard-cards {
   display: flex;
   & > div {
     flex-grow: 1;
-    margin: 20px;
-    border: 1px solid $mis-color-border;
-    border-radius: 6px;
-    text-align: center;
-    box-shadow: 1px 1px 2px 0px $mis-color-shadow;
-    & > .card-header {
-      font-weight: bold;
-      padding: 40px 20px;
-      border-bottom: 1px solid $mis-color-border;
-      background-color: $mis-color-primary;
-      color: white;
-      text-shadow: 1px 1px 2px $mis-color-shadow;
-    }
-    & > .card-footer {
-      padding: 16px;
-      background-color: white;
-      border-radius: 0px 0px 6px 6px;
-    }
   }
 }
 </style>

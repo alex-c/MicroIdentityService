@@ -36,7 +36,7 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
-    getAllIdentities: function() {
+    getAll: function() {
       return this.getIdentities('', 1, -1);
     },
     createIdentity: (identifier, password) => {
@@ -83,7 +83,7 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
-    getAllDomains: function() {
+    getAll: function() {
       return this.getDomains('', 1, -1);
     },
     createDomain: name => {
@@ -119,7 +119,7 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
-    getAllRoles: function() {
+    getAll: function() {
       return this.getRoles('', 1, -1);
     },
     createRole: (name, domainId) => {
