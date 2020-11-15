@@ -36,6 +36,9 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
+    getAllIdentities: function() {
+      return this.getIdentities('', 1, -1);
+    },
     createIdentity: (identifier, password) => {
       return fetch(`${SERVER_ENDPOINT}/api/v1/identities`, {
         method: 'POST',
@@ -115,6 +118,9 @@ export default {
       })
         .catch(catchNetworkError)
         .then(processResponse);
+    },
+    getAllRoles: function() {
+      return this.getRoles('', 1, -1);
     },
     createRole: (name, domainId) => {
       return fetch(`${SERVER_ENDPOINT}/api/v1/roles`, {
