@@ -70,12 +70,14 @@ export default {
     border: 1px solid $mis-color-border;
     border-radius: 6px;
     text-align: center;
+    box-shadow: 1px 1px 2px 0px $mis-color-shadow;
     & > .card-header {
       font-weight: bold;
       padding: 40px 20px;
       border-bottom: 1px solid $mis-color-border;
       background-color: $mis-color-primary;
       color: white;
+      text-shadow: 1px 1px 2px $mis-color-shadow;
     }
     & > .card-footer {
       padding: 16px;
