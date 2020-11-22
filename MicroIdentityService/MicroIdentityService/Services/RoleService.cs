@@ -84,6 +84,11 @@ namespace MicroIdentityService.Services
             return role;
         }
 
+        public IEnumerable<Role> GetIdentityRoles(Guid identityId)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Creates a new role, optionally belonging to a given domain.
         /// </summary>

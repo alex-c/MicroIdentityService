@@ -14,7 +14,7 @@
           </el-select>
         </el-form-item>
         <el-form-item class="form-actions">
-          <el-button type="primary" @click="createRole">{{ $t('general.save') }}</el-button>
+          <el-button type="primary" icon="el-icon-check" @click="createRole">{{ $t('general.save') }}</el-button>
         </el-form-item>
       </el-form>
     </Box>

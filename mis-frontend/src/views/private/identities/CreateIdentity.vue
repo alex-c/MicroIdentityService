@@ -12,7 +12,7 @@
           <el-input v-model="createIdentityForm.password" type="password" />
         </el-form-item>
         <el-form-item class="form-actions">
-          <el-button type="primary" @click="createIdentity">{{ $t('general.save') }}</el-button>
+          <el-button type="primary" icon="el-icon-check" @click="createIdentity">{{ $t('general.save') }}</el-button>
         </el-form-item>
       </el-form>
     </Box>

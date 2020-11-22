@@ -16,6 +16,8 @@ namespace MicroIdentityService.Controllers
     {
         private IdentityService IdentityService { get; }
 
+        private RoleService RoleService { get; }
+
         public IdentityController(ILogger<IdentityController> logger, IdentityService identityService)
         {
             IdentityService = identityService;
@@ -112,6 +114,12 @@ namespace MicroIdentityService.Controllers
         {
             IdentityService.DeleteIdentity(id);
             return NoContent();
+        }
+
+        [HttpGet("{id}/roles")]
+        public IActionResult GetIdentityRoles(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

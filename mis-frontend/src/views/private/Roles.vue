@@ -11,7 +11,7 @@
         <el-select v-model="query.domain" size="mini" clearable @change="setDomain">
           <el-option v-for="(name, id) in domains" :key="id" :label="name" :value="id" />
         </el-select>
-        <el-button type="danger" icon="el-icon-close" size="mini" :disabled="query.search == '' && query.domain == ''" @click="clearFilters" />
+        <el-button type="warning" icon="el-icon-refresh-left" size="mini" :disabled="query.search == '' && query.domain == ''" @click="clearFilters" />
       </div>
 
       <!-- Roles Table -->

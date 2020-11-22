@@ -11,21 +11,30 @@
         <div>
           <div class="role-editor-header">{{ $t('identities.availableRoles') }}</div>
           <div class="role-editor-roles">
-            <div v-if="availableRoles.length === 0" class="no-roles">
-              <EmptyIcon />
-            </div>
-            <div v-else v-for="role in availableRoles" :key="role.id" class="role">{{ roleName(role) }}</div>
+            <el-table :data="availableRoles" size="mini" strpie border v-loading="loading">
+              <el-table-column prop="selected" width="38">
+                <template slot-scope="scope">
+                  <el-checkbox v-model="scope.row.selected" />
+                </template>
+              </el-table-column>
+              <el-table-column prop="domainName" :label="$t('general.domain')" />
+              <el-table-column prop="name" :label="$t('general.role')" />
+            </el-table>
           </div>
         </div>
         <div>
           <div class="role-editor-header">{{ $t('identities.identityRoles') }}</div>
           <div class="role-editor-roles">
-            <div v-if="identityRoles.length === 0" class="no-roles">
-              <EmptyIcon />
-            </div>
-            <div v-else v-for="role in identityRoles" :key="role.id" class="role">{{ roleName(role) }}</div>
+            <el-table :data="identityRoles" size="mini" strpie border v-loading="loading">
+              <el-table-column prop="domainName" :label="$t('general.domain')" />
+              <el-table-column prop="name" :label="$t('general.role')" />
+            </el-table>
           </div>
         </div>
+      </div>
+      <div id="editor-actions">
+        <el-button type="warning" size="mini" icon="el-icon-refresh-left" @click="getAll">{{ $t('general.reset') }}</el-button>
+        <el-button type="primary" size="mini" icon="el-icon-check" @click="updateRoles">{{ $t('general.save') }}</el-button>
       </div>
     </Box>
   </div>
@@ -46,11 +55,9 @@ export default {
       id: this.$route.params.id,
       identity: null,
       domains: [],
-      roles: {
-        available: [],
-        identity: [],
-      },
+      roles: [],
       filter: '',
+      loading: false,
     };
   },
   computed: {
@@ -59,14 +66,24 @@ export default {
       return this.$t('identities.identityRoles') + identifier;
     },
     availableRoles: function() {
-      return this.roles.available.filter(r => r.domainName?.includes(this.filter) || r.name.includes(this.filter));
+      return this.roles.filter(r => r.domainName?.includes(this.filter) || r.name.includes(this.filter));
     },
     identityRoles: function() {
-      return this.roles.identity.filter(r => r.domainName?.includes(this.filter) || r.name.includes(this.filter));
+      return this.roles.filter(r => r.selected && (r.domainName?.includes(this.filter) || r.name.includes(this.filter)));
     },
   },
   methods: {
     // API calls
+    getAll: function() {
+      this.loading = true;
+      this.roles = [];
+      this.filter = '';
+      this.getDomains(() => {
+        this.getIdentity(() => {
+          this.getRoles(() => (this.loading = false));
+        });
+      });
+    },
     getDomains: function(callback) {
       Api.domains
         .getAll()
@@ -76,32 +93,41 @@ export default {
         })
         .catch(this.handleHttpError);
     },
-    getIdentity: function() {
+    getIdentity: function(callback) {
       Api.identities
         .getIdentity(this.id)
         .then(result => {
           this.identity = result.body;
-          this.roles.identity = this.enrichRolesWithDomainNames(result.body.roles);
+          callback();
         })
         .catch(this.handleHttpError);
     },
-    getRoles: function() {
+    getRoles: function(callback) {
       Api.roles
         .getAll()
-        .then(result => (this.roles.available = this.enrichRolesWithDomainNames(result.body.data)))
+        .then(result => {
+          this.roles = this.enrichRolesWithDomainNameAndSelectionStatus(result.body.data);
+          callback();
+        })
         .catch(this.handleHttpError);
+    },
+    updateRoles: function() {
+      // TODO: implement
+      console.log('TODO');
     },
     // Navigation
     navigateBack: function() {
       this.$router.push({ path: '/identities' });
     },
     // Other
-    enrichRolesWithDomainNames: function(roles) {
+    enrichRolesWithDomainNameAndSelectionStatus: function(roles) {
       for (let i = 0; i < roles.length; i++) {
-        let domain = this.domains.find(d => d.id === roles[i].domainId);
+        const domain = this.domains.find(d => d.id === roles[i].domainId);
         if (domain !== undefined) {
           roles[i].domainName = domain.name;
         }
+        const identityRole = this.identity.roles.find(r => r.id === roles[i].id);
+        roles[i].selected = identityRole !== undefined;
       }
       return roles;
     },
@@ -114,10 +140,7 @@ export default {
     },
   },
   mounted() {
-    this.getDomains(() => {
-      this.getRoles();
-      this.getIdentity();
-    });
+    this.getAll();
   },
 };
 </script>
@@ -144,13 +167,6 @@ export default {
   margin-bottom: 8px;
 }
 
-.role-editor-roles {
-  border: 1px solid $mis-color-shadow;
-  border-radius: 2px;
-  max-height: 400px;
-  overflow: auto;
-}
-
 .no-roles {
   color: $mis-color-shadow;
   padding: 8px;
@@ -163,5 +179,10 @@ export default {
   &:last-child {
     padding-bottom: 8px;
   }
+}
+
+#editor-actions {
+  padding: 16px 0px 0px;
+  text-align: right;
 }
 </style>

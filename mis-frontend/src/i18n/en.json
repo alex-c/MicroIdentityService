@@ -12,9 +12,10 @@
     "roles": "Roles",
     "role": "Role",
     "noData": "No Data.",
+    "cancel": "Cancel",
+    "reset": "Reset",
     "save": "Save",
-    "delete": "Delete",
-    "cancel": "Cancel"
+    "delete": "Delete"
   },
   "settings": {
     "title": "Settings",
