@@ -41,7 +41,7 @@ namespace MicroIdentityService.Services
         }
 
         /// <summary>
-        /// Gets identity roles, optionally filtered to the roles that belong to a given domain.
+        /// Gets roles, optionally filtered to the roles that belong to a given domain.
         /// </summary>
         /// <param name="domainId">ID of the domain to get identity roles for.</param>
         /// <returns>Returns a list of roles.</returns>
@@ -82,11 +82,6 @@ namespace MicroIdentityService.Services
                 throw new EntityNotFoundException("Role", id);
             }
             return role;
-        }
-
-        public IEnumerable<Role> GetIdentityRoles(Guid identityId)
-        {
-            throw new NotImplementedException();
         }
 
         /// <summary>

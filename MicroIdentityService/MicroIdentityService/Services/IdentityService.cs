@@ -126,8 +126,7 @@ namespace MicroIdentityService.Services
         {
             Identity identity = GetIdentity(id);
             identity.Disabled = disabled;
-            IdentityRepository.UpdateIdentity(identity);
-            return identity;
+            return IdentityRepository.UpdateIdentity(identity);
         }
 
         /// <summary>
@@ -137,6 +136,32 @@ namespace MicroIdentityService.Services
         public void DeleteIdentity(Guid id)
         {
             IdentityRepository.DeleteIdentity(id);
+        }
+
+        /// <summary>
+        /// Gets roles assigned to a given identity.
+        /// </summary>
+        /// <param name="id">ID of the identity to get roles for.</param>
+        /// <returns>Returns a list of identity roles.</returns>
+        /// <exception cref="EntityNotFoundException">Thrown if the identity could not be found.</exception>
+        public IEnumerable<Role> GetIdentityRoles(Guid id)
+        {
+            Identity identity = GetIdentity(id);
+            return identity.Roles;
+        }
+
+        /// <summary>
+        /// Sets the roles assigned to a given identity.
+        /// </summary>
+        /// <param name="id">ID of the identity for which to update roles.</param>
+        /// <param name="roles">The IDs of the roles to set.</param>
+        /// <exception cref="EntityNotFoundException">Thrown if the identity could not be found.</exception>
+        public void UpdateIdentityRoles(Guid id, IEnumerable<Guid> roles)
+        {
+            Identity identity = GetIdentity(id);
+
+            // TODO
+            throw new NotImplementedException();
         }
     }
 }

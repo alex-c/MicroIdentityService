@@ -16,8 +16,6 @@ namespace MicroIdentityService.Controllers
     {
         private IdentityService IdentityService { get; }
 
-        private RoleService RoleService { get; }
-
         public IdentityController(ILogger<IdentityController> logger, IdentityService identityService)
         {
             IdentityService = identityService;
@@ -119,7 +117,26 @@ namespace MicroIdentityService.Controllers
         [HttpGet("{id}/roles")]
         public IActionResult GetIdentityRoles(Guid id)
         {
-            throw new NotImplementedException();
+            IEnumerable<Role> identityRoles = IdentityService.GetIdentityRoles(id);
+            return Ok(identityRoles.Select(r => new RoleResponse(r)));
+        }
+
+        [HttpPut("{id}/roles")]
+        public IActionResult UpdateIdentityRoles(Guid id, [FromBody] IdentityRolesUpdateRequest identityRolesUpdateRequest)
+        {
+            try
+            {
+                IdentityService.UpdateIdentityRoles(id, identityRolesUpdateRequest.Roles);
+                return NoContent();
+            }
+            catch (EntityNotFoundException exception)
+            {
+                return HandleResourceNotFoundException(exception);
+            }
+            catch (Exception exception)
+            {
+                return HandleUnexpectedException(exception);
+            }
         }
     }
 }
