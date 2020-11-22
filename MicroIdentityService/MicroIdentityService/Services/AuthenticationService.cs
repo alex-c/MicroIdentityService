@@ -25,7 +25,12 @@ namespace MicroIdentityService.Services
         /// <summary>
         /// Grants access to identities.
         /// </summary>
-        private IReadOnlyIdentityRepository IdentityRepository { get; }
+        private IdentityService IdentityService{ get; }
+
+        /// <summary>
+        /// Grants access to domain names.
+        /// </summary>
+        private DomainService DomainService { get; }
 
         /// <summary>
         /// Signing credentials for JWTs.
@@ -52,16 +57,19 @@ namespace MicroIdentityService.Services
         /// </summary>
         /// <param name="loggerFactory">Factory to create loggers from.</param>
         /// <param name="passwordHashingService">Provides password hashing functionalities.</param>
-        /// <param name="identityRepository">Provides identities.</param>
+        /// <param name="identityService">Provides identities.</param>
+        /// <param name="domainService">Provides domain names.</param>
         /// <param name="configuration">App configuration for JWT signing information.</param>
         public AuthenticationService(ILoggerFactory loggerFactory,
             PasswordHashingService passwordHashingService,
-            IReadOnlyIdentityRepository identityRepository,
+            IdentityService identityService,
+            DomainService domainService,
             IConfiguration configuration)
         {
             Logger = loggerFactory.CreateLogger<AuthenticationService>();
             PasswordHashingService = passwordHashingService;
-            IdentityRepository = identityRepository;
+            IdentityService = identityService;
+            DomainService = domainService;
 
             // JWT-related configuration
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("Jwt:Secret")));
@@ -77,17 +85,13 @@ namespace MicroIdentityService.Services
         /// <param name="password">The identity's password.</param>
         /// <param name="serializedToken">The serialized token.</param>
         /// <returns>Returns whether authentication was successful.</returns>
-        /// <exception cref="EntityNotFoundException">User</exception>
+        /// <exception cref="EntityNotFoundException">Thrown if no matching identity or any of the role domains could be found.</exception>
         public bool TryAuthenticate(string identifier, string password, out string serializedToken)
         {
             serializedToken = null;
 
-            // Get user
-            Identity identity = IdentityRepository.GetIdentity(identifier);
-            if (identity == null)
-            {
-                throw new EntityNotFoundException("Identity", identifier);
-            }
+            // Get identities, throws if not found
+            Identity identity = IdentityService.GetIdentity(identifier);
 
             // Reject authentication attempt if identity is disabled
             if (identity.Disabled)
@@ -95,18 +99,22 @@ namespace MicroIdentityService.Services
                 return false;
             }
 
-            // Check password
+            // Reject authentication attempt if bad password provided
             if (identity.HashedPassword != PasswordHashingService.HashAndSaltPassword(password, identity.Salt))
             {
                 return false;
             }
 
-            // Set user claims
+            // Set identity base claims
             List<Claim> claims = new List<Claim>
             {
                 // Add subject, name, role
                 new Claim(JwtRegisteredClaimNames.Sub, identity.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, identity.Identifier),
             };
+
+            // Add identity roles to claims
+            claims.AddRange(GenerateRoleClaims(identity.Roles));
 
             // Generate token
             JwtSecurityToken token = new JwtSecurityToken(JwtIssuer, null, claims, expires: DateTime.Now.Add(JwtLifetime), signingCredentials: SigningCredentials);
@@ -114,6 +122,38 @@ namespace MicroIdentityService.Services
 
             // Done!
             return true;
+        }
+
+        /// <summary>
+        /// Generates a list of `role` claims for the provided identity roles.
+        /// </summary>
+        /// <param name="roles">Roles to generate claims for.</param>
+        /// <returns>Returns the newly generated claims.</returns>
+        /// <exception cref="EntityNotFoundException">Thrown if any of the referenced domains could be found.</exception>
+        private IEnumerable<Claim> GenerateRoleClaims(IEnumerable<Role> roles)
+        {
+            Dictionary<Guid, Domain> domains = new Dictionary<Guid, Domain>();
+            List<Claim> claims = new List<Claim>();
+
+            // For each role, retrieve domain if neccessary, and set claim with role name `[<domainName>.]<roleName>`.
+            foreach (Role role in roles)
+            {
+                string roleName = "";
+                if (role.DomainId.HasValue)
+                {
+                    Guid domainId = role.DomainId.Value;
+                    if (!domains.ContainsKey(domainId))
+                    {
+                        domains.Add(domainId, DomainService.GetDomain(domainId));
+                    }
+                    roleName += domains[domainId].Name + ".";
+                }
+                roleName += role.Name;
+                claims.Add(new Claim("role", roleName));
+            }
+
+            // Done, return role claims
+            return claims;
         }
     }
 }

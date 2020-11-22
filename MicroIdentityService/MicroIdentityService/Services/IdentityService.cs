@@ -107,6 +107,22 @@ namespace MicroIdentityService.Services
         }
 
         /// <summary>
+        /// Gets an identity by its unique user-chosen identifier.
+        /// </summary>
+        /// <param name="identifier">The identifier of the identity to retrieve.</param>
+        /// <returns>Returns the identity, if found.</returns>
+        /// <exception cref="EntityNotFoundException">Thrown if the identity could not be found.</exception>
+        public Identity GetIdentity(string identifier)
+        {
+            Identity identity = IdentityRepository.GetIdentity(identifier);
+            if (identity == null)
+            {
+                throw new EntityNotFoundException("Identity", identifier);
+            }
+            return identity;
+        }
+
+        /// <summary>
         /// Creates a new identity.
         /// </summary>
         /// <param name="identifier">The unique user-chosen identifier with this identity.</param>

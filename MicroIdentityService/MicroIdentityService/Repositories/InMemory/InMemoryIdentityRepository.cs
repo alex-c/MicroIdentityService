@@ -8,7 +8,7 @@ namespace MicroIdentityService.Repositories.InMemory
     /// <summary>
     /// A mock implementation of the identity repository, used for testing. This stores identities in-memory.
     /// </summary>
-    public class InMemoryIdentityRepository : IIdentityRepository, IReadOnlyIdentityRepository
+    public class InMemoryIdentityRepository : IIdentityRepository
     {
         private Dictionary<Guid, Identity> IdentitiesIdMap { get; }
         private Dictionary<string, Identity> IdentitiesIdentifierMap { get; }

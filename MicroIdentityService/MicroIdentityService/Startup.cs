@@ -122,8 +122,7 @@ namespace MicroIdentityService
             if (persistenceStrategy == PersistenceStrategy.InMemory)
             {
                 services.AddSingleton<InMemoryIdentityRepository>();
-                services.AddSingleton<IIdentityRepository>(x => x.GetRequiredService<InMemoryIdentityRepository>());
-                services.AddSingleton<IReadOnlyIdentityRepository>(x => x.GetRequiredService<InMemoryIdentityRepository>());
+                services.AddSingleton<IIdentityRepository, InMemoryIdentityRepository>();
                 services.AddSingleton<IDomainRepository, InMemoryDomainRepository>();
                 services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
                 services.AddSingleton<IIdentityRoleRepository, InMemoryIdentityRolesRepository>();
