@@ -11,6 +11,6 @@ namespace MicroIdentityService.Controllers.Contracts.Requests
         /// <summary>
         /// The roles to assign to the identity.
         /// </summary>
-        public IEnumerable<Guid> Roles { get; set; }
+        public IEnumerable<Guid> RoleIds { get; set; }
     }
 }

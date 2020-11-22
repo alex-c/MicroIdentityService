@@ -112,8 +112,13 @@ export default {
         .catch(this.handleHttpError);
     },
     updateRoles: function() {
-      // TODO: implement
-      console.log('TODO');
+      Api.identities
+        .updateIdentityRoles(
+          this.id,
+          this.identityRoles.map(r => r.id),
+        )
+        .then(() => this.$router.push({ path: '/identities' }))
+        .catch(this.handleHttpError);
     },
     // Navigation
     navigateBack: function() {

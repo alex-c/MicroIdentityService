@@ -71,6 +71,17 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
+    updateIdentityRoles: (id, roleIds) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}/roles`, {
+        method: 'PUT',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+        body: JSON.stringify({ roleIds }),
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
     deleteIdentity: id => {
       return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}`, {
         method: 'DELETE',

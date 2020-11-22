@@ -69,6 +69,16 @@ namespace MicroIdentityService.Services
         }
 
         /// <summary>
+        /// Gets multiple roles using their unique IDs.
+        /// </summary>
+        /// <param name="ids">IDs of the roles to get.</param>
+        /// <returns>Returns the roles, which were found.</returns>
+        public IEnumerable<Role> GetRoles(IEnumerable<Guid> ids)
+        {
+            return RoleRepository.GetRoles(ids);
+        }
+
+        /// <summary>
         /// Gets a role by its unique ID.
         /// </summary>
         /// <param name="id">ID of the role to get.</param>

@@ -4,6 +4,7 @@ using MicroIdentityService.Services.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MicroIdentityService.Services
 {
@@ -12,6 +13,11 @@ namespace MicroIdentityService.Services
     /// </summary>
     public class IdentityService
     {
+        /// <summary>
+        /// Grants access to roles
+        /// </summary>
+        private RoleService RoleService { get; }
+
         /// <summary>
         /// Provides validation logic for client-provided identifiers.
         /// </summary>
@@ -33,6 +39,11 @@ namespace MicroIdentityService.Services
         private IIdentityRepository IdentityRepository { get; }
 
         /// <summary>
+        /// Grants direct access to identity role mappings.
+        /// </summary>
+        private IIdentityRoleRepository IdentityRoleRepository { get; }
+
+        /// <summary>
         /// A logger for local logging needs.
         /// </summary>
         private ILogger Logger { get; }
@@ -46,16 +57,20 @@ namespace MicroIdentityService.Services
         /// <param name="passwordHashingService">The password hashing service.</param>
         /// <param name="identityRepository">A repository of identities.</param>
         public IdentityService(ILoggerFactory loggerFactory,
+            RoleService roleService,
             IdentifierValidationService identifierValidationService,
             PasswordValidationService passwordValidationService,
             PasswordHashingService passwordHashingService,
-            IIdentityRepository identityRepository)
+            IIdentityRepository identityRepository,
+            IIdentityRoleRepository identityRoleRepository)
         {
             Logger = loggerFactory.CreateLogger<IdentityService>();
             IdentifierValidationService = identifierValidationService;
             PasswordValidationService = passwordValidationService;
             PasswordHashingService = passwordHashingService;
             IdentityRepository = identityRepository;
+            IdentityRoleRepository = identityRoleRepository;
+            RoleService = roleService;
         }
 
         /// <summary>
@@ -154,14 +169,18 @@ namespace MicroIdentityService.Services
         /// Sets the roles assigned to a given identity.
         /// </summary>
         /// <param name="id">ID of the identity for which to update roles.</param>
-        /// <param name="roles">The IDs of the roles to set.</param>
-        /// <exception cref="EntityNotFoundException">Thrown if the identity could not be found.</exception>
-        public void UpdateIdentityRoles(Guid id, IEnumerable<Guid> roles)
+        /// <param name="roleIds">The IDs of the roles to set.</param>
+        /// <exception cref="EntityNotFoundException">Thrown if the identity or any of the roles could not be found.</exception>
+        public void UpdateIdentityRoles(Guid id, IEnumerable<Guid> roleIds)
         {
             Identity identity = GetIdentity(id);
-
-            // TODO
-            throw new NotImplementedException();
+            IEnumerable<Role> roles = RoleService.GetRoles(roleIds);
+            if (roles.Count() != roleIds.Count())
+            {
+                Guid firstMissingId = roles.First(r => !roleIds.Contains(r.Id)).Id;
+                throw new EntityNotFoundException("Role", firstMissingId);
+            }
+            IdentityRoleRepository.SetIdentityRoles(identity, roles);
         }
     }
 }

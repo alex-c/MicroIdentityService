@@ -126,6 +126,7 @@ namespace MicroIdentityService
                 services.AddSingleton<IReadOnlyIdentityRepository>(x => x.GetRequiredService<InMemoryIdentityRepository>());
                 services.AddSingleton<IDomainRepository, InMemoryDomainRepository>();
                 services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
+                services.AddSingleton<IIdentityRoleRepository, InMemoryIdentityRolesRepository>();
             }
             else
             {

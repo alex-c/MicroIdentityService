@@ -22,6 +22,11 @@ namespace MicroIdentityService.Repositories.InMemory
             return Roles.Values;
         }
 
+        public IEnumerable<Role> GetRoles(IEnumerable<Guid> ids)
+        {
+            return Roles.Values.Where(r => ids.Contains(r.Id));
+        }
+
         public IEnumerable<Role> SearchRolesByName(string filter)
         {
             return GetRoles().Where(r => r.Name.ToLowerInvariant().Contains(filter.ToLowerInvariant()));

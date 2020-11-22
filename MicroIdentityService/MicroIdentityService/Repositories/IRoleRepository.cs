@@ -16,6 +16,13 @@ namespace MicroIdentityService.Repositories
         IEnumerable<Role> GetRoles();
 
         /// <summary>
+        /// Gets multiple roles using their unique IDs.
+        /// </summary>
+        /// <param name="ids">IDs of the roles to get.</param>
+        /// <returns>Returns the roles which were found.</returns>
+        IEnumerable<Role> GetRoles(IEnumerable<Guid> ids);
+
+        /// <summary>
         /// Searches roles whose name contains the passed filter (case insensitive).
         /// </summary>
         /// <param name="filter">The string to filter names with.</param>

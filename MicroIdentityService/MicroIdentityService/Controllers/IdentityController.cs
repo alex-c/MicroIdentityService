@@ -126,7 +126,7 @@ namespace MicroIdentityService.Controllers
         {
             try
             {
-                IdentityService.UpdateIdentityRoles(id, identityRolesUpdateRequest.Roles);
+                IdentityService.UpdateIdentityRoles(id, identityRolesUpdateRequest.RoleIds);
                 return NoContent();
             }
             catch (EntityNotFoundException exception)
