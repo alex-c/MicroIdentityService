@@ -6,16 +6,19 @@ using MicroIdentityService.Services.IdentifierValidation;
 using MicroIdentityService.Services.IdentifierValidation.Validators;
 using MicroIdentityService.Services.PasswordValidation;
 using MicroIdentityService.Services.PasswordValidation.Validators;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace MicroIdentityService
 {
@@ -79,6 +82,22 @@ namespace MicroIdentityService
                     });
                 }
             });
+
+            // Configure JWT-based authorization
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateLifetime = true,
+                        ValidateAudience = false,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration.GetValue<string>("Jwt:Issuer"),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("Jwt:Secret")))
+                    };
+                });
+            services.AddAuthorization();
 
             // Confiture persistence-related services
             ConfigurePersistenceServices(services);
