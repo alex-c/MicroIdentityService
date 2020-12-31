@@ -25,6 +25,15 @@ function getAuthorizationHeader() {
 const SERVER_ENDPOINT = process.env.VUE_APP_SERVER_ENDPOINT;
 
 export default {
+  authenticate: (identifier, password) => {
+    return fetch(`${SERVER_ENDPOINT}/api/v1/auth`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password }),
+    })
+      .catch(catchNetworkError)
+      .then(processResponse);
+  },
   identities: {
     getIdentities: (filter, page, elementsPerPage) => {
       return fetch(`${SERVER_ENDPOINT}/api/v1/identities?filter=${filter}&page=${page}&elementsPerPage=${elementsPerPage}`, {

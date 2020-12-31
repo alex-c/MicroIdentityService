@@ -17,18 +17,18 @@ import MenuIcon from '@/components/icons/MenuIcon.vue';
 import LogoutIcon from '@/components/icons/LogoutIcon.vue';
 import SettingsIcon from '@/components/icons/SettingsIcon.vue';
 
-import { SET_MENU_DRAWER_OPEN } from '@/store/mutations.js';
-import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
+import { SIGN_OUT } from '@/store/actions.js';
+import { SET_MENU_DRAWER_OPEN, SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
 
 export default {
   name: 'Header',
   components: { MenuIcon, LogoutIcon, SettingsIcon },
   computed: {
     collapsedUi: function() {
-      return this.$store.state.collapsedUi;
+      return this.$store.state.ui.collapsedUi;
     },
     menuOpen: function() {
-      return this.$store.state.menuOpen;
+      return this.$store.state.ui.menuOpen;
     },
     menuToggleIcon: function() {
       return {
@@ -45,6 +45,7 @@ export default {
       this.$store.commit(SET_SETTINGS_DRAWER_OPEN, true);
     },
     signOut: function() {
+      this.$store.dispatch(SIGN_OUT);
       this.$router.push({ path: '/' });
     },
   },

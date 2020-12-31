@@ -19,10 +19,10 @@ export default {
   components: { Header, Menu },
   computed: {
     collapsedUi() {
-      return this.$store.state.collapsedUi;
+      return this.$store.state.ui.collapsedUi;
     },
     menuOpen() {
-      return this.$store.state.menuOpen;
+      return this.$store.state.ui.menuOpen;
     },
   },
   methods: {

@@ -15,10 +15,10 @@ export default {
   components: { MenuItem },
   computed: {
     collapsedUi() {
-      return this.$store.state.collapsedUi;
+      return this.$store.state.ui.collapsedUi;
     },
     menuOpen() {
-      return this.$store.state.menuOpen;
+      return this.$store.state.ui.menuOpen;
     },
     current() {
       return this.$route.path;

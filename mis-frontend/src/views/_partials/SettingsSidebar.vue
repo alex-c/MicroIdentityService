@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     drawerOpen: function() {
-      return this.$store.state.settings.drawerOpen;
+      return this.$store.state.ui.settingsDrawerOpen;
     },
   },
   methods: {

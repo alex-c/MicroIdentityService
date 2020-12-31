@@ -2,6 +2,9 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
+// Navigation guards
+import { redirectAuthorizedUser, redirectUnauthorizedUser } from './route-guards.js';
+
 // Main layour views
 import Public from '../views/Public.vue';
 import Private from '../views/Private.vue';
@@ -20,10 +23,12 @@ const routes = [
     path: '/',
     name: 'Public',
     component: Public,
+    beforeEnter: redirectAuthorizedUser,
   },
   {
     path: '/private',
     component: Private,
+    beforeEnter: redirectUnauthorizedUser,
     children: [
       {
         path: '/',

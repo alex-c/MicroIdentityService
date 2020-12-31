@@ -23,9 +23,12 @@
 </template>
 
 <script>
+import Api from '@/Api.js';
+
 import Box from '@/components/Box.vue';
 import SettingsIcon from '@/components/icons/SettingsIcon.vue';
 
+import { SIGN_IN } from '@/store/actions.js';
 import { SET_SETTINGS_DRAWER_OPEN } from '@/store/mutations.js';
 
 export default {
@@ -41,7 +44,21 @@ export default {
   },
   methods: {
     signIn: function() {
-      this.$router.push({ path: '/private' });
+      Api.authenticate(this.loginForm.identifier, this.loginForm.password)
+        .then(response => {
+          const token = response.body.token;
+          this.$store
+            .dispatch(SIGN_IN, token)
+            .then(() => this.$router.push('/private'))
+            .catch(error => {
+              this.$message.error('Only administrators may access this administrative tool.');
+            });
+        })
+        .catch(error => {
+          if (error.status === 401) {
+            this.$message.error('Authentication failed, please check your identifier and password.');
+          }
+        });
     },
     showSettingsSidebar: function() {
       this.$store.commit(SET_SETTINGS_DRAWER_OPEN, true);
