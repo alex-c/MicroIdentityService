@@ -13,9 +13,9 @@
       <!-- Domains Table -->
       <div class="content-row">
         <el-table :data="domains" stripe border size="mini" :empty-text="$t('general.noData')" highlight-current-row @current-change="selectDomain" ref="domainTable" row-key="id">
-          <el-table-column prop="id" :label="$t('general.id')"></el-table-column>
-          <el-table-column prop="name" :label="$t('general.name')"></el-table-column>
-          <el-table-column prop="roles" :label="$t('general.roles')" :formatter="formatRoles"></el-table-column>
+          <el-table-column prop="id" :label="$t('general.id')" min-width="300"></el-table-column>
+          <el-table-column prop="name" :label="$t('general.name')" min-width="150"></el-table-column>
+          <el-table-column prop="roles" :label="$t('general.roles')" :formatter="formatRoles" min-width="70"></el-table-column>
         </el-table>
       </div>
 

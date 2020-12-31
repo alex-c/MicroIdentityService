@@ -23,10 +23,10 @@
           ref="identityTable"
           row-key="id"
         >
-          <el-table-column prop="id" :label="$t('general.id')"></el-table-column>
-          <el-table-column prop="identifier" :label="$t('general.identifier')"></el-table-column>
-          <el-table-column prop="roles" :label="$t('general.roles')" :formatter="formatRoles"></el-table-column>
-          <el-table-column prop="disabled" :label="$t('identities.status')" :formatter="formatStatus"></el-table-column>
+          <el-table-column prop="id" :label="$t('general.id')" min-width="300"></el-table-column>
+          <el-table-column prop="identifier" :label="$t('general.identifier')" min-width="150"></el-table-column>
+          <el-table-column prop="roles" :label="$t('general.roles')" :formatter="formatRoles" min-width="70"></el-table-column>
+          <el-table-column prop="disabled" :label="$t('identities.status')" :formatter="formatStatus" min-width="150"></el-table-column>
         </el-table>
       </div>
 

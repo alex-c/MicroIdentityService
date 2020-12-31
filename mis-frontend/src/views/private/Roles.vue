@@ -17,9 +17,9 @@
       <!-- Roles Table -->
       <div class="content-row">
         <el-table :data="roles" stripe border size="mini" :empty-text="$t('general.noData')" highlight-current-row @current-change="selectRole" ref="rolesTable" row-key="id">
-          <el-table-column prop="id" :label="$t('general.id')"></el-table-column>
-          <el-table-column prop="name" :label="$t('general.name')"></el-table-column>
-          <el-table-column prop="domainId" :label="$t('general.domain')" :formatter="formatDomain"></el-table-column>
+          <el-table-column prop="id" :label="$t('general.id')" min-width="300"></el-table-column>
+          <el-table-column prop="name" :label="$t('general.name')" min-width="150"></el-table-column>
+          <el-table-column prop="domainId" :label="$t('general.domain')" :formatter="formatDomain" min-width="150"></el-table-column>
         </el-table>
       </div>
 
