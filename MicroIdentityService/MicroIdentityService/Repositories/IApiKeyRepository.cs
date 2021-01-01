@@ -13,7 +13,14 @@ namespace MicroIdentityService.Repositories
         /// Gets all available API keys.
         /// </summary>
         /// <returns>Returns all API keys.</returns>
-        IEnumerable<ApiKey> GetAllApiKeys();
+        IEnumerable<ApiKey> GetApiKeys();
+
+        /// <summary>
+        /// Searches API keys by name. All API keys containing the search string in the name (case insensitive) are returned.
+        /// </summary>
+        /// <param name="filter">A string to filter API key names with.</param>
+        /// <returns>Returns all matching API keys.</returns>
+        IEnumerable<ApiKey> SearchApiKeysByName(string filter);
 
         /// <summary>
         /// Gets an API key by it's ID.

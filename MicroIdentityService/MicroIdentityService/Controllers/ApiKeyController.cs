@@ -23,7 +23,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetApiKeys([FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
+        public IActionResult GetApiKeys([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
         {
             if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
             {
@@ -32,7 +32,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                IEnumerable<ApiKey> keys = ApiKeyService.GetAllApiKeys();
+                IEnumerable<ApiKey> keys = ApiKeyService.GetApiKeys(filter);
                 IEnumerable<ApiKey> paginatedKeys = Paginate(keys, page, elementsPerPage, paginationDisabled);
                 return Ok(new PaginatedResponse<ApiKeyResponse>(paginatedKeys.Select(k => new ApiKeyResponse(k)), keys.Count()));
             }

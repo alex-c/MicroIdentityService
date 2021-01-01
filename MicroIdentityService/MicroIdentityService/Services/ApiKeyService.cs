@@ -34,12 +34,20 @@ namespace MicroIdentityService.Services
         }
 
         /// <summary>
-        /// Gets all available API keys, whether they are enabled or not.
+        /// Gets available API keys, whether they are enabled or not, optionally filtered by name.
         /// </summary>
-        /// <returns>Returns all API keys.</returns>
-        public IEnumerable<ApiKey> GetAllApiKeys()
+        /// <param name="filter">Optional name filter.</param>
+        /// <returns>Returns matching API keys.</returns>
+        public IEnumerable<ApiKey> GetApiKeys(string filter = null)
         {
-            return ApiKeyRepository.GetAllApiKeys();
+            if (filter == null)
+            {
+                return ApiKeyRepository.GetApiKeys();
+            }
+            else
+            {
+                return ApiKeyRepository.SearchApiKeysByName(filter);
+            }
         }
 
         /// <summary>
