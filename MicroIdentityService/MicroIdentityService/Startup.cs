@@ -83,6 +83,14 @@ namespace MicroIdentityService
                 }
             });
 
+            // Check JWT signing key validity
+            if (Configuration.GetValue<string>("Jwt:Secret").Length < 16)
+            {
+                string errorMessage = "The secret for signing JWTs has to be at least 16 characters long.";
+                Logger.LogError(errorMessage);
+                throw new Exception(errorMessage);
+            }
+
             // Configure JWT-based authorization
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -249,6 +257,9 @@ namespace MicroIdentityService
             app.UseRouting();
 
             app.UseCors(LOCAL_DEVELOPMENT_CORS_POLICY);
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
