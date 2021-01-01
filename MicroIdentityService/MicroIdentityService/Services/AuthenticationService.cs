@@ -140,6 +140,7 @@ namespace MicroIdentityService.Services
             }
             catch (Exception exception)
             {
+                Logger.LogError(exception, "Token refresh failed for token: {0}", token);
                 return false;
             }
         }
