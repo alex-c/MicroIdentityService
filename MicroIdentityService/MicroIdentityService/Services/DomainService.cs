@@ -4,7 +4,6 @@ using MicroIdentityService.Services.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace MicroIdentityService.Services
 {

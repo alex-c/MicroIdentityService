@@ -114,6 +114,7 @@ namespace MicroIdentityService
             services.AddSingleton<IdentityService>();
             services.AddSingleton<DomainService>();
             services.AddSingleton<RoleService>();
+            services.AddSingleton<ApiKeyService>();
 
             // Register controllers
             services.AddControllers();
@@ -145,6 +146,7 @@ namespace MicroIdentityService
                 services.AddSingleton<IDomainRepository, InMemoryDomainRepository>();
                 services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
                 services.AddSingleton<IIdentityRoleRepository, InMemoryIdentityRolesRepository>();
+                services.AddSingleton<IApiKeyRepository, InMemoryApiKeyRepository>();
             }
             else
             {
