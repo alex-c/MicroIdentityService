@@ -8,6 +8,11 @@
         /// <summary>
         /// Indicates that entities are to be persisted in memory.
         /// </summary>
-        InMemory
+        InMemory,
+
+        /// <summary>
+        /// Indicates that entities are to be persisted in a PostgreSQL database.
+        /// </summary>
+        Sql
     }
 }

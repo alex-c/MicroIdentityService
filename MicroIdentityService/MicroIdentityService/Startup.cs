@@ -1,6 +1,8 @@
 ﻿using MicroIdentityService.Models;
 using MicroIdentityService.Repositories;
 using MicroIdentityService.Repositories.InMemory;
+using MicroIdentityService.Repositories.Sql;
+using MicroIdentityService.Repositories.Sql.Support;
 using MicroIdentityService.Services;
 using MicroIdentityService.Services.IdentifierValidation;
 using MicroIdentityService.Services.IdentifierValidation.Validators;
@@ -156,10 +158,24 @@ namespace MicroIdentityService
                 services.AddSingleton<IIdentityRoleRepository, InMemoryIdentityRolesRepository>();
                 services.AddSingleton<IApiKeyRepository, InMemoryApiKeyRepository>();
             }
+            else if (persistenceStrategy == PersistenceStrategy.Sql)
+            {
+                // Configure Dapper to convert `column_name` to property `ColumnName` and handle UTC times right
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                Dapper.SqlMapper.AddTypeHandler(new DateTimeHandler());
+
+                services.AddSingleton<IApiKeyRepository, SqlApiKeyRepository>();
+
+                // TODO: replace these with SQL implementations
+                services.AddSingleton<InMemoryIdentityRepository>();
+                services.AddSingleton<IIdentityRepository, InMemoryIdentityRepository>();
+                services.AddSingleton<IDomainRepository, InMemoryDomainRepository>();
+                services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
+                services.AddSingleton<IIdentityRoleRepository, InMemoryIdentityRolesRepository>();
+            }
             else
             {
-                // TODO: implement real DB persistence
-                throw new NotImplementedException("Real database persistence has not been implemented yet.");
+                throw new NotImplementedException($"The persistence strategy `{persistenceStrategy}` has not been implemented.");
             }
         }
 
