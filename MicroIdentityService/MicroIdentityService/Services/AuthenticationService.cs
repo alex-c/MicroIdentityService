@@ -117,11 +117,31 @@ namespace MicroIdentityService.Services
             claims.AddRange(GenerateRoleClaims(identity.Roles));
 
             // Generate token
-            JwtSecurityToken token = new JwtSecurityToken(JwtIssuer, null, claims, expires: DateTime.Now.Add(JwtLifetime), signingCredentials: SigningCredentials);
-            serializedToken = new JwtSecurityTokenHandler().WriteToken(token);
+            serializedToken = GenerateNewToken(claims);
 
             // Done!
             return true;
+        }
+
+        /// <summary>
+        /// Refreshes a JWT token by generating a new token with the same claims and a refreshed expiration timestamp.
+        /// </summary>
+        /// <param name="token">The token to refresh.</param>
+        /// <param name="refreshedToken">The refreshed token.</param>
+        /// <returns>Returns whether the operation was successful.</returns>
+        public bool TryRefresh(string token, out string refreshedToken)
+        {
+            refreshedToken = null;
+            try
+            {
+                JwtSecurityToken deseiralizedToken = new JwtSecurityTokenHandler().ReadJwtToken(token);
+                refreshedToken = GenerateNewToken(deseiralizedToken.Claims);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                return false;
+            }
         }
 
         /// <summary>
@@ -154,6 +174,17 @@ namespace MicroIdentityService.Services
 
             // Done, return role claims
             return claims;
+        }
+
+        /// <summary>
+        /// Generates a new JWT with a given list of claims.
+        /// </summary>
+        /// <param name="claims">The claims to add to the token.</param>
+        /// <returns>Returns the newly created token.</returns>
+        private string GenerateNewToken(IEnumerable<Claim> claims)
+        {
+            JwtSecurityToken token = new JwtSecurityToken(JwtIssuer, null, claims, expires: DateTime.Now.Add(JwtLifetime), signingCredentials: SigningCredentials);
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

@@ -2,8 +2,10 @@
 using MicroIdentityService.Controllers.Contracts.Responses;
 using MicroIdentityService.Services;
 using MicroIdentityService.Services.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using System;
 
 namespace MicroIdentityService.Controllers
@@ -63,6 +65,35 @@ namespace MicroIdentityService.Controllers
             catch (Exception exception)
             {
                 return HandleUnexpectedException(exception);
+            }
+        }
+
+        [HttpGet("refresh")]
+        [Authorize]
+        public IActionResult RefreshToken()
+        {
+            // Retrieve authorization header
+            string authorizationHeader = Request.Headers[HeaderNames.Authorization].ToString();
+            if (String.IsNullOrWhiteSpace(authorizationHeader) || !authorizationHeader.Contains("Bearer "))
+            {
+                return Unauthorized();
+            }
+
+            // Retrieve token from authorization header
+            string token = authorizationHeader.Substring(8, authorizationHeader.Length - 8);
+            if (String.IsNullOrWhiteSpace(token))
+            {
+                return Unauthorized();
+            }
+
+            // Attempt to refresh the token and return
+            if (AuthenticationService.TryRefresh(token, out string refreshedToken))
+            {
+                return Ok(new AuthenticationResponse(refreshedToken));
+            }
+            else
+            {
+                return Unauthorized();
             }
         }
     }
