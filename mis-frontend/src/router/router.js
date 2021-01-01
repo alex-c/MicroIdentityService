@@ -17,6 +17,7 @@ import IdentityRoles from '../views/private/identities/IdentityRoles.vue';
 import Domains from '../views/private/Domains.vue';
 import Roles from '../views/private/Roles.vue';
 import CreateRole from '../views/private/roles/CreateRole.vue';
+import ApiKeys from '../views/private/ApiKeys.vue';
 
 const routes = [
   {
@@ -63,6 +64,10 @@ const routes = [
       {
         path: '/roles/create',
         component: CreateRole,
+      },
+      {
+        path: '/api-keys',
+        component: ApiKeys,
       },
     ],
   },

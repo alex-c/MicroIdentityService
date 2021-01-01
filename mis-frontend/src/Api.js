@@ -174,4 +174,48 @@ export default {
         .then(processResponse);
     },
   },
+  apiKeys: {
+    getApiKeys: (filter, page, elementsPerPage) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/api-keys?filter=${filter}&page=${page}&elementsPerPage=${elementsPerPage}`, {
+        method: 'GET',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
+    createApiKey: name => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/api-keys`, {
+        method: 'POST',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+        body: JSON.stringify({ name }),
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
+    updateApiKeyStatus: (id, enabled) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/api-keys/${id}/status`, {
+        method: 'PUT',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+        body: JSON.stringify({ enabled }),
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
+    deleteApiKey: id => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/api-keys/${id}`, {
+        method: 'DELETE',
+        withCredentials: true,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json', Authorization: getAuthorizationHeader() },
+      })
+        .catch(catchNetworkError)
+        .then(processResponse);
+    },
+  },
 };

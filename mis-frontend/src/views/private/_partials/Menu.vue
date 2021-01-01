@@ -4,6 +4,7 @@
     <MenuItem target="identities" :current="current" />
     <MenuItem target="domains" :current="current" />
     <MenuItem target="roles" :current="current" />
+    <MenuItem target="api-keys" :current="current" />
   </div>
 </template>
 
