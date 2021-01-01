@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Services
 {
@@ -78,15 +79,15 @@ namespace MicroIdentityService.Services
         /// </summary>
         /// <param name="filter">A string to filter identities names with.</param>
         /// <returns>Returns identities.</returns>
-        public IEnumerable<Identity> GetIdentities(string filter)
+        public async Task<IEnumerable<Identity>> GetIdentities(string filter)
         {
             if (filter == null)
             {
-                return IdentityRepository.GetIdentities();
+                return await IdentityRepository.GetIdentities();
             }
             else
             {
-                return IdentityRepository.SearchIdentitiesByIdentifier(filter);
+                return await IdentityRepository.SearchIdentitiesByIdentifier(filter);
             }
         }
 
@@ -96,9 +97,9 @@ namespace MicroIdentityService.Services
         /// <param name="id">The ID of the identity to get.</param>
         /// <returns>Returns the identity.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if the identity could not be found.</exception>
-        public Identity GetIdentity(Guid id)
+        public async Task<Identity> GetIdentity(Guid id)
         {
-            Identity identity = IdentityRepository.GetIdentity(id);
+            Identity identity = await IdentityRepository.GetIdentity(id);
             if (identity == null)
             {
                 throw new EntityNotFoundException("Identity", id);
@@ -112,9 +113,9 @@ namespace MicroIdentityService.Services
         /// <param name="identifier">The identifier of the identity to retrieve.</param>
         /// <returns>Returns the identity, if found.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if the identity could not be found.</exception>
-        public Identity GetIdentity(string identifier)
+        public async Task<Identity> GetIdentity(string identifier)
         {
-            Identity identity = IdentityRepository.GetIdentity(identifier);
+            Identity identity = await IdentityRepository.GetIdentity(identifier);
             if (identity == null)
             {
                 throw new EntityNotFoundException("Identity", identifier);
@@ -129,21 +130,21 @@ namespace MicroIdentityService.Services
         /// <param name="password">The as-of-yet unhashed password of this identity.</param>
         /// <returns></returns>
         /// <exception cref="EntityAlreadyExsistsException">Identity</exception>
-        public Identity CreateIdentity(string identifier, string password)
+        public async Task<Identity> CreateIdentity(string identifier, string password)
         {
             // Validate identifier format and availability
             IdentifierValidationService.Validate(identifier);
-            if (IdentityRepository.GetIdentity(identifier) != null)
+            if ((await IdentityRepository.GetIdentity(identifier)) != null)
             {
                 throw new EntityAlreadyExsistsException("Identity", identifier);
             }
 
             // Validate client-provided password
             PasswordValidationService.Validate(password);
-            
+
             // Hash password and create new identity
             (string hash, byte[] salt) = PasswordHashingService.HashAndSaltPassword(password);
-            return IdentityRepository.CreateIdentity(identifier, hash, salt);
+            return await IdentityRepository.CreateIdentity(identifier, hash, salt);
         }
 
         /// <summary>
@@ -153,20 +154,20 @@ namespace MicroIdentityService.Services
         /// <param name="disabled">Whether the identity is to be disabled</param>
         /// <returns>Returns the updated identity.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if the identity could not be found.</exception>
-        public Identity UpdateIdentity(Guid id, bool disabled)
+        public async Task<Identity> UpdateIdentity(Guid id, bool disabled)
         {
-            Identity identity = GetIdentity(id);
+            Identity identity = await GetIdentity(id);
             identity.Disabled = disabled;
-            return IdentityRepository.UpdateIdentity(identity);
+            return await IdentityRepository.UpdateIdentity(identity);
         }
 
         /// <summary>
         /// Deletes an identity.
         /// </summary>
         /// <param name="id">The ID of the identity to delete.</param>
-        public void DeleteIdentity(Guid id)
+        public async Task DeleteIdentity(Guid id)
         {
-            IdentityRepository.DeleteIdentity(id);
+            await IdentityRepository.DeleteIdentity(id);
         }
 
         /// <summary>
@@ -175,9 +176,9 @@ namespace MicroIdentityService.Services
         /// <param name="id">ID of the identity to get roles for.</param>
         /// <returns>Returns a list of identity roles.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if the identity could not be found.</exception>
-        public IEnumerable<Role> GetIdentityRoles(Guid id)
+        public async Task<IEnumerable<Role>> GetIdentityRoles(Guid id)
         {
-            Identity identity = GetIdentity(id);
+            Identity identity = await GetIdentity(id);
             return identity.Roles;
         }
 
@@ -187,16 +188,16 @@ namespace MicroIdentityService.Services
         /// <param name="id">ID of the identity for which to update roles.</param>
         /// <param name="roleIds">The IDs of the roles to set.</param>
         /// <exception cref="EntityNotFoundException">Thrown if the identity or any of the roles could not be found.</exception>
-        public void UpdateIdentityRoles(Guid id, IEnumerable<Guid> roleIds)
+        public async Task UpdateIdentityRoles(Guid id, IEnumerable<Guid> roleIds)
         {
-            Identity identity = GetIdentity(id);
-            IEnumerable<Role> roles = RoleService.GetRoles(roleIds);
+            Identity identity = await GetIdentity(id);
+            IEnumerable<Role> roles = await RoleService.GetRoles(roleIds);
             if (roles.Count() != roleIds.Count())
             {
                 Guid firstMissingId = roles.First(r => !roleIds.Contains(r.Id)).Id;
                 throw new EntityNotFoundException("Role", firstMissingId);
             }
-            IdentityRoleRepository.SetIdentityRoles(identity, roles);
+            await IdentityRoleRepository.SetIdentityRoles(identity, roles);
         }
     }
 }

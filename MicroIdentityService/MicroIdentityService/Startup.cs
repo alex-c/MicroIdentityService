@@ -261,7 +261,7 @@ namespace MicroIdentityService
                     string identifier = Configuration.GetValue<string>("Administrator:Identifier");
                     string password = Configuration.GetValue<string>("Administrator:Password");
                     IdentityService identityService = app.ApplicationServices.GetService<IdentityService>();
-                    Identity identity = identityService.CreateIdentity(identifier, password);
+                    Identity identity = await identityService.CreateIdentity(identifier, password);
                     identity.Roles = new List<Role>() { misEntities.adminRole };
                 }
             }
@@ -303,11 +303,11 @@ namespace MicroIdentityService
 
             // Get roles of MIS domain
             RoleService roleService = app.ApplicationServices.GetService<RoleService>();
-            IEnumerable<Role> roles = roleService.GetRoles("", misDomain.Id);
+            IEnumerable<Role> roles = await roleService.GetRoles("", misDomain.Id);
             Role misAdminRole = roles.Where(r => r.Name == MIS_ADMINISTRATOR_ROLE_NAME).FirstOrDefault();
             if (misAdminRole == null)
             {
-                misAdminRole = roleService.CreateRole(MIS_ADMINISTRATOR_ROLE_NAME, misDomain.Id);
+                misAdminRole = await roleService.CreateRole(MIS_ADMINISTRATOR_ROLE_NAME, misDomain.Id);
             }
 
             // Return MIS domain and admin role

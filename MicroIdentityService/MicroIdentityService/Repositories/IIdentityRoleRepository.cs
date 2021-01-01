@@ -1,6 +1,6 @@
 ﻿using MicroIdentityService.Models;
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Repositories
 {
@@ -14,6 +14,6 @@ namespace MicroIdentityService.Repositories
         /// </summary>
         /// <param name="identity">Identity for which to set roles.</param>
         /// <param name="roles">Roles to set.</param>
-        void SetIdentityRoles(Identity identity, IEnumerable<Role> roles);
+        Task SetIdentityRoles(Identity identity, IEnumerable<Role> roles);
     }
 }

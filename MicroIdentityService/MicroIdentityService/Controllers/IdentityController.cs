@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Controllers
 {
@@ -23,7 +24,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetIdentities([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
+        public async Task<IActionResult> GetIdentities([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
         {
             if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
             {
@@ -32,7 +33,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                IEnumerable<Identity> identities = IdentityService.GetIdentities(filter);
+                IEnumerable<Identity> identities = await IdentityService.GetIdentities(filter);
                 IEnumerable<Identity> paginatedIdentities = Paginate(identities, page, elementsPerPage, paginationDisabled);
                 return Ok(new PaginatedResponse<IdentityResponse>(paginatedIdentities.Select(i => new IdentityResponse(i)), identities.Count()));
             }
@@ -43,11 +44,11 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetIdentity(Guid id)
+        public async Task<IActionResult> GetIdentity(Guid id)
         {
             try
             {
-                Identity identity = IdentityService.GetIdentity(id);
+                Identity identity = await IdentityService.GetIdentity(id);
                 return Ok(new IdentityResponse(identity));
             }
             catch (EntityNotFoundException exception)
@@ -61,7 +62,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateIdentity([FromBody] IdentityCreationRequest identityCreationRequest)
+        public async Task<IActionResult> CreateIdentity([FromBody] IdentityCreationRequest identityCreationRequest)
         {
             if (identityCreationRequest == null ||
                 string.IsNullOrWhiteSpace(identityCreationRequest.Identifier) ||
@@ -72,7 +73,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                Identity identity = IdentityService.CreateIdentity(identityCreationRequest.Identifier, identityCreationRequest.Password);
+                Identity identity = await IdentityService.CreateIdentity(identityCreationRequest.Identifier, identityCreationRequest.Password);
                 return Created(GetNewResourceUri(identity.Id), new IdentityResponse(identity));
             }
             catch (ValidationException exception)
@@ -90,11 +91,11 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateIdentity(Guid id, [FromBody] IdentityUpdateRequest identityUpdateRequest)
+        public async Task<IActionResult> UpdateIdentity(Guid id, [FromBody] IdentityUpdateRequest identityUpdateRequest)
         {
             try
             {
-                IdentityService.UpdateIdentity(id, identityUpdateRequest.Disabled);
+                await IdentityService.UpdateIdentity(id, identityUpdateRequest.Disabled);
                 return NoContent();
             }
             catch (EntityNotFoundException exception)
@@ -108,25 +109,25 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteIdentity(Guid id)
+        public async Task<IActionResult> DeleteIdentity(Guid id)
         {
-            IdentityService.DeleteIdentity(id);
+            await IdentityService.DeleteIdentity(id);
             return NoContent();
         }
 
         [HttpGet("{id}/roles")]
-        public IActionResult GetIdentityRoles(Guid id)
+        public async Task<IActionResult> GetIdentityRoles(Guid id)
         {
-            IEnumerable<Role> identityRoles = IdentityService.GetIdentityRoles(id);
+            IEnumerable<Role> identityRoles = await IdentityService.GetIdentityRoles(id);
             return Ok(identityRoles.Select(r => new RoleResponse(r)));
         }
 
         [HttpPut("{id}/roles")]
-        public IActionResult UpdateIdentityRoles(Guid id, [FromBody] IdentityRolesUpdateRequest identityRolesUpdateRequest)
+        public async Task<IActionResult> UpdateIdentityRoles(Guid id, [FromBody] IdentityRolesUpdateRequest identityRolesUpdateRequest)
         {
             try
             {
-                IdentityService.UpdateIdentityRoles(id, identityRolesUpdateRequest.RoleIds);
+                await IdentityService.UpdateIdentityRoles(id, identityRolesUpdateRequest.RoleIds);
                 return NoContent();
             }
             catch (EntityNotFoundException exception)

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Controllers
 {
@@ -23,7 +24,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetRoles([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10, [FromQuery] Guid? domainId = null)
+        public async Task<IActionResult> GetRoles([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10, [FromQuery] Guid? domainId = null)
         {
             if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
             {
@@ -32,7 +33,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                IEnumerable<Role> roles = RoleService.GetRoles(filter, domainId);
+                IEnumerable<Role> roles = await RoleService.GetRoles(filter, domainId);
                 IEnumerable<Role> paginatedIdentities = Paginate(roles, page, elementsPerPage, paginationDisabled);
                 return Ok(new PaginatedResponse<RoleResponse>(paginatedIdentities.Select(i => new RoleResponse(i)), roles.Count()));
             }
@@ -48,11 +49,11 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetRole(Guid id)
+        public async Task<IActionResult> GetRole(Guid id)
         {
             try
             {
-                Role role = RoleService.GetRole(id);
+                Role role = await RoleService.GetRole(id);
                 return Ok(new RoleResponse(role));
             }
             catch (EntityNotFoundException exception)
@@ -66,7 +67,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateRole([FromBody] RoleCreationRequest roleCreationRequest)
+        public async Task<IActionResult> CreateRole([FromBody] RoleCreationRequest roleCreationRequest)
         {
             if (roleCreationRequest == null || string.IsNullOrWhiteSpace(roleCreationRequest.Name))
             {
@@ -75,7 +76,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                Role role = RoleService.CreateRole(roleCreationRequest.Name, roleCreationRequest.DomainId);
+                Role role = await RoleService.CreateRole(roleCreationRequest.Name, roleCreationRequest.DomainId);
                 return Created(GetNewResourceUri(role.Id), new RoleResponse(role));
             }
             catch (EntityAlreadyExsistsException exception)
@@ -89,7 +90,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult UpdateRole(Guid id, [FromBody] RoleUpdateRequest roleUpdateRequest)
+        public async Task<IActionResult> UpdateRole(Guid id, [FromBody] RoleUpdateRequest roleUpdateRequest)
         {
             if (roleUpdateRequest == null || string.IsNullOrWhiteSpace(roleUpdateRequest.Name))
             {
@@ -98,7 +99,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                Role role = RoleService.UpdateRole(id, roleUpdateRequest.Name);
+                Role role = await RoleService.UpdateRole(id, roleUpdateRequest.Name);
                 return Ok(new RoleResponse(role));
             }
             catch (EntityNotFoundException exception)
@@ -112,9 +113,9 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteIdentity(Guid id)
+        public async Task<IActionResult> DeleteIdentity(Guid id)
         {
-            RoleService.DeleteRole(id);
+            await RoleService.DeleteRole(id);
             return NoContent();
         }
     }

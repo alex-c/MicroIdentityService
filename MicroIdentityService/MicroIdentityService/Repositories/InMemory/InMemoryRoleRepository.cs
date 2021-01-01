@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Repositories.InMemory
 {
@@ -17,32 +18,32 @@ namespace MicroIdentityService.Repositories.InMemory
             Roles = new Dictionary<Guid, Role>();
         }
 
-        public IEnumerable<Role> GetRoles()
+        public async Task<IEnumerable<Role>> GetRoles()
         {
             return Roles.Values;
         }
 
-        public IEnumerable<Role> GetRoles(IEnumerable<Guid> ids)
+        public async Task<IEnumerable<Role>> GetRoles(IEnumerable<Guid> ids)
         {
             return Roles.Values.Where(r => ids.Contains(r.Id));
         }
 
-        public IEnumerable<Role> SearchRolesByName(string filter)
+        public async Task<IEnumerable<Role>> SearchRolesByName(string filter)
         {
-            return GetRoles().Where(r => r.Name.ToLowerInvariant().Contains(filter.ToLowerInvariant()));
+            return (await GetRoles()).Where(r => r.Name.ToLowerInvariant().Contains(filter.ToLowerInvariant()));
         }
 
-        public IEnumerable<Role> GetDomainRoles(Guid domainId)
+        public async Task<IEnumerable<Role>> GetDomainRoles(Guid domainId)
         {
-            return GetRoles().Where(r => r.DomainId == domainId);
+            return (await GetRoles()).Where(r => r.DomainId == domainId);
         }
 
-        public IEnumerable<Role> SearchDomainRolesByName(Guid domainId, string filter)
+        public async Task<IEnumerable<Role>> SearchDomainRolesByName(Guid domainId, string filter)
         {
-            return GetDomainRoles(domainId).Where(r => r.Name.ToLowerInvariant().Contains(filter.ToLowerInvariant()));
+            return (await GetDomainRoles(domainId)).Where(r => r.Name.ToLowerInvariant().Contains(filter.ToLowerInvariant()));
         }
 
-        public Role GetRole(Guid id)
+        public async Task<Role> GetRole(Guid id)
         {
             if (Roles.TryGetValue(id, out Role role))
             {
@@ -51,12 +52,12 @@ namespace MicroIdentityService.Repositories.InMemory
             return null;
         }
 
-        public Role GetRole(string name, Guid? domainId)
+        public async Task<Role> GetRole(string name, Guid? domainId)
         {
             return Roles.Values.FirstOrDefault(r => r.Name == name && r.DomainId == domainId);
         }
 
-        public Role CreateRole(string name, Guid? domainId)
+        public async Task<Role> CreateRole(string name, Guid? domainId)
         {
             Role role = new Role()
             {
@@ -68,13 +69,13 @@ namespace MicroIdentityService.Repositories.InMemory
             return role;
         }
 
-        public Role UpdateRole(Role role)
+        public async Task<Role> UpdateRole(Role role)
         {
             // NoOp: in-memory identity already updated
             return role;
         }
 
-        public void DeleteRole(Guid id)
+        public async Task DeleteRole(Guid id)
         {
             Roles.Remove(id);
         }

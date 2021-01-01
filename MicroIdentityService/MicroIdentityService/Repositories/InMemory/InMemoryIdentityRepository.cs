@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Repositories.InMemory
 {
@@ -19,17 +20,17 @@ namespace MicroIdentityService.Repositories.InMemory
             IdentitiesIdentifierMap = new Dictionary<string, Identity>();
         }
 
-        public IEnumerable<Identity> GetIdentities()
+        public async Task<IEnumerable<Identity>> GetIdentities()
         {
             return IdentitiesIdMap.Values;
         }
 
-        public IEnumerable<Identity> SearchIdentitiesByIdentifier(string filter)
+        public async Task<IEnumerable<Identity>> SearchIdentitiesByIdentifier(string filter)
         {
             return IdentitiesIdentifierMap.Where(kvp => kvp.Key.ToLowerInvariant().Contains(filter.ToLowerInvariant())).Select(kvp => kvp.Value);
         }
 
-        public Identity GetIdentity(Guid id)
+        public async Task<Identity> GetIdentity(Guid id)
         {
             if (IdentitiesIdMap.TryGetValue(id, out Identity identity))
             {
@@ -38,7 +39,7 @@ namespace MicroIdentityService.Repositories.InMemory
             return null;
         }
 
-        public Identity GetIdentity(string identifier)
+        public async Task<Identity> GetIdentity(string identifier)
         {
             if (IdentitiesIdentifierMap.TryGetValue(identifier, out Identity identity))
             {
@@ -47,7 +48,7 @@ namespace MicroIdentityService.Repositories.InMemory
             return null;
         }
 
-        public Identity CreateIdentity(string identifier, string hashedPassword, byte[] salt)
+        public async Task<Identity> CreateIdentity(string identifier, string hashedPassword, byte[] salt)
         {
             Identity identity = new Identity()
             {
@@ -63,13 +64,13 @@ namespace MicroIdentityService.Repositories.InMemory
             return identity;
         }
 
-        public Identity UpdateIdentity(Identity identity)
+        public async Task<Identity> UpdateIdentity(Identity identity)
         {
             // NoOp: in-memory identity already updated
             return identity;
         }
 
-        public void DeleteIdentity(Guid id)
+        public async Task DeleteIdentity(Guid id)
         {
             if (IdentitiesIdMap.TryGetValue(id, out Identity identity))
             {

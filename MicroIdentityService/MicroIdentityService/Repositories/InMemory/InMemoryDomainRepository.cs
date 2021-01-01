@@ -37,7 +37,7 @@ namespace MicroIdentityService.Repositories.InMemory
         {
             if (DomainIdMap.TryGetValue(id, out Domain domain))
             {
-                return SetDomainRoles(domain);
+                return await SetDomainRoles(domain);
             }
             return null;
         }
@@ -46,7 +46,7 @@ namespace MicroIdentityService.Repositories.InMemory
         {
             if (DomainNameMap.TryGetValue(name, out Domain domain))
             {
-                return SetDomainRoles(domain);
+                return await SetDomainRoles(domain);
             }
             return null;
         }
@@ -79,9 +79,9 @@ namespace MicroIdentityService.Repositories.InMemory
             }
         }
 
-        private Domain SetDomainRoles(Domain domain)
+        private async Task<Domain> SetDomainRoles(Domain domain)
         {
-            domain.Roles = RoleRepository.GetDomainRoles(domain.Id).ToHashSet();
+            domain.Roles = (await RoleRepository.GetDomainRoles(domain.Id)).ToHashSet();
             return domain;
         }
 

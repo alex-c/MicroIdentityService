@@ -90,7 +90,7 @@ namespace MicroIdentityService.Services
         public async Task<string> Authenticate(string identifier, string password)
         {
             // Get identities, throws if not found
-            Identity identity = IdentityService.GetIdentity(identifier);
+            Identity identity = await IdentityService.GetIdentity(identifier);
 
             // Reject authentication attempt if identity is disabled
             if (identity.Disabled)

@@ -4,6 +4,7 @@ using MicroIdentityService.Services.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Services
 {
@@ -46,25 +47,25 @@ namespace MicroIdentityService.Services
         /// <param name="domainId">ID of the domain to get identity roles for.</param>
         /// <returns>Returns a list of roles.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if a domain ID was provided but no matching domain could be found.</exception>
-        public IEnumerable<Role> GetRoles(string filter = null, Guid? domainId = null)
+        public async Task<IEnumerable<Role>> GetRoles(string filter = null, Guid? domainId = null)
         {
             if (filter == null && domainId == null)
             {
-                return RoleRepository.GetRoles();
+                return await RoleRepository.GetRoles();
             }
             else if (filter == null && domainId != null)
             {
-                DomainService.GetDomain(domainId.Value); // Throws an EntityNotFoundException if domain doesn't exist
-                return RoleRepository.GetDomainRoles(domainId.Value);
+                await DomainService.GetDomain(domainId.Value); // Throws an EntityNotFoundException if domain doesn't exist
+                return await RoleRepository.GetDomainRoles(domainId.Value);
             }
             else if (filter != null && domainId == null)
             {
-                return RoleRepository.SearchRolesByName(filter);
+                return await RoleRepository.SearchRolesByName(filter);
             }
             else
             {
-                DomainService.GetDomain(domainId.Value); // Throws an EntityNotFoundException if domain doesn't exist
-                return RoleRepository.SearchDomainRolesByName(domainId.Value, filter);
+                await DomainService.GetDomain(domainId.Value); // Throws an EntityNotFoundException if domain doesn't exist
+                return await RoleRepository.SearchDomainRolesByName(domainId.Value, filter);
             }
         }
 
@@ -73,9 +74,9 @@ namespace MicroIdentityService.Services
         /// </summary>
         /// <param name="ids">IDs of the roles to get.</param>
         /// <returns>Returns the roles, which were found.</returns>
-        public IEnumerable<Role> GetRoles(IEnumerable<Guid> ids)
+        public async Task<IEnumerable<Role>> GetRoles(IEnumerable<Guid> ids)
         {
-            return RoleRepository.GetRoles(ids);
+            return await RoleRepository.GetRoles(ids);
         }
 
         /// <summary>
@@ -84,9 +85,9 @@ namespace MicroIdentityService.Services
         /// <param name="id">ID of the role to get.</param>
         /// <returns>Returns the role.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if the role could not be found.</exception>
-        public Role GetRole(Guid id)
+        public async Task<Role> GetRole(Guid id)
         {
-            Role role = RoleRepository.GetRole(id);
+            Role role = await RoleRepository.GetRole(id);
             if (role == null)
             {
                 throw new EntityNotFoundException("Role", id);
@@ -101,14 +102,14 @@ namespace MicroIdentityService.Services
         /// <param name="domainId">Optiona ID of the domain to create the role for.</param>
         /// <returns>Returns the newly created role.</returns>
         /// <exception cref="EntityAlreadyExsistsException">Thrown if the role name is already taken.</exception>
-        public Role CreateRole(string name, Guid? domainId)
+        public async Task<Role> CreateRole(string name, Guid? domainId)
         {
-            Role role = RoleRepository.GetRole(name, domainId);
+            Role role = await RoleRepository.GetRole(name, domainId);
             if (role != null)
             {
                 throw new EntityAlreadyExsistsException("Role", name);
             }
-            return RoleRepository.CreateRole(name, domainId);
+            return await RoleRepository.CreateRole(name, domainId);
         }
 
         /// <summary>
@@ -118,20 +119,20 @@ namespace MicroIdentityService.Services
         /// <param name="name">The new role name to set.</param>
         /// <returns>Returns the updated role.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if the role could not be found.</exception>
-        public Role UpdateRole(Guid id, string name)
+        public async Task<Role> UpdateRole(Guid id, string name)
         {
-            Role role = GetRole(id);
+            Role role = await GetRole(id);
             role.Name = name;
-            return RoleRepository.UpdateRole(role);
+            return await RoleRepository.UpdateRole(role);
         }
 
         /// <summary>
         /// Deletes a role. A deletion attempt of a non-existing role is considered successful.
         /// </summary>
         /// <param name="id">ID of the role to delete.</param>
-        public void DeleteRole(Guid id)
+        public async Task DeleteRole(Guid id)
         {
-            RoleRepository.DeleteRole(id);
+            await RoleRepository.DeleteRole(id);
         }
     }
 }
