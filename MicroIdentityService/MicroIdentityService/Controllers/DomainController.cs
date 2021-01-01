@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Controllers
 {
@@ -23,7 +24,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetDomains([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
+        public async Task<IActionResult> GetDomains([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
         {
             if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
             {
@@ -32,7 +33,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                IEnumerable<Domain> domains = DomainService.GetDomains(filter);
+                IEnumerable<Domain> domains = await DomainService.GetDomains(filter);
                 IEnumerable<Domain> paginatedIdentities = Paginate(domains, page, elementsPerPage, paginationDisabled);
                 return Ok(new PaginatedResponse<DomainResponse>(paginatedIdentities.Select(i => new DomainResponse(i)), domains.Count()));
             }
@@ -43,11 +44,11 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetDomain(Guid id)
+        public async Task<IActionResult> GetDomain(Guid id)
         {
             try
             {
-                Domain domain = DomainService.GetDomain(id);
+                Domain domain = await DomainService.GetDomain(id);
                 return Ok(new DomainResponse(domain));
             }
             catch (EntityNotFoundException exception)
@@ -61,7 +62,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateDomain([FromBody] DomainCreationOrUpdateRequest domainCreationRequest)
+        public async Task<IActionResult> CreateDomain([FromBody] DomainCreationOrUpdateRequest domainCreationRequest)
         {
             if (domainCreationRequest == null || string.IsNullOrWhiteSpace(domainCreationRequest.Name))
             {
@@ -70,7 +71,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                Domain domain = DomainService.CreateDomain(domainCreationRequest.Name);
+                Domain domain = await DomainService.CreateDomain(domainCreationRequest.Name);
                 return Created(GetNewResourceUri(domain.Id), new DomainResponse(domain));
             }
             catch (EntityAlreadyExsistsException exception)
@@ -84,7 +85,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpPatch("{id}")]
-        public IActionResult UpdateDomain(Guid id, [FromBody] DomainCreationOrUpdateRequest domainUpdateRequest)
+        public async Task<IActionResult> UpdateDomain(Guid id, [FromBody] DomainCreationOrUpdateRequest domainUpdateRequest)
         {
             if (domainUpdateRequest == null || string.IsNullOrWhiteSpace(domainUpdateRequest.Name))
             {
@@ -93,7 +94,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                Domain domain = DomainService.UpdateDomain(id, domainUpdateRequest.Name);
+                Domain domain = await DomainService.UpdateDomain(id, domainUpdateRequest.Name);
                 return Ok(new DomainResponse(domain));
             }
             catch (EntityNotFoundException exception)
@@ -107,9 +108,9 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteIdentity(Guid id)
+        public async Task<IActionResult> DeleteIdentity(Guid id)
         {
-            DomainService.DeleteDomain(id);
+            await DomainService.DeleteDomain(id);
             return NoContent();
         }
     }

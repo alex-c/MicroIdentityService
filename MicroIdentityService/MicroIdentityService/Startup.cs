@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService
 {
@@ -247,10 +248,10 @@ namespace MicroIdentityService
         /// Configures the app.
         /// </summary>
         /// <param name="app">Application builder to configure the app through.</param>
-        public void Configure(IApplicationBuilder app)
+        public async void Configure(IApplicationBuilder app)
         {
             // Make sure that the MIS domain and admin role are present
-            (Domain domain, Role adminRole) misEntities = ConfigureMisDomainAndAdminRole(app);
+            (Domain domain, Role adminRole) misEntities = await ConfigureMisDomainAndAdminRole(app);
 
             // If configured, ensure existense of an MIS admin
             try
@@ -287,17 +288,17 @@ namespace MicroIdentityService
         /// </summary>
         /// <param name="app">Grants access to app services.</param>
         /// <returns>Returns the MIS domain and admin role entities.</returns>
-        private (Domain, Role) ConfigureMisDomainAndAdminRole(IApplicationBuilder app)
+        private async Task<(Domain, Role)> ConfigureMisDomainAndAdminRole(IApplicationBuilder app)
         {
             // Get domains
             DomainService domainService = app.ApplicationServices.GetService<DomainService>();
-            IEnumerable<Domain> domains = domainService.GetDomains();
+            IEnumerable<Domain> domains = await domainService.GetDomains();
 
             // Configure MIS domain if needed
             Domain misDomain = domains.Where(d => d.Name == MIS_DOMAIN_NAME).FirstOrDefault();
             if (misDomain == null)
             {
-                misDomain = domainService.CreateDomain(MIS_DOMAIN_NAME);
+                misDomain = await domainService.CreateDomain(MIS_DOMAIN_NAME);
             }
 
             // Get roles of MIS domain

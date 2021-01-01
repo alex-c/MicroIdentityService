@@ -4,6 +4,7 @@ using MicroIdentityService.Services.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Services
 {
@@ -38,15 +39,15 @@ namespace MicroIdentityService.Services
         /// </summary>
         /// <param name="filter">A string to filter domain names with.</param>
         /// <returns>Returns domains.</returns>
-        public IEnumerable<Domain> GetDomains(string filter = null)
+        public async Task<IEnumerable<Domain>> GetDomains(string filter = null)
         {
             if (filter == null)
             {
-                return DomainRepository.GetDomains();
+                return await DomainRepository.GetDomains();
             }
             else
             {
-                return DomainRepository.SearchDomainsByName(filter);
+                return await DomainRepository.SearchDomainsByName(filter);
             }
         }
 
@@ -56,9 +57,9 @@ namespace MicroIdentityService.Services
         /// <param name="id">ID of the domain to get.</param>
         /// <returns>Returns the domain.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if no matching domain could be found.</exception>
-        public Domain GetDomain(Guid id)
+        public async Task<Domain> GetDomain(Guid id)
         {
-            Domain domain = DomainRepository.GetDomain(id);
+            Domain domain = await DomainRepository.GetDomain(id);
             if (domain == null)
             {
                 throw new EntityNotFoundException("Domain", id);
@@ -72,13 +73,13 @@ namespace MicroIdentityService.Services
         /// <param name="name">The name of the domain to create.</param>
         /// <returns>Returns the newly created domain.</returns>
         /// <exception cref="EntityAlreadyExsistsException">Thrown if the domain name is already taken.</exception>
-        public Domain CreateDomain(string name)
+        public async Task<Domain> CreateDomain(string name)
         {
-            if (DomainRepository.GetDomain(name) != null)
+            if (await DomainRepository.GetDomain(name) != null)
             {
                 throw new EntityAlreadyExsistsException("Domain", name);
             }
-            return DomainRepository.CreateDomain(name);
+            return await DomainRepository.CreateDomain(name);
         }
 
         /// <summary>
@@ -88,20 +89,20 @@ namespace MicroIdentityService.Services
         /// <param name="name">The new domain name to set.</param>
         /// <returns>Returns the updated domain.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if no matching domain could be found.</exception>
-        public Domain UpdateDomain(Guid id, string name)
+        public async Task<Domain> UpdateDomain(Guid id, string name)
         {
-            Domain domain = GetDomain(id);
+            Domain domain = await GetDomain(id);
             domain.Name = name;
-            return DomainRepository.UpdateDomain(domain);
+            return await DomainRepository.UpdateDomain(domain);
         }
 
         /// <summary>
         /// Deletes an identitiy. An attempt to delete a domain which doesn't exist is considered successful.
         /// </summary>
         /// <param name="id">ID of the domain to delete.</param>
-        public void DeleteDomain(Guid id)
+        public async Task DeleteDomain(Guid id)
         {
-            DomainRepository.DeleteDomain(id);
+            await DomainRepository.DeleteDomain(id);
         }
     }
 }

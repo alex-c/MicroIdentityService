@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Services
 {
@@ -86,23 +87,21 @@ namespace MicroIdentityService.Services
         /// <param name="serializedToken">The serialized token.</param>
         /// <returns>Returns whether authentication was successful.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if no matching identity or any of the role domains could be found.</exception>
-        public bool TryAuthenticate(string identifier, string password, out string serializedToken)
+        public async Task<string> Authenticate(string identifier, string password)
         {
-            serializedToken = null;
-
             // Get identities, throws if not found
             Identity identity = IdentityService.GetIdentity(identifier);
 
             // Reject authentication attempt if identity is disabled
             if (identity.Disabled)
             {
-                return false;
+                return null;
             }
 
             // Reject authentication attempt if bad password provided
             if (identity.HashedPassword != PasswordHashingService.HashAndSaltPassword(password, identity.Salt))
             {
-                return false;
+                return null;
             }
 
             // Set identity base claims
@@ -114,13 +113,10 @@ namespace MicroIdentityService.Services
             };
 
             // Add identity roles to claims
-            claims.AddRange(GenerateRoleClaims(identity.Roles));
+            claims.AddRange(await GenerateRoleClaims(identity.Roles));
 
-            // Generate token
-            serializedToken = GenerateNewToken(claims);
-
-            // Done!
-            return true;
+            // Generate and return token
+            return GenerateNewToken(claims);
         }
 
         /// <summary>
@@ -151,7 +147,7 @@ namespace MicroIdentityService.Services
         /// <param name="roles">Roles to generate claims for.</param>
         /// <returns>Returns the newly generated claims.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if any of the referenced domains could be found.</exception>
-        private IEnumerable<Claim> GenerateRoleClaims(IEnumerable<Role> roles)
+        private async Task<IEnumerable<Claim>> GenerateRoleClaims(IEnumerable<Role> roles)
         {
             Dictionary<Guid, Domain> domains = new Dictionary<Guid, Domain>();
             List<Claim> claims = new List<Claim>();
@@ -165,7 +161,7 @@ namespace MicroIdentityService.Services
                     Guid domainId = role.DomainId.Value;
                     if (!domains.ContainsKey(domainId))
                     {
-                        domains.Add(domainId, DomainService.GetDomain(domainId));
+                        domains.Add(domainId, await DomainService.GetDomain(domainId));
                     }
                     roleName += domains[domainId].Name + ".";
                 }

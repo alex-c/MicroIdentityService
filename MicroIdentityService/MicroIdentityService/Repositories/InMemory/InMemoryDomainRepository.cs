@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Repositories.InMemory
 {
@@ -22,17 +23,17 @@ namespace MicroIdentityService.Repositories.InMemory
             RoleRepository = roleRepository;
         }
 
-        public IEnumerable<Domain> GetDomains()
+        public async Task<IEnumerable<Domain>> GetDomains()
         {
             return SetDomainRoles(DomainIdMap.Values);
         }
 
-        public IEnumerable<Domain> SearchDomainsByName(string filter)
+        public async Task<IEnumerable<Domain>> SearchDomainsByName(string filter)
         {
             return SetDomainRoles(DomainNameMap.Where(kvp => kvp.Key.ToLowerInvariant().Contains(filter.ToLowerInvariant())).Select(kvp => kvp.Value));
         }
 
-        public Domain GetDomain(Guid id)
+        public async Task<Domain> GetDomain(Guid id)
         {
             if (DomainIdMap.TryGetValue(id, out Domain domain))
             {
@@ -41,7 +42,7 @@ namespace MicroIdentityService.Repositories.InMemory
             return null;
         }
 
-        public Domain GetDomain(string name)
+        public async Task<Domain> GetDomain(string name)
         {
             if (DomainNameMap.TryGetValue(name, out Domain domain))
             {
@@ -50,7 +51,7 @@ namespace MicroIdentityService.Repositories.InMemory
             return null;
         }
 
-        public Domain CreateDomain(string name)
+        public async Task<Domain> CreateDomain(string name)
         {
             Domain domain = new Domain()
             {
@@ -63,13 +64,13 @@ namespace MicroIdentityService.Repositories.InMemory
             return domain;
         }
 
-        public Domain UpdateDomain(Domain domain)
+        public async Task<Domain> UpdateDomain(Domain domain)
         {
             // NoOp: in-memory identity already updated
             return domain;
         }
 
-        public void DeleteDomain(Guid id)
+        public async Task DeleteDomain(Guid id)
         {
             if (DomainIdMap.TryGetValue(id, out Domain domain))
             {

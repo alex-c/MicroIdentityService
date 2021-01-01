@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using System;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Controllers
 {
@@ -38,7 +39,7 @@ namespace MicroIdentityService.Controllers
         /// <param name="authenticationRequest">Authentication request data.</param>
         /// <returns>Returns a JWT on success.</returns>
         [HttpPost]
-        public IActionResult AuthenticateUser([FromBody] AuthenticationRequest authenticationRequest)
+        public async Task<IActionResult> AuthenticateUser([FromBody] AuthenticationRequest authenticationRequest)
         {
             if (authenticationRequest == null || 
                 string.IsNullOrEmpty(authenticationRequest.Identifier) || 
@@ -49,7 +50,8 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                if (AuthenticationService.TryAuthenticate(authenticationRequest.Identifier, authenticationRequest.Password, out string token))
+                string token = await AuthenticationService.Authenticate(authenticationRequest.Identifier, authenticationRequest.Password);
+                if (token != null)
                 {
                     return Ok(new AuthenticationResponse(token));
                 }
