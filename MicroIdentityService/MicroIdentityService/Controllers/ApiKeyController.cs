@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Controllers
 {
@@ -23,7 +24,7 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetApiKeys([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
+        public async Task<IActionResult> GetApiKeys([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
         {
             if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
             {
@@ -32,7 +33,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                IEnumerable<ApiKey> keys = ApiKeyService.GetApiKeys(filter);
+                IEnumerable<ApiKey> keys = await ApiKeyService.GetApiKeys(filter);
                 IEnumerable<ApiKey> paginatedKeys = Paginate(keys, page, elementsPerPage, paginationDisabled);
                 return Ok(new PaginatedResponse<ApiKeyResponse>(paginatedKeys.Select(k => new ApiKeyResponse(k)), keys.Count()));
             }
@@ -43,19 +44,19 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateApiKey([FromBody] ApiKeyCreationRequest apiKeyCreationRequest)
+        public async Task<IActionResult> CreateApiKey([FromBody] ApiKeyCreationRequest apiKeyCreationRequest)
         {
             if (apiKeyCreationRequest == null || string.IsNullOrWhiteSpace(apiKeyCreationRequest.Name))
             {
                 return HandleBadRequest("A valid key name has to be supplied.");
             }
 
-            ApiKey key = ApiKeyService.CreateApiKey(apiKeyCreationRequest.Name);
+            ApiKey key = await ApiKeyService.CreateApiKey(apiKeyCreationRequest.Name);
             return Created(GetNewResourceUri(key.Id), new ApiKeyResponse(key));
         }
 
         [HttpPut("{id}/status")]
-        public IActionResult UpdateApiKeyStatus(Guid id, [FromBody] ApiKeyStatusUpdateRequest apiKeyStatusUpdateRequest)
+        public async Task<IActionResult> UpdateApiKeyStatus(Guid id, [FromBody] ApiKeyStatusUpdateRequest apiKeyStatusUpdateRequest)
         {
             if (apiKeyStatusUpdateRequest == null)
             {
@@ -64,7 +65,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                ApiKeyService.UpdateApiKeyStatus(id, apiKeyStatusUpdateRequest.Enabled);
+                await ApiKeyService.UpdateApiKeyStatus(id, apiKeyStatusUpdateRequest.Enabled);
                 return NoContent();
             }
             catch (EntityNotFoundException exception)
@@ -78,9 +79,9 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteApiKey(Guid id)
+        public async Task<IActionResult> DeleteApiKey(Guid id)
         {
-            ApiKeyService.DeleteApiKey(id);
+            await ApiKeyService.DeleteApiKey(id);
             return NoContent();
         }
     }

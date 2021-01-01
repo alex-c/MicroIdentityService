@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Repositories.InMemory
 {
@@ -17,22 +18,22 @@ namespace MicroIdentityService.Repositories.InMemory
             ApiKeys = new Dictionary<Guid, ApiKey>();
         }
 
-        public IEnumerable<ApiKey> GetApiKeys()
+        public async Task<IEnumerable<ApiKey>> GetApiKeys()
         {
             return ApiKeys.Values;
         }
 
-        public IEnumerable<ApiKey> SearchApiKeysByName(string filter)
+        public async Task<IEnumerable<ApiKey>> SearchApiKeysByName(string filter)
         {
             return ApiKeys.Values.Where(a => a.Name.ToLowerInvariant().Contains(filter.ToLowerInvariant()));
         }
 
-        public ApiKey GetApiKey(Guid id)
+        public async Task<ApiKey> GetApiKey(Guid id)
         {
             return ApiKeys.GetValueOrDefault(id);
         }
 
-        public ApiKey CreateApiKey(string name)
+        public async Task<ApiKey> CreateApiKey(string name)
         {
             ApiKey key = new ApiKey()
             {
@@ -46,12 +47,12 @@ namespace MicroIdentityService.Repositories.InMemory
             return key;
         }
 
-        public void UpdateApiKey(ApiKey apiKey)
+        public async Task UpdateApiKey(ApiKey apiKey)
         {
             ApiKeys[apiKey.Id] = apiKey;
         }
 
-        public void DeleteApiKey(Guid id)
+        public async Task DeleteApiKey(Guid id)
         {
             ApiKeys.Remove(id);
         }

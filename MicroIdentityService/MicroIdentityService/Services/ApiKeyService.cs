@@ -4,6 +4,7 @@ using MicroIdentityService.Services.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MicroIdentityService.Services
 {
@@ -38,15 +39,15 @@ namespace MicroIdentityService.Services
         /// </summary>
         /// <param name="filter">Optional name filter.</param>
         /// <returns>Returns matching API keys.</returns>
-        public IEnumerable<ApiKey> GetApiKeys(string filter = null)
+        public async Task<IEnumerable<ApiKey>> GetApiKeys(string filter = null)
         {
             if (filter == null)
             {
-                return ApiKeyRepository.GetApiKeys();
+                return await ApiKeyRepository.GetApiKeys();
             }
             else
             {
-                return ApiKeyRepository.SearchApiKeysByName(filter);
+                return await ApiKeyRepository.SearchApiKeysByName(filter);
             }
         }
 
@@ -56,9 +57,9 @@ namespace MicroIdentityService.Services
         /// <param name="id">ID of the API key to get.</param>
         /// <returns>Returns the API key if found.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if no matching API key could be found.</exception>
-        public ApiKey GetApiKey(Guid id)
+        public async Task<ApiKey> GetApiKey(Guid id)
         {
-            return GetApiKeyOrThrowNotFoundException(id);
+            return await GetApiKeyOrThrowNotFoundException(id);
         }
 
         /// <summary>
@@ -66,9 +67,9 @@ namespace MicroIdentityService.Services
         /// </summary>
         /// <param name="name">Name of the API key to create.</param>
         /// <returns>Returns the newly created key.</returns>
-        public ApiKey CreateApiKey(string name)
+        public async Task<ApiKey> CreateApiKey(string name)
         {
-            return ApiKeyRepository.CreateApiKey(name);
+            return await ApiKeyRepository.CreateApiKey(name);
         }
 
         /// <summary>
@@ -78,9 +79,9 @@ namespace MicroIdentityService.Services
         /// <param name="name">New name of the key.</param>
         /// <returns>Returns the updated key.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if no matching API key could be found.</exception>
-        public ApiKey UpdateApiKey(Guid id, string name)
+        public async Task<ApiKey> UpdateApiKey(Guid id, string name)
         {
-            ApiKey key = GetApiKeyOrThrowNotFoundException(id);
+            ApiKey key = await GetApiKeyOrThrowNotFoundException(id);
 
             key.Name = name;
             ApiKeyRepository.UpdateApiKey(key);
@@ -94,9 +95,9 @@ namespace MicroIdentityService.Services
         /// <param name="id">ID of the key to update the status for.</param>
         /// <param name="isEnabled">Whether the key is supposed to be enabled.</param>
         /// <exception cref="EntityNotFoundException">Thrown if no matching API key could be found.</exception>
-        public void UpdateApiKeyStatus(Guid id, bool isEnabled)
+        public async Task UpdateApiKeyStatus(Guid id, bool isEnabled)
         {
-            ApiKey key = GetApiKeyOrThrowNotFoundException(id);
+            ApiKey key = await GetApiKeyOrThrowNotFoundException(id);
 
             key.Enabled = isEnabled;
             ApiKeyRepository.UpdateApiKey(key);
@@ -106,9 +107,9 @@ namespace MicroIdentityService.Services
         /// Deletes an API key.
         /// </summary>
         /// <param name="id">ID of the key to delete.</param>
-        public void DeleteApiKey(Guid id)
+        public async Task DeleteApiKey(Guid id)
         {
-            ApiKeyRepository.DeleteApiKey(id);
+            await ApiKeyRepository.DeleteApiKey(id);
         }
 
         #region Private Helpers
@@ -119,9 +120,9 @@ namespace MicroIdentityService.Services
         /// <param name="id">ID of the key to get.</param>
         /// <exception cref="EntityNotFoundException">Thrown if no matching key could be found.</exception>
         /// <returns>Returns the key, if found.</returns>
-        private ApiKey GetApiKeyOrThrowNotFoundException(Guid id)
+        private async Task<ApiKey> GetApiKeyOrThrowNotFoundException(Guid id)
         {
-            ApiKey key = ApiKeyRepository.GetApiKey(id);
+            ApiKey key = await ApiKeyRepository.GetApiKey(id);
 
             // Check for key existence
             if (key == null)
