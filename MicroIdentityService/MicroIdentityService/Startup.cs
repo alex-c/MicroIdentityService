@@ -34,8 +34,6 @@ namespace MicroIdentityService
         /// CORS policy name for local development.
         /// </summary>
         private static readonly string LOCAL_DEVELOPMENT_CORS_POLICY = "localDevelopmentCorsPolicy";
-        private static readonly string MIS_DOMAIN_NAME = "mis";
-        private static readonly string MIS_ADMINISTRATOR_ROLE_NAME = "admin";
 
         /// <summary>
         /// The hosting environment information.
@@ -129,6 +127,9 @@ namespace MicroIdentityService
 
             // Register controllers
             services.AddControllers();
+
+            // Setup service to run on start
+            services.AddHostedService<SetupService>();
         }
 
         /// <summary>
@@ -166,13 +167,10 @@ namespace MicroIdentityService
                 Dapper.SqlMapper.AddTypeHandler(new DateTimeHandler());
 
                 services.AddSingleton<IApiKeyRepository, SqlApiKeyRepository>();
-
-                // TODO: replace these with SQL implementations
-                services.AddSingleton<InMemoryIdentityRepository>();
-                services.AddSingleton<IIdentityRepository, InMemoryIdentityRepository>();
-                services.AddSingleton<IDomainRepository, InMemoryDomainRepository>();
-                services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
-                services.AddSingleton<IIdentityRoleRepository, InMemoryIdentityRolesRepository>();
+                services.AddSingleton<IDomainRepository, SqlDomainRepository>();
+                services.AddSingleton<IRoleRepository, SqlRoleRepository>();
+                services.AddSingleton<IIdentityRepository, SqlIdentityRepository>();
+                services.AddSingleton<IIdentityRoleRepository, SqlIdentityRoleRepository>();
             }
             else
             {
@@ -245,31 +243,11 @@ namespace MicroIdentityService
         }
 
         /// <summary>
-        /// Configures the app.
+        /// Configures the middleware pipleine.
         /// </summary>
         /// <param name="app">Application builder to configure the app through.</param>
-        public async void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app)
         {
-            // Make sure that the MIS domain and admin role are present
-            (Domain domain, Role adminRole) misEntities = await ConfigureMisDomainAndAdminRole(app);
-
-            // If configured, ensure existense of an MIS admin
-            try
-            {
-                if (Configuration.GetValue("Administrator:CreateIfMissing", false))
-                {
-                    string identifier = Configuration.GetValue<string>("Administrator:Identifier");
-                    string password = Configuration.GetValue<string>("Administrator:Password");
-                    IdentityService identityService = app.ApplicationServices.GetService<IdentityService>();
-                    Identity identity = await identityService.CreateIdentity(identifier, password);
-                    identity.Roles = new List<Role>() { misEntities.adminRole };
-                }
-            }
-            catch (Exception exception)
-            {
-                Logger.LogWarning($"Failed processing `Administrator` configuration: {exception.Message}");
-            }
-
             app.UseSerilogRequestLogging();
             app.UseRouting();
 
@@ -278,40 +256,11 @@ namespace MicroIdentityService
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => {
+            app.UseEndpoints(endpoints =>
+            {
                 endpoints.MapControllers();
             });
         }
 
-        /// <summary>
-        /// Ensures that the MIS domain and admin role are present - creating them if needed. Returns both.
-        /// </summary>
-        /// <param name="app">Grants access to app services.</param>
-        /// <returns>Returns the MIS domain and admin role entities.</returns>
-        private async Task<(Domain, Role)> ConfigureMisDomainAndAdminRole(IApplicationBuilder app)
-        {
-            // Get domains
-            DomainService domainService = app.ApplicationServices.GetService<DomainService>();
-            IEnumerable<Domain> domains = await domainService.GetDomains();
-
-            // Configure MIS domain if needed
-            Domain misDomain = domains.Where(d => d.Name == MIS_DOMAIN_NAME).FirstOrDefault();
-            if (misDomain == null)
-            {
-                misDomain = await domainService.CreateDomain(MIS_DOMAIN_NAME);
-            }
-
-            // Get roles of MIS domain
-            RoleService roleService = app.ApplicationServices.GetService<RoleService>();
-            IEnumerable<Role> roles = await roleService.GetRoles("", misDomain.Id);
-            Role misAdminRole = roles.Where(r => r.Name == MIS_ADMINISTRATOR_ROLE_NAME).FirstOrDefault();
-            if (misAdminRole == null)
-            {
-                misAdminRole = await roleService.CreateRole(MIS_ADMINISTRATOR_ROLE_NAME, misDomain.Id);
-            }
-
-            // Return MIS domain and admin role
-            return (misDomain, misAdminRole);
-        }
     }
 }

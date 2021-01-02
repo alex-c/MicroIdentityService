@@ -36,6 +36,14 @@ namespace MicroIdentityService.Models
         /// <summary>
         /// The roles associated with this identity.
         /// </summary>
-        public IEnumerable<Role> Roles { get; set; }
+        public ICollection<Role> Roles { get; set; }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="Identity"/>.
+        /// </summary>
+        public Identity()
+        {
+            Roles = new List<Role>();
+        }
     }
 }

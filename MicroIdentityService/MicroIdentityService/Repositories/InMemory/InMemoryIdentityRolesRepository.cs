@@ -1,5 +1,6 @@
 ﻿using MicroIdentityService.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MicroIdentityService.Repositories.InMemory
@@ -8,7 +9,7 @@ namespace MicroIdentityService.Repositories.InMemory
     {
         public async Task SetIdentityRoles(Identity identity, IEnumerable<Role> roles)
         {
-            identity.Roles = roles;
+            identity.Roles = roles.ToList();
         }
     }
 }

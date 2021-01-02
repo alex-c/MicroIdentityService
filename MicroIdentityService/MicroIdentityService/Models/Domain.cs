@@ -22,5 +22,13 @@ namespace MicroIdentityService.Models
         /// Roles associated with this domain.
         /// </summary>
         public ISet<Role> Roles { get; set; }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="Domain"/>.
+        /// </summary>
+        public Domain()
+        {
+            Roles = new HashSet<Role>();
+        }
     }
 }

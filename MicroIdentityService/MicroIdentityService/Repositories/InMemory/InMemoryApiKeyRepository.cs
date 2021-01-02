@@ -47,9 +47,10 @@ namespace MicroIdentityService.Repositories.InMemory
             return key;
         }
 
-        public async Task UpdateApiKey(ApiKey apiKey)
+        public async Task<ApiKey> UpdateApiKey(ApiKey apiKey)
         {
             ApiKeys[apiKey.Id] = apiKey;
+            return apiKey;
         }
 
         public async Task DeleteApiKey(Guid id)

@@ -41,7 +41,7 @@ namespace MicroIdentityService.Repositories
         /// Updates an existing API key.
         /// </summary>
         /// <param name="apiKey">key to update.</param>
-        Task UpdateApiKey(ApiKey apiKey);
+        Task<ApiKey> UpdateApiKey(ApiKey apiKey);
 
         /// <summary>
         /// Deletes an API key.
