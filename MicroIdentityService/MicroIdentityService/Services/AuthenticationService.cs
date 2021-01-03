@@ -73,10 +73,10 @@ namespace MicroIdentityService.Services
             DomainService = domainService;
 
             // JWT-related configuration
-            SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>("Jwt:Secret")));
+            SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>(ConfigurationPaths.JWT_SECRET)));
             SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            JwtLifetime = TimeSpan.FromMinutes(configuration.GetValue<int>("Jwt:LifetimeInMinutes"));
-            JwtIssuer = configuration.GetValue<string>("Jwt:Issuer");
+            JwtLifetime = TimeSpan.FromMinutes(configuration.GetValue<int>(ConfigurationPaths.JWT_LIFETIME_IN_MINUTES));
+            JwtIssuer = configuration.GetValue<string>(ConfigurationPaths.JWT_ISSUER);
         }
 
         /// <summary>

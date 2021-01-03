@@ -87,11 +87,11 @@ namespace MicroIdentityService
         {
             try
             {
-                if (Configuration.GetValue("Administrator:CreateIfMissing", false))
+                if (Configuration.GetValue(ConfigurationPaths.CREATE_ADMINISTRATOR_IF_MISSING, false))
                 {
-                    string identifier = Configuration.GetValue<string>("Administrator:Identifier");
-                    string password = Configuration.GetValue<string>("Administrator:Password");
-                    if (String.IsNullOrWhiteSpace(identifier) || String.IsNullOrWhiteSpace(password))
+                    string identifier = Configuration.GetValue<string>(ConfigurationPaths.ADMINISTRATOR_IDENTIFIER);
+                    string password = Configuration.GetValue<string>(ConfigurationPaths.ADMINISTRATOR_PASSWORD);
+                    if (string.IsNullOrWhiteSpace(identifier) || string.IsNullOrWhiteSpace(password))
                     {
                         throw new Exception("Invalid administrator identifier and/or password.");
                     }

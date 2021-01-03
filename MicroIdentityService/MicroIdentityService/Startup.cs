@@ -85,7 +85,7 @@ namespace MicroIdentityService
             });
 
             // Check JWT signing key validity
-            if (Configuration.GetValue<string>("Jwt:Secret").Length < 16)
+            if (Configuration.GetValue<string>(ConfigurationPaths.JWT_SECRET).Length < 16)
             {
                 string errorMessage = "The secret for signing JWTs has to be at least 16 characters long.";
                 Logger.LogError(errorMessage);
@@ -102,8 +102,8 @@ namespace MicroIdentityService
                         ValidateLifetime = true,
                         ValidateAudience = false,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = Configuration.GetValue<string>("Jwt:Issuer"),
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>("Jwt:Secret")))
+                        ValidIssuer = Configuration.GetValue<string>(ConfigurationPaths.JWT_ISSUER),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>(ConfigurationPaths.JWT_SECRET)))
                     };
                 });
             services.AddAuthorization();
@@ -142,7 +142,7 @@ namespace MicroIdentityService
             PersistenceStrategy persistenceStrategy;
             try
             {
-                persistenceStrategy = Configuration.GetValue<PersistenceStrategy>("Persistence:Strategy");
+                persistenceStrategy = Configuration.GetValue<PersistenceStrategy>(ConfigurationPaths.PERSISTENCE_STRATEGY);
             }
             catch (Exception exception)
             {
@@ -188,7 +188,7 @@ namespace MicroIdentityService
             IdentifierValidationStrategy identifierValidationStrategy;
             try
             {
-                identifierValidationStrategy = Configuration.GetValue<IdentifierValidationStrategy>("IdentifierValidation:Strategy");
+                identifierValidationStrategy = Configuration.GetValue<IdentifierValidationStrategy>(ConfigurationPaths.IDENTIFIER_VALIDATION_STRATEGY);
             }
             catch (Exception)
             {
@@ -220,7 +220,7 @@ namespace MicroIdentityService
             PasswordValidationStrategy passwordValidationStrategy;
             try
             {
-                passwordValidationStrategy = Configuration.GetValue<PasswordValidationStrategy>("PasswordValidation:Strategy");
+                passwordValidationStrategy = Configuration.GetValue<PasswordValidationStrategy>(ConfigurationPaths.PASSWORD_VALIDATION_STRATEGY);
             }
             catch (Exception)
             {

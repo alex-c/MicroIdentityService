@@ -18,7 +18,7 @@ namespace MicroIdentityService.Services.PasswordValidation.Validators
         /// <param name="configuration">App configuration.</param>
         public MinimumLengthPasswordValidator(IConfiguration configuration)
         {
-            MinimumLength = configuration.GetValue("PasswordValidation:Configuration:MinimumLength", 12);
+            MinimumLength = configuration.GetValue(ConfigurationPaths.PASSWORD_VALIDATION_MINIMUM_LENGTH, 12);
         }
 
         public bool Validate(string password, out string errorMessage)

@@ -27,7 +27,7 @@ namespace MicroIdentityService.Repositories.Sql
         /// <param name="logger">A logger for repository-level logging needs.</param>
         public BaseSqlRepository(IConfiguration configuration, ILogger logger)
         {
-            ConnectionString = configuration.GetValue<string>("Database:ConnectionString");
+            ConnectionString = configuration.GetValue<string>(ConfigurationPaths.DATABASE_CONNECTION_STRING);
             Logger = logger;
         }
 
