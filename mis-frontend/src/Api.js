@@ -91,8 +91,8 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
-    deleteIdentity: id => {
-      return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}`, {
+    deleteIdentity: (id, softDelete) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}?softDelete=${softDelete}`, {
         method: 'DELETE',
         withCredentials: true,
         credentials: 'include',

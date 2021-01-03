@@ -52,8 +52,11 @@
           <el-button icon="el-icon-unlock" type="success" size="mini" :disabled="selectedIdentity.id === null" v-else @click="enableIdentity">
             {{ $t('identities.enable') }}
           </el-button>
-          <el-button icon="el-icon-delete" type="danger" size="mini" :disabled="selectedIdentity.id === null" @click="deleteIdentity">
+          <el-button icon="el-icon-delete" type="danger" size="mini" :disabled="selectedIdentity.id === null" @click="deleteIdentity(false)">
             {{ $t('identities.delete') }}
+          </el-button>
+          <el-button icon="el-icon-takeaway-box" type="danger" size="mini" :disabled="selectedIdentity.id === null" @click="deleteIdentity(true)">
+            {{ $t('identities.anonymize') }}
           </el-button>
         </div>
       </div>
@@ -107,7 +110,7 @@ export default {
         .then(this.getIdentities) // TODO: message
         .catch(this.handleHttpError);
     },
-    deleteIdentity: function() {
+    deleteIdentity: function(softDelete) {
       this.$confirm(this.$t('identities.deleteConfirm', { id: this.selectedIdentity.identifier }), {
         confirmButtonText: this.$t('general.delete'),
         cancelButtonText: this.$t('general.cancel'),
@@ -115,7 +118,7 @@ export default {
       })
         .then(() => {
           Api.identities
-            .deleteIdentity(this.selectedIdentity.id)
+            .deleteIdentity(this.selectedIdentity.id, softDelete)
             .then(response => {
               this.$message({
                 message: this.$t('identities.deletedMessage', this.selectedIdentity.identifier),

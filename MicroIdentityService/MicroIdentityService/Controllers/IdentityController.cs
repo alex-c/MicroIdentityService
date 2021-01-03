@@ -109,9 +109,9 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteIdentity(Guid id)
+        public async Task<IActionResult> DeleteIdentity(Guid id, [FromQuery] bool softDelete = false)
         {
-            await IdentityService.DeleteIdentity(id);
+            await IdentityService.DeleteIdentity(id, softDelete);
             return NoContent();
         }
 

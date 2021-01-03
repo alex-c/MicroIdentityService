@@ -71,7 +71,7 @@ namespace MicroIdentityService.Repositories.Sql
         {
             using (IDbConnection connection = GetNewConnection())
             {
-                await connection.ExecuteAsync("UPDATE identities SET disabled=@Disabled WHERE id=@Id", identity);
+                await connection.ExecuteAsync("UPDATE identities SET identifier=@Identifier, password=@HashedPassword, salt=@Salt, disabled=@Disabled WHERE id=@Id", identity);
             }
             return identity;
         }

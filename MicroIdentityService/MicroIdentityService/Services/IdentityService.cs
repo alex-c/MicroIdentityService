@@ -162,12 +162,24 @@ namespace MicroIdentityService.Services
         }
 
         /// <summary>
-        /// Deletes an identity.
+        /// Deletes an identity, optinally as a soft delete. A soft delete doesn't actually delete the identity from
+        /// the persistence layer, but anonymizes it (removing all personal data) and disables it.
         /// </summary>
         /// <param name="id">The ID of the identity to delete.</param>
-        public async Task DeleteIdentity(Guid id)
+        public async Task DeleteIdentity(Guid id, bool softDelete = false)
         {
-            await IdentityRepository.DeleteIdentity(id);
+            if (softDelete)
+            {
+                Identity identity = await GetIdentity(id);
+                identity.Identifier = identity.Id.ToString();
+                identity.HashedPassword = identity.Id.ToString();
+                identity.Disabled = true;
+                await IdentityRepository.UpdateIdentity(identity);
+            }
+            else
+            {
+                await IdentityRepository.DeleteIdentity(id);
+            }
         }
 
         /// <summary>
