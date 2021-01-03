@@ -148,13 +148,13 @@ namespace MicroIdentityService.Services
         }
 
         /// <summary>
-        /// Updates an existing identity.
+        /// Updates the status of an existing identity (whther it is disabled or not).
         /// </summary>
         /// <param name="id">ID of the identity to update.</param>
-        /// <param name="disabled">Whether the identity is to be disabled</param>
+        /// <param name="disabled">Whether the identity is to be disabled.</param>
         /// <returns>Returns the updated identity.</returns>
         /// <exception cref="EntityNotFoundException">Thrown if the identity could not be found.</exception>
-        public async Task<Identity> UpdateIdentity(Guid id, bool disabled)
+        public async Task<Identity> UpdateIdentityStatus(Guid id, bool disabled)
         {
             Identity identity = await GetIdentity(id);
             identity.Disabled = disabled;

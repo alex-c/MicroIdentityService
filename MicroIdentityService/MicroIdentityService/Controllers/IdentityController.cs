@@ -95,7 +95,7 @@ namespace MicroIdentityService.Controllers
         {
             try
             {
-                await IdentityService.UpdateIdentity(id, identityUpdateRequest.Disabled);
+                await IdentityService.UpdateIdentityStatus(id, identityUpdateRequest.Disabled);
                 return NoContent();
             }
             catch (EntityNotFoundException exception)

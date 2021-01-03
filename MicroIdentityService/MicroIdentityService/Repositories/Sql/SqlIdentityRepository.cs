@@ -67,16 +67,21 @@ namespace MicroIdentityService.Repositories.Sql
             return identity;
         }
 
-        public Task<Identity> UpdateIdentity(Identity identity)
+        public async Task<Identity> UpdateIdentity(Identity identity)
         {
-            // TODO: implement
-            throw new NotImplementedException();
+            using (IDbConnection connection = GetNewConnection())
+            {
+                await connection.ExecuteAsync("UPDATE identities SET disabled=@Disabled WHERE id=@Id", identity);
+            }
+            return identity;
         }
 
-        public Task DeleteIdentity(Guid id)
+        public async Task DeleteIdentity(Guid id)
         {
-            // TODO: implement
-            throw new NotImplementedException();
+            using (IDbConnection connection = GetNewConnection())
+            {
+                await connection.ExecuteAsync("DELETE FROM identities WHERE id=@Id", new { id });
+            }
         }
 
         private async Task<IEnumerable<Identity>> QueryMultipleIdentities(string sql, object parameters = null)

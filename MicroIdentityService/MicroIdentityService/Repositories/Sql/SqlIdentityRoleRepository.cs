@@ -16,7 +16,7 @@ namespace MicroIdentityService.Repositories.Sql
         {
             using (IDbConnection connection = GetNewConnection())
             {
-                await connection.ExecuteAsync("DELETE FROM identity_roles WHERE identity_id=@id", new { identity.Id });
+                await connection.ExecuteAsync("DELETE FROM identity_roles WHERE identity_id=@id", identity);
                 foreach (Role role in roles)
                 {
                     await connection.ExecuteAsync("INSERT INTO identity_roles (identity_id, role_id) VALUES (@IdentityId, @RoleId)",

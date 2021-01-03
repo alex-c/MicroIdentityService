@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MicroIdentityService.Repositories.Sql
@@ -21,8 +22,8 @@ namespace MicroIdentityService.Repositories.Sql
 
         public async Task<IEnumerable<Role>> GetRoles(IEnumerable<Guid> ids)
         {
-            string sql = "SELECT * FROM roles WHERE id IN @Ids;";
-            return await QueryMultipleRoles(sql, new { ids });
+            string sql = "SELECT * FROM roles WHERE id=ANY(@Ids);";
+            return await QueryMultipleRoles(sql, new { Ids = ids.ToArray() });
         }
 
         public async Task<IEnumerable<Role>> GetDomainRoles(Guid domainId)
