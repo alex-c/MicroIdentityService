@@ -12,10 +12,11 @@ import GenericErrorHandlingMixin from '@/mixins/GenericErrorHandlingMixin.js';
 export default {
   name: 'DashboardCard',
   mixins: [GenericErrorHandlingMixin],
-  props: ['entity'],
+  props: ['entity', 'path'],
   data() {
     return {
       entities: [],
+      cleanPath: this.path ? this.path : this.entity,
     };
   },
   methods: {
@@ -26,7 +27,7 @@ export default {
         .catch(this.handleHttpError);
     },
     navigateToEntitiesView: function() {
-      this.$router.push({ path: '/' + this.entity });
+      this.$router.push({ path: '/' + this.cleanPath });
     },
   },
   mounted() {

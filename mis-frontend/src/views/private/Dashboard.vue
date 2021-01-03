@@ -4,6 +4,7 @@
       <DashboardCard entity="identities" />
       <DashboardCard entity="domains" />
       <DashboardCard entity="roles" />
+      <DashboardCard entity="apiKeys" path="api-keys" />
     </div>
   </div>
 </template>

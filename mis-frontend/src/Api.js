@@ -185,6 +185,9 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
+    getAll: function() {
+      return this.getApiKeys('', 1, -1);
+    },
     createApiKey: name => {
       return fetch(`${SERVER_ENDPOINT}/api/v1/api-keys`, {
         method: 'POST',
