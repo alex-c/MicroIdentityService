@@ -13,15 +13,17 @@ namespace MicroIdentityService.Repositories
         /// <summary>
         /// Gets all available identities.
         /// </summary>
+        /// <param name="showDisabled">Whether to return disabled identities. Defaults to false.</param>
         /// <returns>Returns all identities.</returns>
-        Task<IEnumerable<Identity>> GetIdentities();
+        Task<IEnumerable<Identity>> GetIdentities(bool showDisabled);
 
         /// <summary>
         /// Searches identities by identifier. All identities containing the search string in the identifier (case insensitive) are returned.
         /// </summary>
         /// <param name="filter">A string to filter identity identifiers with.</param>
+        /// <param name="showDisabled">Whether to return disabled identities. Defaults to false.</param>
         /// <returns>Returns all matching identities.</returns>
-        Task<IEnumerable<Identity>> SearchIdentitiesByIdentifier(string filter);
+        Task<IEnumerable<Identity>> SearchIdentitiesByIdentifier(string filter, bool showDisabled);
 
         /// <summary>
         /// Gets an identity by its unique ID. Returns null if no matching identity could be found.

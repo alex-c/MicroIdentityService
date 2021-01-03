@@ -20,13 +20,21 @@ namespace MicroIdentityService.Repositories.InMemory
             IdentitiesIdentifierMap = new Dictionary<string, Identity>();
         }
 
-        public async Task<IEnumerable<Identity>> GetIdentities()
+        public async Task<IEnumerable<Identity>> GetIdentities(bool showDisabled)
         {
+            if (!showDisabled)
+            {
+                return IdentitiesIdMap.Values.Where(i => i.Disabled == false);
+            }
             return IdentitiesIdMap.Values;
         }
 
-        public async Task<IEnumerable<Identity>> SearchIdentitiesByIdentifier(string filter)
+        public async Task<IEnumerable<Identity>> SearchIdentitiesByIdentifier(string filter, bool showDisabled)
         {
+            if (!showDisabled)
+            {
+                return IdentitiesIdentifierMap.Where(kvp => kvp.Key.ToLowerInvariant().Contains(filter.ToLowerInvariant())).Select(kvp => kvp.Value).Where(i => i.Disabled == false);
+            }
             return IdentitiesIdentifierMap.Where(kvp => kvp.Key.ToLowerInvariant().Contains(filter.ToLowerInvariant())).Select(kvp => kvp.Value);
         }
 

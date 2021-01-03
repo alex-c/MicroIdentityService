@@ -3,7 +3,7 @@
     /// <summary>
     /// A contract for a request to update an identity.
     /// </summary>
-    public class IdentityUpdateRequest
+    public class IdentityStatusUpdateRequest
     {
         /// <summary>
         /// Indicates whether the identity is disabled.

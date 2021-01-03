@@ -78,16 +78,17 @@ namespace MicroIdentityService.Services
         /// Gets all identities, optionally filtered by name.
         /// </summary>
         /// <param name="filter">A string to filter identities names with.</param>
+        /// <param name="showDisabled">Whether to return disabled identities. Defaults to false.</param>
         /// <returns>Returns identities.</returns>
-        public async Task<IEnumerable<Identity>> GetIdentities(string filter)
+        public async Task<IEnumerable<Identity>> GetIdentities(string filter, bool showDisabled = false)
         {
             if (filter == null)
             {
-                return await IdentityRepository.GetIdentities();
+                return await IdentityRepository.GetIdentities(showDisabled);
             }
             else
             {
-                return await IdentityRepository.SearchIdentitiesByIdentifier(filter);
+                return await IdentityRepository.SearchIdentitiesByIdentifier(filter, showDisabled);
             }
         }
 

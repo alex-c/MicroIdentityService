@@ -24,7 +24,10 @@ namespace MicroIdentityService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetIdentities([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
+        public async Task<IActionResult> GetIdentities([FromQuery] string filter = null,
+            [FromQuery] int page = 1,
+            [FromQuery] int elementsPerPage = 10,
+            [FromQuery] bool showDisabled = false)
         {
             if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
             {
@@ -33,7 +36,7 @@ namespace MicroIdentityService.Controllers
 
             try
             {
-                IEnumerable<Identity> identities = await IdentityService.GetIdentities(filter);
+                IEnumerable<Identity> identities = await IdentityService.GetIdentities(filter, showDisabled);
                 IEnumerable<Identity> paginatedIdentities = Paginate(identities, page, elementsPerPage, paginationDisabled);
                 return Ok(new PaginatedResponse<IdentityResponse>(paginatedIdentities.Select(i => new IdentityResponse(i)), identities.Count()));
             }
@@ -90,12 +93,12 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateIdentity(Guid id, [FromBody] IdentityUpdateRequest identityUpdateRequest)
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateIdentityStatus(Guid id, [FromBody] IdentityStatusUpdateRequest identityStatusUpdateRequest)
         {
             try
             {
-                await IdentityService.UpdateIdentityStatus(id, identityUpdateRequest.Disabled);
+                await IdentityService.UpdateIdentityStatus(id, identityStatusUpdateRequest.Disabled);
                 return NoContent();
             }
             catch (EntityNotFoundException exception)
@@ -114,6 +117,8 @@ namespace MicroIdentityService.Controllers
             await IdentityService.DeleteIdentity(id, softDelete);
             return NoContent();
         }
+
+        #region Identity roles
 
         [HttpGet("{id}/roles")]
         public async Task<IActionResult> GetIdentityRoles(Guid id)
@@ -139,5 +144,7 @@ namespace MicroIdentityService.Controllers
                 return HandleUnexpectedException(exception);
             }
         }
+
+        #endregion
     }
 }

@@ -35,8 +35,8 @@ export default {
       .then(processResponse);
   },
   identities: {
-    getIdentities: (filter, page, elementsPerPage) => {
-      return fetch(`${SERVER_ENDPOINT}/api/v1/identities?filter=${filter}&page=${page}&elementsPerPage=${elementsPerPage}`, {
+    getIdentities: (filter, showDisabled, page, elementsPerPage) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/identities?filter=${filter}&showDisabled=${showDisabled}&page=${page}&elementsPerPage=${elementsPerPage}`, {
         method: 'GET',
         withCredentials: true,
         credentials: 'include',
@@ -46,7 +46,7 @@ export default {
         .then(processResponse);
     },
     getAll: function() {
-      return this.getIdentities('', 1, -1);
+      return this.getIdentities('', false, 1, -1);
     },
     getIdentity: id => {
       return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}`, {
@@ -69,8 +69,8 @@ export default {
         .catch(catchNetworkError)
         .then(processResponse);
     },
-    updateIdentity: (id, disabled) => {
-      return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}`, {
+    updateIdentityStatus: (id, disabled) => {
+      return fetch(`${SERVER_ENDPOINT}/api/v1/identities/${id}/status`, {
         method: 'PUT',
         withCredentials: true,
         credentials: 'include',

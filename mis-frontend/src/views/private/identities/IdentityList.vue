@@ -8,6 +8,7 @@
       <!-- Filtering Options -->
       <div class="filter-row">
         <el-input :placeholder="$t('identities.filter')" prefix-icon="el-icon-search" v-model="query.search" size="mini" clearable @change="setSearch" />
+        <el-checkbox v-model="query.showDisabled" border size="mini" @change="getIdentities">Show Disabled</el-checkbox>
       </div>
 
       <!-- Identities Table -->
@@ -80,6 +81,7 @@ export default {
         page: 1,
         elementsPerPage: 10,
         search: '',
+        showDisabled: false,
       },
       identities: [],
       totalIdentities: 0,
@@ -91,7 +93,7 @@ export default {
     getIdentities: function() {
       this.resetSelectedIdentity();
       Api.identities
-        .getIdentities(this.query.search, this.query.page, this.query.elementsPerPage)
+        .getIdentities(this.query.search, this.query.showDisabled, this.query.page, this.query.elementsPerPage)
         .then(response => {
           this.identities = response.body.data;
           this.totalIdentities = response.body.totalElements;
@@ -99,14 +101,14 @@ export default {
         .catch(this.handleHttpError);
     },
     enableIdentity: function() {
-      this.updateIdentity(false);
+      this.updateIdentityStatus(false);
     },
     disableIdentity: function() {
-      this.updateIdentity(true);
+      this.updateIdentityStatus(true);
     },
-    updateIdentity: function(disabled) {
+    updateIdentityStatus: function(disabled) {
       Api.identities
-        .updateIdentity(this.selectedIdentity.id, disabled)
+        .updateIdentityStatus(this.selectedIdentity.id, disabled)
         .then(this.getIdentities) // TODO: message
         .catch(this.handleHttpError);
     },

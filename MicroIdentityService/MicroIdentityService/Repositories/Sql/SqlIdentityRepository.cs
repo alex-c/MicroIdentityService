@@ -14,15 +14,23 @@ namespace MicroIdentityService.Repositories.Sql
     {
         public SqlIdentityRepository(IConfiguration configuration, ILogger<SqlIdentityRepository> logger) : base(configuration, logger) { }
 
-        public async Task<IEnumerable<Identity>> GetIdentities()
+        public async Task<IEnumerable<Identity>> GetIdentities(bool showDisabled)
         {
             string sql = "SELECT * FROM identities i LEFT JOIN identity_roles ir ON ir.identity_id=i.id LEFT JOIN roles r ON r.id=ir.role_id";
+            if (!showDisabled)
+            {
+                sql += " WHERE disabled=false";
+            }
             return await QueryMultipleIdentities(sql);
         }
 
-        public async Task<IEnumerable<Identity>> SearchIdentitiesByIdentifier(string filter)
+        public async Task<IEnumerable<Identity>> SearchIdentitiesByIdentifier(string filter, bool showDisabled)
         {
-            string sql = "SELECT * FROM identities i LEFT JOIN identity_roles ir ON ir.identity_id=i.id LEFT JOIN roles r ON r.id=ir.role_id WHERE i.name LIKE @Filter";
+            string sql = "SELECT * FROM identities i LEFT JOIN identity_roles ir ON ir.identity_id=i.id LEFT JOIN roles r ON r.id=ir.role_id WHERE i.identifier LIKE @Filter";
+            if (!showDisabled)
+            {
+                sql += " AND disabled=false";
+            }
             return await QueryMultipleIdentities(sql, new { Filter = $"%{filter}%" });
         }
 
@@ -54,12 +62,12 @@ namespace MicroIdentityService.Repositories.Sql
             Identity identity = null;
             using (IDbConnection connection = GetNewConnection())
             {
-                await connection.ExecuteAsync("INSERT INTO identities (id, identifier, password, salt) VALUES (@Id, @Identifier, @Password, @Salt)",
+                await connection.ExecuteAsync("INSERT INTO identities (id, identifier, hashed_password, salt) VALUES (@Id, @Identifier, @HashedPassword, @Salt)",
                     new
                     {
                         id,
                         identifier,
-                        Password = hashedPassword,
+                        hashedPassword,
                         salt
                     });
                 identity = await QuerySingleIdentity(connection, id);
@@ -71,7 +79,7 @@ namespace MicroIdentityService.Repositories.Sql
         {
             using (IDbConnection connection = GetNewConnection())
             {
-                await connection.ExecuteAsync("UPDATE identities SET identifier=@Identifier, password=@HashedPassword, salt=@Salt, disabled=@Disabled WHERE id=@Id", identity);
+                await connection.ExecuteAsync("UPDATE identities SET identifier=@Identifier, hashed_password=@HashedPassword, salt=@Salt, disabled=@Disabled WHERE id=@Id", identity);
             }
             return identity;
         }

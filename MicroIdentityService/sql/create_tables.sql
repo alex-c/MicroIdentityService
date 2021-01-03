@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS identity_roles;
 DROP TABLE IF EXISTS identities;
 DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS domains;
+
 -- API Keys
 
 CREATE TABLE api_keys (
@@ -33,7 +34,7 @@ CREATE TABLE roles (
 CREATE TABLE identities (
   id uuid PRIMARY KEY,
   identifier varchar (255) UNIQUE NOT NULL,
-  password varchar (255) NOT NULL,
+  hashed_password varchar (255) NOT NULL,
   salt bytea NOT NULL,
   disabled boolean DEFAULT false NOT NULL
 );
