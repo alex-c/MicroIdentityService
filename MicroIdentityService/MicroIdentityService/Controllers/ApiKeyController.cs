@@ -1,8 +1,10 @@
-﻿using MicroIdentityService.Controllers.Contracts.Requests;
+﻿using MicroIdentityService.Authorization;
+using MicroIdentityService.Controllers.Contracts.Requests;
 using MicroIdentityService.Controllers.Contracts.Responses;
 using MicroIdentityService.Models;
 using MicroIdentityService.Services;
 using MicroIdentityService.Services.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,7 +25,7 @@ namespace MicroIdentityService.Controllers
             Logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Policy = Policies.API_KEYS_GET)]
         public async Task<IActionResult> GetApiKeys([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
         {
             if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
@@ -43,7 +45,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Policy = Policies.API_KEYS_CREATE)]
         public async Task<IActionResult> CreateApiKey([FromBody] ApiKeyCreationRequest apiKeyCreationRequest)
         {
             if (apiKeyCreationRequest == null || string.IsNullOrWhiteSpace(apiKeyCreationRequest.Name))
@@ -55,7 +57,7 @@ namespace MicroIdentityService.Controllers
             return Created(GetNewResourceUri(key.Id), new ApiKeyResponse(key));
         }
 
-        [HttpPut("{id}/status")]
+        [HttpPut("{id}/status"), Authorize(Policy = Policies.API_KEYS_UPDATE)]
         public async Task<IActionResult> UpdateApiKeyStatus(Guid id, [FromBody] ApiKeyStatusUpdateRequest apiKeyStatusUpdateRequest)
         {
             if (apiKeyStatusUpdateRequest == null)
@@ -78,7 +80,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Policy = Policies.API_KEYS_DELETE)]
         public async Task<IActionResult> DeleteApiKey(Guid id)
         {
             await ApiKeyService.DeleteApiKey(id);

@@ -1,8 +1,10 @@
-﻿using MicroIdentityService.Controllers.Contracts.Requests;
+﻿using MicroIdentityService.Authorization;
+using MicroIdentityService.Controllers.Contracts.Requests;
 using MicroIdentityService.Controllers.Contracts.Responses;
 using MicroIdentityService.Models;
 using MicroIdentityService.Services;
 using MicroIdentityService.Services.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,7 +25,7 @@ namespace MicroIdentityService.Controllers
             Logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Policy = Policies.DOMAINS_GET)]
         public async Task<IActionResult> GetDomains([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10)
         {
             if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
@@ -43,7 +45,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize(Policy = Policies.DOMAINS_GET)]
         public async Task<IActionResult> GetDomain(Guid id)
         {
             try
@@ -61,7 +63,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Policy = Policies.DOMAINS_CREATE)]
         public async Task<IActionResult> CreateDomain([FromBody] DomainCreationOrUpdateRequest domainCreationRequest)
         {
             if (domainCreationRequest == null || string.IsNullOrWhiteSpace(domainCreationRequest.Name))
@@ -84,7 +86,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}"), Authorize(Policy = Policies.DOMAINS_UPDATE)]
         public async Task<IActionResult> UpdateDomain(Guid id, [FromBody] DomainCreationOrUpdateRequest domainUpdateRequest)
         {
             if (domainUpdateRequest == null || string.IsNullOrWhiteSpace(domainUpdateRequest.Name))
@@ -107,7 +109,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Policy = Policies.DOMAINS_DELETE)]
         public async Task<IActionResult> DeleteIdentity(Guid id)
         {
             await DomainService.DeleteDomain(id);

@@ -1,4 +1,4 @@
-﻿using MicroIdentityService.Models;
+﻿using MicroIdentityService.Authorization;
 using MicroIdentityService.Repositories;
 using MicroIdentityService.Repositories.InMemory;
 using MicroIdentityService.Repositories.Sql;
@@ -9,6 +9,7 @@ using MicroIdentityService.Services.IdentifierValidation.Validators;
 using MicroIdentityService.Services.PasswordValidation;
 using MicroIdentityService.Services.PasswordValidation.Validators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -18,10 +19,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MicroIdentityService
 {
@@ -30,6 +28,11 @@ namespace MicroIdentityService
     /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// The MicroIdentityService adminstrator role.
+        /// </summary>
+        private static readonly string MIS_ADMINISTRATOR_ROLE = "mis.admin";
+
         /// <summary>
         /// CORS policy name for local development.
         /// </summary>
@@ -106,7 +109,34 @@ namespace MicroIdentityService
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>(ConfigurationPaths.JWT_SECRET)))
                     };
                 });
-            services.AddAuthorization();
+            services.AddAuthorization(options =>
+            {
+                // API Keys
+                RegisterPolicy(options, Policies.API_KEYS_GET, Permissions.API_KEYS_GET);
+                RegisterPolicy(options, Policies.API_KEYS_CREATE, Permissions.API_KEYS_CREATE);
+                RegisterPolicy(options, Policies.API_KEYS_UPDATE, Permissions.API_KEYS_UPDATE);
+                RegisterPolicy(options, Policies.API_KEYS_DELETE, Permissions.API_KEYS_DELETE);
+
+                // Domains
+                RegisterPolicy(options, Policies.DOMAINS_GET, Permissions.DOMAINS_GET);
+                RegisterPolicy(options, Policies.DOMAINS_CREATE, Permissions.DOMAINS_CREATE);
+                RegisterPolicy(options, Policies.DOMAINS_UPDATE, Permissions.DOMAINS_UPDATE);
+                RegisterPolicy(options, Policies.DOMAINS_DELETE, Permissions.DOMAINS_DELETE);
+
+                // Users
+                RegisterPolicy(options, Policies.USERS_GET, Permissions.USERS_GET);
+                RegisterPolicy(options, Policies.USERS_CREATE, Permissions.USERS_CREATE);
+                RegisterPolicy(options, Policies.USERS_UPDATE, Permissions.USERS_UPDATE);
+                RegisterPolicy(options, Policies.USERS_DELETE, Permissions.USERS_DELETE);
+                RegisterPolicy(options, Policies.USERS_GET_ROLES, Permissions.USERS_GET_ROLES);
+                RegisterPolicy(options, Policies.USERS_SET_ROLES, Permissions.USERS_SET_ROLES);
+
+                // Roles
+                RegisterPolicy(options, Policies.ROLES_GET, Permissions.ROLES_GET);
+                RegisterPolicy(options, Policies.ROLES_CREATE, Permissions.ROLES_CREATE);
+                RegisterPolicy(options, Policies.ROLES_UPDATE, Permissions.ROLES_UPDATE);
+                RegisterPolicy(options, Policies.ROLES_DELETE, Permissions.ROLES_DELETE);
+            });
 
             // Confiture persistence-related services
             ConfigurePersistenceServices(services);
@@ -240,6 +270,17 @@ namespace MicroIdentityService
                     services.AddSingleton<IPasswordValidator, NoOpPasswordValidator>();
                     break;
             }
+        }
+
+        /// <summary>
+        /// Registers an authorization policy for agiven permission.
+        /// </summary>
+        /// <param name="options">The authorization options to add a new policy to.</param>
+        /// <param name="policyName">The name of the new policy.</param>
+        /// <param name="permission">The permission this policy is for.</param>
+        private void RegisterPolicy(AuthorizationOptions options, string policyName, string permission)
+        {
+            options.AddPolicy(policyName, policy => policy.RequireAuthenticatedUser().Requirements.Add(new PermissionRequirement(new string[] { MIS_ADMINISTRATOR_ROLE }, permission)));
         }
 
         /// <summary>

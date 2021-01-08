@@ -1,8 +1,10 @@
-﻿using MicroIdentityService.Controllers.Contracts.Requests;
+﻿using MicroIdentityService.Authorization;
+using MicroIdentityService.Controllers.Contracts.Requests;
 using MicroIdentityService.Controllers.Contracts.Responses;
 using MicroIdentityService.Models;
 using MicroIdentityService.Services;
 using MicroIdentityService.Services.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,7 +25,7 @@ namespace MicroIdentityService.Controllers
             Logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Policy = Policies.ROLES_GET)]
         public async Task<IActionResult> GetRoles([FromQuery] string filter = null, [FromQuery] int page = 1, [FromQuery] int elementsPerPage = 10, [FromQuery] Guid? domainId = null)
         {
             if (!ValidatePaginationParameters(page, elementsPerPage, out string errorMessage, out bool paginationDisabled))
@@ -48,7 +50,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize(Policy = Policies.ROLES_GET)]
         public async Task<IActionResult> GetRole(Guid id)
         {
             try
@@ -66,7 +68,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Policy = Policies.ROLES_CREATE)]
         public async Task<IActionResult> CreateRole([FromBody] RoleCreationRequest roleCreationRequest)
         {
             if (roleCreationRequest == null || string.IsNullOrWhiteSpace(roleCreationRequest.Name))
@@ -89,7 +91,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}"), Authorize(Policy = Policies.ROLES_UPDATE)]
         public async Task<IActionResult> UpdateRole(Guid id, [FromBody] RoleUpdateRequest roleUpdateRequest)
         {
             if (roleUpdateRequest == null || string.IsNullOrWhiteSpace(roleUpdateRequest.Name))
@@ -112,7 +114,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Policy = Policies.ROLES_DELETE)]
         public async Task<IActionResult> DeleteIdentity(Guid id)
         {
             await RoleService.DeleteRole(id);

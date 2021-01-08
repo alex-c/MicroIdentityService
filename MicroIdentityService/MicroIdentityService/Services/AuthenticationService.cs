@@ -1,5 +1,4 @@
 ﻿using MicroIdentityService.Models;
-using MicroIdentityService.Repositories;
 using MicroIdentityService.Services.Exceptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -26,12 +25,17 @@ namespace MicroIdentityService.Services
         /// <summary>
         /// Grants access to identities.
         /// </summary>
-        private IdentityService IdentityService{ get; }
+        private IdentityService IdentityService { get; }
 
         /// <summary>
         /// Grants access to domain names.
         /// </summary>
         private DomainService DomainService { get; }
+
+        /// <summary>
+        /// Grants access to API keys.
+        /// </summary>
+        private ApiKeyService ApiKeyService { get; }
 
         /// <summary>
         /// Signing credentials for JWTs.
@@ -65,12 +69,14 @@ namespace MicroIdentityService.Services
             PasswordHashingService passwordHashingService,
             IdentityService identityService,
             DomainService domainService,
+            ApiKeyService apiKeyService,
             IConfiguration configuration)
         {
             Logger = loggerFactory.CreateLogger<AuthenticationService>();
             PasswordHashingService = passwordHashingService;
             IdentityService = identityService;
             DomainService = domainService;
+            ApiKeyService = apiKeyService;
 
             // JWT-related configuration
             SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration.GetValue<string>(ConfigurationPaths.JWT_SECRET)));
@@ -89,7 +95,7 @@ namespace MicroIdentityService.Services
         /// <exception cref="EntityNotFoundException">Thrown if no matching identity or any of the role domains could be found.</exception>
         public async Task<string> Authenticate(string identifier, string password)
         {
-            // Get identities, throws if not found
+            // Get identitiy, throws if not found
             Identity identity = await IdentityService.GetIdentity(identifier);
 
             // Reject authentication attempt if identity is disabled
@@ -114,6 +120,34 @@ namespace MicroIdentityService.Services
 
             // Add identity roles to claims
             claims.AddRange(await GenerateRoleClaims(identity.Roles));
+
+            // Generate and return token
+            return GenerateNewToken(claims);
+        }
+
+        /// <summary>
+        /// Performs authentication based on an API key.
+        /// </summary>
+        /// <param name="apiKeyId">The API key (the entity ID).</param>
+        /// <returns>Returns a JWT on authentication success.</returns>
+        public async Task<string> Authenticate(Guid apiKeyId)
+        {
+            // Get API key, throws if not found
+            ApiKey apiKey = await ApiKeyService.GetApiKey(apiKeyId);
+
+            // Reject authentication attempt if API key is disabled
+            if (!apiKey.Enabled)
+            {
+                return null;
+            }
+
+            // Set claims
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, apiKey.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, apiKey.Name),
+                new Claim("role", "mis.admin")
+            };
 
             // Generate and return token
             return GenerateNewToken(claims);

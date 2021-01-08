@@ -1,8 +1,10 @@
-﻿using MicroIdentityService.Controllers.Contracts.Requests;
+﻿using MicroIdentityService.Authorization;
+using MicroIdentityService.Controllers.Contracts.Requests;
 using MicroIdentityService.Controllers.Contracts.Responses;
 using MicroIdentityService.Models;
 using MicroIdentityService.Services;
 using MicroIdentityService.Services.Exceptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,7 +25,7 @@ namespace MicroIdentityService.Controllers
             Logger = logger;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Policy = Policies.USERS_GET)]
         public async Task<IActionResult> GetIdentities([FromQuery] string filter = null,
             [FromQuery] int page = 1,
             [FromQuery] int elementsPerPage = 10,
@@ -46,7 +48,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize(Policy = Policies.USERS_GET)]
         public async Task<IActionResult> GetIdentity(Guid id)
         {
             try
@@ -64,7 +66,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Policy = Policies.USERS_CREATE)]
         public async Task<IActionResult> CreateIdentity([FromBody] IdentityCreationRequest identityCreationRequest)
         {
             if (identityCreationRequest == null ||
@@ -93,7 +95,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpPut("{id}/status")]
+        [HttpPut("{id}/status"), Authorize(Policy = Policies.USERS_UPDATE)]
         public async Task<IActionResult> UpdateIdentityStatus(Guid id, [FromBody] IdentityStatusUpdateRequest identityStatusUpdateRequest)
         {
             try
@@ -111,7 +113,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Policy = Policies.USERS_DELETE)]
         public async Task<IActionResult> DeleteIdentity(Guid id, [FromQuery] bool softDelete = false)
         {
             await IdentityService.DeleteIdentity(id, softDelete);
@@ -120,14 +122,14 @@ namespace MicroIdentityService.Controllers
 
         #region Identity roles
 
-        [HttpGet("{id}/roles")]
+        [HttpGet("{id}/roles"), Authorize(Policy = Policies.USERS_GET_ROLES)]
         public async Task<IActionResult> GetIdentityRoles(Guid id)
         {
             IEnumerable<Role> identityRoles = await IdentityService.GetIdentityRoles(id);
             return Ok(identityRoles.Select(r => new RoleResponse(r)));
         }
 
-        [HttpPut("{id}/roles")]
+        [HttpPut("{id}/roles"), Authorize(Policy = Policies.USERS_SET_ROLES)]
         public async Task<IActionResult> UpdateIdentityRoles(Guid id, [FromBody] IdentityRolesUpdateRequest identityRolesUpdateRequest)
         {
             try
