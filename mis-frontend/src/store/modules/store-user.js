@@ -13,10 +13,10 @@ const name = localStorage.getItem('name');
 // Admin role detection
 const MIS_ADMIN_ROLE = 'mis.admin';
 function isAdmin(decodedToken) {
-  if (Array.isArray(decodedToken.role)) {
-    return decodedToken.role.includes(MIS_ADMIN_ROLE);
-  } else if (typeof decodedToken.role === 'string') {
-    return decodedToken.role === MIS_ADMIN_ROLE;
+  if (Array.isArray(decodedToken.roles)) {
+    return decodedToken.roles.includes(MIS_ADMIN_ROLE);
+  } else if (typeof decodedToken.roles === 'string') {
+    return decodedToken.roles === MIS_ADMIN_ROLE;
   }
   return false;
 }

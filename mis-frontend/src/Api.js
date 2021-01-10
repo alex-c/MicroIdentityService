@@ -26,7 +26,7 @@ const SERVER_ENDPOINT = process.env.VUE_APP_SERVER_ENDPOINT;
 
 export default {
   authenticate: (identifier, password) => {
-    return fetch(`${SERVER_ENDPOINT}/api/v1/auth`, {
+    return fetch(`${SERVER_ENDPOINT}/api/v1/auth/identity`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ identifier, password }),
