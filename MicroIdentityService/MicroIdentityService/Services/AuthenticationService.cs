@@ -141,13 +141,18 @@ namespace MicroIdentityService.Services
                 return null;
             }
 
-            // Set claims
+            // Set base claims
             List<Claim> claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, apiKey.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, apiKey.Name),
-                new Claim(MisConstants.JWT_ROLES, MisConstants.MIS_ADMINISTRATOR_ROLE)
             };
+
+            // Set fine-grained permission claims
+            foreach (string permission in apiKey.Permissions)
+            {
+                claims.Add(new Claim(MisConstants.JWT_PERMISSIONS, permission));
+            }
 
             // Generate and return token
             return GenerateNewToken(claims);
