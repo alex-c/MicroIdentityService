@@ -1,10 +1,11 @@
 -- Creates the tables needed for MicroIdentityService.
 
-DROP TABLE IF EXISTS api_keys;
 DROP TABLE IF EXISTS identity_roles;
 DROP TABLE IF EXISTS identities;
 DROP TABLE IF EXISTS roles;
 DROP TABLE IF EXISTS domains;
+DROP TABLE IF EXISTS api_key_permissionss;
+DROP TABLE IF EXISTS api_keys;
 
 -- API Keys
 
@@ -12,6 +13,12 @@ CREATE TABLE api_keys (
   id uuid PRIMARY KEY,
   name varchar (255) NOT NULL,
   enabled boolean DEFAULT false NOT NULL
+);
+
+CREATE TABLE api_key_permissions (
+  api_key_id uuid REFERENCES api_keys(id) NOT NULL,
+  permission varchar(255) NOT NULL,
+  UNIQUE (api_key_id, permission)
 );
 
 -- Domains

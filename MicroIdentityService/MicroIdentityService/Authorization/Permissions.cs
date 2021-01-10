@@ -9,6 +9,8 @@
         public const string API_KEYS_CREATE = "api-keys.create";
         public const string API_KEYS_UPDATE = "api-keys.update";
         public const string API_KEYS_DELETE = "api-keys.delete";
+        public const string API_KEYS_GET_PERMISSIONS = "api-keys.get-permissions";
+        public const string API_KEYS_SET_PERMISSIONS = "api-keys.set-permissions";
 
         public const string DOMAINS_GET = "domains.get";
         public const string DOMAINS_CREATE = "domains.create";

@@ -10,18 +10,6 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
     public class IdentityResponse
     {
         /// <summary>
-        /// Creates an instance from an identity model.
-        /// </summary>
-        /// <param name="identity">The identity model for which to create an instance.</param>
-        public IdentityResponse(Identity identity)
-        {
-            Id = identity.Id;
-            Identifier = identity.Identifier;
-            Disabled = identity.Disabled;
-            Roles = identity.Roles;
-        }
-
-        /// <summary>
         /// The user's unique system ID.
         /// </summary>
         public Guid Id { get; set; }
@@ -40,5 +28,17 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
         /// The roles associated with this identity.
         /// </summary>
         public IEnumerable<Role> Roles { get; set; }
+
+        /// <summary>
+        /// Creates an instance from an identity model.
+        /// </summary>
+        /// <param name="identity">The identity model for which to create an instance.</param>
+        public IdentityResponse(Identity identity)
+        {
+            Id = identity.Id;
+            Identifier = identity.Identifier;
+            Disabled = identity.Disabled;
+            Roles = identity.Roles;
+        }
     }
 }

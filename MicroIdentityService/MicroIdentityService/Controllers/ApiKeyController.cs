@@ -86,5 +86,34 @@ namespace MicroIdentityService.Controllers
             await ApiKeyService.DeleteApiKey(id);
             return NoContent();
         }
+
+        #region Api key permissions
+
+        [HttpGet("{id}/permissions"), Authorize(Policy = Policies.API_KEYS_GET_PERMISSIONS)]
+        public async Task<IActionResult> GetApiKeyPermissions(Guid id)
+        {
+            IEnumerable<string> apiKeyPermissions = await ApiKeyService.GetApiKeyPermissions(id);
+            return Ok(apiKeyPermissions);
+        }
+
+        [HttpPut("{id}/permissions"), Authorize(Policy = Policies.API_KEYS_SET_PERMISSIONS)]
+        public async Task<IActionResult> UpdateApiKeyPermissions(Guid id, [FromBody] ApiKeyPermissionsUpdateRequest apiKeyPermissionsUpdateRequest)
+        {
+            try
+            {
+                await ApiKeyService.UpdateApiKeyPermissions(id, apiKeyPermissionsUpdateRequest.Permissions);
+                return NoContent();
+            }
+            catch (EntityNotFoundException exception)
+            {
+                return HandleResourceNotFoundException(exception);
+            }
+            catch (Exception exception)
+            {
+                return HandleUnexpectedException(exception);
+            }
+        }
+
+        #endregion
     }
 }

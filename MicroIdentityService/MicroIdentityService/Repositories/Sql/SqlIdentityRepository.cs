@@ -88,6 +88,7 @@ namespace MicroIdentityService.Repositories.Sql
         {
             using (IDbConnection connection = GetNewConnection())
             {
+                await connection.ExecuteAsync("DELETE FROM identity_roles WHERE identity_id=@Id", new { id });
                 await connection.ExecuteAsync("DELETE FROM identities WHERE id=@Id", new { id });
             }
         }

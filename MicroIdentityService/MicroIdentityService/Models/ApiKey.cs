@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace MicroIdentityService.Models
 {
@@ -21,5 +22,18 @@ namespace MicroIdentityService.Models
         /// Whether this key is enabled.
         /// </summary>
         public bool Enabled { get; set; }
+
+        /// <summary>
+        /// Permissions granted by this API key.
+        /// </summary>
+        public ICollection<string> Permissions { get; set; }
+
+        /// <summary>
+        /// Creates a new instance of <see cref="ApiKey"/>.
+        /// </summary>
+        public ApiKey()
+        {
+            Permissions = new List<string>();
+        }
     }
 }

@@ -19,6 +19,16 @@ namespace MicroIdentityService.Services
         private IApiKeyRepository ApiKeyRepository { get; }
 
         /// <summary>
+        /// The underlying repository pf API key permissionss.
+        /// </summary>
+        private IApiKeyPermissionRepository ApiKeyPermissionRepository { get; }
+
+        /// <summary>
+        /// Grants access to existing permission names.
+        /// </summary>
+        private PermissionService PermissionService { get; }
+
+        /// <summary>
         /// A logger for local logging purposes.
         /// </summary>
         private ILogger Logger { get; }
@@ -28,9 +38,16 @@ namespace MicroIdentityService.Services
         /// </summary>
         /// <param name="logger">A logger instance for local logging needs.</param>
         /// <param name="apiKeyRepository">Grants access to API keys.</param>
-        public ApiKeyService(ILogger<ApiKeyService> logger, IApiKeyRepository apiKeyRepository)
+        /// <param name="apiKeyPermissionRepository">Grants write access to API key permissionss.</param>
+        /// <param name="permissionService">Grants access to existing permission names.</param>
+        public ApiKeyService(ILogger<ApiKeyService> logger,
+            IApiKeyRepository apiKeyRepository,
+            IApiKeyPermissionRepository apiKeyPermissionRepository,
+            PermissionService permissionService)
         {
             ApiKeyRepository = apiKeyRepository;
+            ApiKeyPermissionRepository = apiKeyPermissionRepository;
+            PermissionService = permissionService;
             Logger = logger;
         }
 
@@ -59,7 +76,12 @@ namespace MicroIdentityService.Services
         /// <exception cref="EntityNotFoundException">Thrown if no matching API key could be found.</exception>
         public async Task<ApiKey> GetApiKey(Guid id)
         {
-            return await GetApiKeyOrThrowNotFoundException(id);
+            ApiKey key = await ApiKeyRepository.GetApiKey(id);
+            if (key == null)
+            {
+                throw new EntityNotFoundException("ApiKey", id);
+            }
+            return key;
         }
 
         /// <summary>
@@ -81,10 +103,10 @@ namespace MicroIdentityService.Services
         /// <exception cref="EntityNotFoundException">Thrown if no matching API key could be found.</exception>
         public async Task<ApiKey> UpdateApiKey(Guid id, string name)
         {
-            ApiKey key = await GetApiKeyOrThrowNotFoundException(id);
+            ApiKey key = await GetApiKey(id);
 
             key.Name = name;
-            ApiKeyRepository.UpdateApiKey(key);
+            await ApiKeyRepository.UpdateApiKey(key);
 
             return key;
         }
@@ -97,10 +119,10 @@ namespace MicroIdentityService.Services
         /// <exception cref="EntityNotFoundException">Thrown if no matching API key could be found.</exception>
         public async Task UpdateApiKeyStatus(Guid id, bool isEnabled)
         {
-            ApiKey key = await GetApiKeyOrThrowNotFoundException(id);
+            ApiKey key = await GetApiKey(id);
 
             key.Enabled = isEnabled;
-            ApiKeyRepository.UpdateApiKey(key);
+            await ApiKeyRepository.UpdateApiKey(key);
         }
 
         /// <summary>
@@ -112,27 +134,32 @@ namespace MicroIdentityService.Services
             await ApiKeyRepository.DeleteApiKey(id);
         }
 
-        #region Private Helpers
-
         /// <summary>
-        /// Attempts to get an API key from the underlying repository and throws a <see cref="EntityNotFoundException"/> if no matching key could be found.
+        /// Gets permissions assigned to a given API key.
         /// </summary>
-        /// <param name="id">ID of the key to get.</param>
-        /// <exception cref="EntityNotFoundException">Thrown if no matching key could be found.</exception>
-        /// <returns>Returns the key, if found.</returns>
-        private async Task<ApiKey> GetApiKeyOrThrowNotFoundException(Guid id)
+        /// <param name="id">ID of the API key to get permissions for.</param>
+        /// <returns>Returns a list of API key permissions.</returns>
+        /// <exception cref="EntityNotFoundException">Thrown if the API key could not be found.</exception>
+        public async Task<IEnumerable<string>> GetApiKeyPermissions(Guid id)
         {
-            ApiKey key = await ApiKeyRepository.GetApiKey(id);
-
-            // Check for key existence
-            if (key == null)
-            {
-                throw new EntityNotFoundException("ApiKey", id);
-            }
-
-            return key;
+            ApiKey apiKey = await GetApiKey(id);
+            return apiKey.Permissions;
         }
 
-        #endregion
+        /// <summary>
+        /// Sets the permissions assigned to a given API key.
+        /// </summary>
+        /// <param name="id">ID of the API key for which to update permissions.</param>
+        /// <param name="roleIds">The IDs of the permissions to set.</param>
+        /// <exception cref="EntityNotFoundException">Thrown if the API key or any of the permissions could not be found.</exception>
+        public async Task UpdateApiKeyPermissions(Guid id, IEnumerable<string> permissions)
+        {
+            ApiKey apiKey = await GetApiKey(id);
+
+            // Validate permissions existence
+            PermissionService.ValidatePermissions(permissions);
+
+            await ApiKeyPermissionRepository.SetApiKeyPermissions(apiKey, permissions);
+        }
     }
 }

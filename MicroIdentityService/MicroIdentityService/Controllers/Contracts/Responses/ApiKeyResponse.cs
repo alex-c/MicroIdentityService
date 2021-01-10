@@ -1,5 +1,6 @@
 ﻿using MicroIdentityService.Models;
 using System;
+using System.Collections.Generic;
 
 namespace MicroIdentityService.Controllers.Contracts.Responses
 {
@@ -24,6 +25,11 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
         public bool Enabled { get; set; }
 
         /// <summary>
+        /// Permissions granted by this API key.
+        /// </summary>
+        public IEnumerable<string> Permissions { get; set; }
+
+        /// <summary>
         /// Generates an API key response contract from an API key model.
         /// </summary>
         /// <param name="key">Key to generate an ID for.</param>
@@ -32,6 +38,7 @@ namespace MicroIdentityService.Controllers.Contracts.Responses
             Id = key.Id;
             Name = key.Name;
             Enabled = key.Enabled;
+            Permissions = key.Permissions;
         }
     }
 }

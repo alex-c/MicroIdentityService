@@ -113,6 +113,8 @@ namespace MicroIdentityService
                 RegisterPolicy(options, Policies.API_KEYS_CREATE, Permissions.API_KEYS_CREATE);
                 RegisterPolicy(options, Policies.API_KEYS_UPDATE, Permissions.API_KEYS_UPDATE);
                 RegisterPolicy(options, Policies.API_KEYS_DELETE, Permissions.API_KEYS_DELETE);
+                RegisterPolicy(options, Policies.API_KEYS_GET_PERMISSIONS, Permissions.API_KEYS_GET_PERMISSIONS);
+                RegisterPolicy(options, Policies.API_KEYS_SET_PERMISSIONS, Permissions.API_KEYS_SET_PERMISSIONS);
 
                 // Domains
                 RegisterPolicy(options, Policies.DOMAINS_GET, Permissions.DOMAINS_GET);
@@ -155,6 +157,7 @@ namespace MicroIdentityService
             services.AddSingleton<DomainService>();
             services.AddSingleton<RoleService>();
             services.AddSingleton<ApiKeyService>();
+            services.AddSingleton<PermissionService>();
 
             // Register controllers
             services.AddControllers();
@@ -190,6 +193,7 @@ namespace MicroIdentityService
                 services.AddSingleton<IRoleRepository, InMemoryRoleRepository>();
                 services.AddSingleton<IIdentityRoleRepository, InMemoryIdentityRolesRepository>();
                 services.AddSingleton<IApiKeyRepository, InMemoryApiKeyRepository>();
+                services.AddSingleton<IApiKeyPermissionRepository, InMemoryApiKeyPermissionRepository>();
             }
             else if (persistenceStrategy == PersistenceStrategy.Sql)
             {
@@ -202,6 +206,7 @@ namespace MicroIdentityService
                 services.AddSingleton<IRoleRepository, SqlRoleRepository>();
                 services.AddSingleton<IIdentityRepository, SqlIdentityRepository>();
                 services.AddSingleton<IIdentityRoleRepository, SqlIdentityRoleRepository>();
+                services.AddSingleton<IApiKeyPermissionRepository, SqlApiKeyPermissionRepository>();
             }
             else
             {
