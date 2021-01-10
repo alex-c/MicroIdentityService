@@ -4,7 +4,7 @@ MicroIdentityService (μIS) is a simple .NET Core microservice for identity mana
 
 ## Status
 
-Please note that μIS is currently in early development!
+:warning: Please note that μIS is currently in early development, which means that the API isn't stable yet.
 
 ## Features
 
