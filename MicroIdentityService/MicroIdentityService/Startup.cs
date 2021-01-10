@@ -29,11 +29,6 @@ namespace MicroIdentityService
     public class Startup
     {
         /// <summary>
-        /// The MicroIdentityService adminstrator role.
-        /// </summary>
-        private static readonly string MIS_ADMINISTRATOR_ROLE = "mis.admin";
-
-        /// <summary>
         /// CORS policy name for local development.
         /// </summary>
         private static readonly string LOCAL_DEVELOPMENT_CORS_POLICY = "localDevelopmentCorsPolicy";
@@ -95,7 +90,7 @@ namespace MicroIdentityService
                 throw new Exception(errorMessage);
             }
 
-            // Configure JWT-based authorization
+            // Configure JWT-based auth
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -109,6 +104,8 @@ namespace MicroIdentityService
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration.GetValue<string>(ConfigurationPaths.JWT_SECRET)))
                     };
                 });
+
+            // Register authorization policies
             services.AddAuthorization(options =>
             {
                 // API Keys
@@ -137,6 +134,10 @@ namespace MicroIdentityService
                 RegisterPolicy(options, Policies.ROLES_UPDATE, Permissions.ROLES_UPDATE);
                 RegisterPolicy(options, Policies.ROLES_DELETE, Permissions.ROLES_DELETE);
             });
+
+            // Register authorization handlers
+            services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, AdministratorAuthorizationHandler>();
 
             // Confiture persistence-related services
             ConfigurePersistenceServices(services);
@@ -280,7 +281,9 @@ namespace MicroIdentityService
         /// <param name="permission">The permission this policy is for.</param>
         private void RegisterPolicy(AuthorizationOptions options, string policyName, string permission)
         {
-            options.AddPolicy(policyName, policy => policy.RequireAuthenticatedUser().Requirements.Add(new PermissionRequirement(new string[] { MIS_ADMINISTRATOR_ROLE }, permission)));
+            options.AddPolicy(policyName, policy => policy
+                .RequireAuthenticatedUser()
+                .Requirements.Add(new PermissionAuthorizationRequirement(permission)));
         }
 
         /// <summary>

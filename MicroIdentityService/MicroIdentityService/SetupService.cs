@@ -18,9 +18,6 @@ namespace MicroIdentityService
     /// </summary>
     public class SetupService : IHostedService
     {
-        private static readonly string MIS_DOMAIN_NAME = "mis";
-        private static readonly string MIS_ADMINISTRATOR_ROLE_NAME = "admin";
-
         private IServiceProvider ServiceProvider { get; }
         private IConfiguration Configuration { get; }
 
@@ -60,19 +57,19 @@ namespace MicroIdentityService
             IEnumerable<Domain> domains = await domainService.GetDomains();
 
             // Configure MIS domain if needed
-            Domain misDomain = domains.Where(d => d.Name == MIS_DOMAIN_NAME).FirstOrDefault();
+            Domain misDomain = domains.Where(d => d.Name == MisConstants.MIS_DOMAIN_NAME).FirstOrDefault();
             if (misDomain == null)
             {
-                misDomain = await domainService.CreateDomain(MIS_DOMAIN_NAME);
+                misDomain = await domainService.CreateDomain(MisConstants.MIS_DOMAIN_NAME);
             }
 
             // Get roles of MIS domain
             RoleService roleService = ServiceProvider.GetService<RoleService>();
             IEnumerable<Role> roles = await roleService.GetRoles(null, misDomain.Id);
-            Role misAdminRole = roles.Where(r => r.Name == MIS_ADMINISTRATOR_ROLE_NAME).FirstOrDefault();
+            Role misAdminRole = roles.Where(r => r.Name == MisConstants.MIS_ADMINISTRATOR_ROLE_NAME).FirstOrDefault();
             if (misAdminRole == null)
             {
-                misAdminRole = await roleService.CreateRole(MIS_ADMINISTRATOR_ROLE_NAME, misDomain.Id);
+                misAdminRole = await roleService.CreateRole(MisConstants.MIS_ADMINISTRATOR_ROLE_NAME, misDomain.Id);
             }
 
             // Return MIS domain and admin role

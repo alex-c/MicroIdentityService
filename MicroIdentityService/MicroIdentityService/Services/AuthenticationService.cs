@@ -113,7 +113,7 @@ namespace MicroIdentityService.Services
             // Set identity base claims
             List<Claim> claims = new List<Claim>
             {
-                // Add subject, name, role
+                // Add subject and unique name
                 new Claim(JwtRegisteredClaimNames.Sub, identity.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, identity.Identifier),
             };
@@ -146,7 +146,7 @@ namespace MicroIdentityService.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, apiKey.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, apiKey.Name),
-                new Claim("role", "mis.admin")
+                new Claim(MisConstants.JWT_ROLES, MisConstants.MIS_ADMINISTRATOR_ROLE)
             };
 
             // Generate and return token
@@ -200,7 +200,7 @@ namespace MicroIdentityService.Services
                     roleName += domains[domainId].Name + ".";
                 }
                 roleName += role.Name;
-                claims.Add(new Claim("role", roleName));
+                claims.Add(new Claim(MisConstants.JWT_ROLES, roleName));
             }
 
             // Done, return role claims
