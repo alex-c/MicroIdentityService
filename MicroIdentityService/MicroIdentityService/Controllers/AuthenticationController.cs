@@ -38,19 +38,54 @@ namespace MicroIdentityService.Controllers
         /// </summary>
         /// <param name="authenticationRequest">Authentication request data.</param>
         /// <returns>Returns a JWT on success.</returns>
-        [HttpPost]
-        public async Task<IActionResult> AuthenticateUser([FromBody] AuthenticationRequest authenticationRequest)
+        [HttpPost("identity")]
+        public async Task<IActionResult> AuthenticateUser([FromBody] IdentityAuthenticationRequest authenticationRequest)
         {
             if (authenticationRequest == null || 
                 string.IsNullOrEmpty(authenticationRequest.Identifier) || 
                 string.IsNullOrEmpty(authenticationRequest.Password))
             {
-                return HandleBadRequest("An identity ID and password need to be supplied for authentication requests.");
+                return HandleBadRequest("An identity identifier and password need to be supplied for authentication requests.");
             }
 
             try
             {
                 string token = await AuthenticationService.Authenticate(authenticationRequest.Identifier, authenticationRequest.Password);
+                if (token != null)
+                {
+                    return Ok(new AuthenticationResponse(token));
+                }
+                else
+                {
+                    return Unauthorized();
+                }
+            }
+            catch (EntityNotFoundException)
+            {
+                return Unauthorized();
+            }
+            catch (Exception exception)
+            {
+                return HandleUnexpectedException(exception);
+            }
+        }
+
+        /// <summary>
+        /// Authenticates a client application using an API key.
+        /// </summary>
+        /// <param name="authenticationRequest">Authentication request data.</param>
+        /// <returns>Returns a JWT on success.</returns>
+        [HttpPost("client")]
+        public async Task<IActionResult> AuthenticateClient([FromBody] ClientAuthenticationRequest authenticationRequest)
+        {
+            if (authenticationRequest == null || authenticationRequest.ApiKey == null)
+            {
+                return HandleBadRequest("An API key needs to be supplied for client authentication requests.");
+            }
+
+            try
+            {
+                string token = await AuthenticationService.Authenticate(authenticationRequest.ApiKey);
                 if (token != null)
                 {
                     return Ok(new AuthenticationResponse(token));

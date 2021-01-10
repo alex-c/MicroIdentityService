@@ -3,7 +3,7 @@
     /// <summary>
     /// A contract for an identity authentication request.
     /// </summary>
-    public class AuthenticationRequest
+    public class IdentityAuthenticationRequest
     {
         /// <summary>
         /// Identifier of the identity to authenticate.
