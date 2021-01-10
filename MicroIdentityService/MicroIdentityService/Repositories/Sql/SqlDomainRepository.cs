@@ -111,7 +111,7 @@ namespace MicroIdentityService.Repositories.Sql
             return await QuerySingleDomain(connection, sql, new { id });
         }
 
-        private async Task<Domain> QuerySingleDomain(IDbConnection connection, string sql, object parameters, string splitOn = "domain_id")
+        private async Task<Domain> QuerySingleDomain(IDbConnection connection, string sql, object parameters, string splitOn = "id")
         {
             IEnumerable<Domain> domains = null;
             Dictionary<Guid, Domain> domainMap = new Dictionary<Guid, Domain>();
