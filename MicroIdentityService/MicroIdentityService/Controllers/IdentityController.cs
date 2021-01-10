@@ -25,7 +25,7 @@ namespace MicroIdentityService.Controllers
             Logger = logger;
         }
 
-        [HttpGet, Authorize(Policy = Policies.USERS_GET)]
+        [HttpGet, Authorize(Policy = Policies.IDENTITIES_GET)]
         public async Task<IActionResult> GetIdentities([FromQuery] string filter = null,
             [FromQuery] int page = 1,
             [FromQuery] int elementsPerPage = 10,
@@ -48,7 +48,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpGet("{id}"), Authorize(Policy = Policies.USERS_GET)]
+        [HttpGet("{id}"), Authorize(Policy = Policies.IDENTITIES_GET)]
         public async Task<IActionResult> GetIdentity(Guid id)
         {
             try
@@ -66,7 +66,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpPost, Authorize(Policy = Policies.USERS_CREATE)]
+        [HttpPost, Authorize(Policy = Policies.IDENTITIES_CREATE)]
         public async Task<IActionResult> CreateIdentity([FromBody] IdentityCreationRequest identityCreationRequest)
         {
             if (identityCreationRequest == null ||
@@ -95,7 +95,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpPut("{id}/status"), Authorize(Policy = Policies.USERS_UPDATE)]
+        [HttpPut("{id}/status"), Authorize(Policy = Policies.IDENTITIES_UPDATE)]
         public async Task<IActionResult> UpdateIdentityStatus(Guid id, [FromBody] IdentityStatusUpdateRequest identityStatusUpdateRequest)
         {
             try
@@ -113,7 +113,7 @@ namespace MicroIdentityService.Controllers
             }
         }
 
-        [HttpDelete("{id}"), Authorize(Policy = Policies.USERS_DELETE)]
+        [HttpDelete("{id}"), Authorize(Policy = Policies.IDENTITIES_DELETE)]
         public async Task<IActionResult> DeleteIdentity(Guid id, [FromQuery] bool softDelete = false)
         {
             await IdentityService.DeleteIdentity(id, softDelete);
@@ -122,14 +122,14 @@ namespace MicroIdentityService.Controllers
 
         #region Identity roles
 
-        [HttpGet("{id}/roles"), Authorize(Policy = Policies.USERS_GET_ROLES)]
+        [HttpGet("{id}/roles"), Authorize(Policy = Policies.IDENTITIES_GET_ROLES)]
         public async Task<IActionResult> GetIdentityRoles(Guid id)
         {
             IEnumerable<Role> identityRoles = await IdentityService.GetIdentityRoles(id);
             return Ok(identityRoles.Select(r => new RoleResponse(r)));
         }
 
-        [HttpPut("{id}/roles"), Authorize(Policy = Policies.USERS_SET_ROLES)]
+        [HttpPut("{id}/roles"), Authorize(Policy = Policies.IDENTITIES_SET_ROLES)]
         public async Task<IActionResult> UpdateIdentityRoles(Guid id, [FromBody] IdentityRolesUpdateRequest identityRolesUpdateRequest)
         {
             try

@@ -124,12 +124,12 @@ namespace MicroIdentityService
                 RegisterPolicy(options, Policies.DOMAINS_DELETE, Permissions.DOMAINS_DELETE);
 
                 // Users
-                RegisterPolicy(options, Policies.USERS_GET, Permissions.USERS_GET);
-                RegisterPolicy(options, Policies.USERS_CREATE, Permissions.USERS_CREATE);
-                RegisterPolicy(options, Policies.USERS_UPDATE, Permissions.USERS_UPDATE);
-                RegisterPolicy(options, Policies.USERS_DELETE, Permissions.USERS_DELETE);
-                RegisterPolicy(options, Policies.USERS_GET_ROLES, Permissions.USERS_GET_ROLES);
-                RegisterPolicy(options, Policies.USERS_SET_ROLES, Permissions.USERS_SET_ROLES);
+                RegisterPolicy(options, Policies.IDENTITIES_GET, Permissions.IDENTITIES_GET);
+                RegisterPolicy(options, Policies.IDENTITIES_CREATE, Permissions.IDENTITIES_CREATE);
+                RegisterPolicy(options, Policies.IDENTITIES_UPDATE, Permissions.IDENTITIES_UPDATE);
+                RegisterPolicy(options, Policies.IDENTITIES_DELETE, Permissions.IDENTITIES_DELETE);
+                RegisterPolicy(options, Policies.IDENTITIES_GET_ROLES, Permissions.IDENTITIES_GET_ROLES);
+                RegisterPolicy(options, Policies.IDENTITIES_SET_ROLES, Permissions.IDENTITIES_SET_ROLES);
 
                 // Roles
                 RegisterPolicy(options, Policies.ROLES_GET, Permissions.ROLES_GET);
